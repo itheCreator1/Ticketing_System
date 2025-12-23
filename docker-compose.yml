@@ -7,31 +7,40 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     environment:
-      - PORT=3000
-      - NODE_ENV=development
-      - DATABASE_URL=postgres://ticketing_user:ticketing_pass@db:5432/ticketing_db
-      - SESSION_SECRET=your-super-secret-session-key-change-in-production
+      - PORT=${PORT:-3000}
+      - NODE_ENV=${NODE_ENV:-development}
+      - DATABASE_URL=${DATABASE_URL}
+      - SESSION_SECRET=${SESSION_SECRET}
     depends_on:
       db:
         condition: service_healthy
-    command: npm run dev
+    command: ${DOCKER_COMMAND:-npm run dev}
+    restart: ${RESTART_POLICY:-no}
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   db:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: ticketing_user
-      POSTGRES_PASSWORD: ticketing_pass
-      POSTGRES_DB: ticketing_db
+      POSTGRES_USER: ${POSTGRES_USER:-ticketing_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ticketing_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-ticketing_db}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./migrations:/docker-entrypoint-initdb.d
+      - ./backups:/backups
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ticketing_user -d ticketing_db"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ticketing_user} -d ${POSTGRES_DB:-ticketing_db}"]
+      interval: 10s
       timeout: 5s
       retries: 5
+    restart: ${RESTART_POLICY:-no}
 
 volumes:
   postgres_data:
