@@ -64,21 +64,23 @@ docker-compose build
 # Start in production mode
 docker-compose up -d
 
-# View logs
-docker-compose logs -f
+# View logs to see initialization
+docker-compose logs -f web
 ```
 
-#### 4. Initialize Database
+**The database will be automatically initialized on first startup!**
 
-```bash
-# Run migrations
-docker-compose exec web npm run init-db
+The Docker entrypoint script will:
+- Wait for PostgreSQL to be ready
+- Run database migrations if not already initialized
+- Create a default admin user if none exists:
+  - **Username**: `admin`
+  - **Password**: `admin123`
+  - **Email**: `admin@example.com`
 
-# Create admin user (follow prompts)
-docker-compose exec web npm run seed-admin
-```
+⚠️ **IMPORTANT**: Change the default admin password immediately after first login!
 
-#### 5. Verify Deployment
+#### 4. Verify Deployment
 
 ```bash
 # Check service status
