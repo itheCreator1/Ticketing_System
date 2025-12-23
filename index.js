@@ -12,6 +12,7 @@ const errorHandler = require('./middleware/errorHandler');
 
 const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -50,9 +51,10 @@ app.use((req, res, next) => {
 
 app.use('/', publicRoutes);
 app.use('/auth', authRoutes);
+app.use('/admin', adminRoutes);
 
 app.use((req, res) => {
-  res.status(404).send('404 - Page Not Found');
+  res.status(404).render('errors/404', { title: '404 - Page Not Found' });
 });
 
 app.use(errorHandler);
