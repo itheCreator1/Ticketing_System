@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { validateRequest } = require('../middleware/validation');
-const { FLASH_KEYS, AUTH_MESSAGES } = require('../constants/messages');
+const { AUTH_MESSAGES } = require('../constants/messages');
 const authService = require('../services/authService');
 const { validateLogin } = require('../validators/authValidators');
+const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
 
 router.get('/login', (req, res) => {
   if (req.session.user) {
@@ -18,14 +19,11 @@ router.post('/login', validateLogin, validateRequest, async (req, res, next) => 
     const user = await authService.authenticate(username, password);
 
     if (!user) {
-      req.flash(FLASH_KEYS.ERROR, AUTH_MESSAGES.LOGIN_FAILED);
-      return res.redirect('/auth/login');
+      return errorRedirect(req, res, AUTH_MESSAGES.LOGIN_FAILED, '/auth/login');
     }
 
     req.session.user = authService.createSessionData(user);
-
-    req.flash(FLASH_KEYS.SUCCESS, AUTH_MESSAGES.LOGIN_SUCCESS);
-    res.redirect('/admin/dashboard');
+    successRedirect(req, res, AUTH_MESSAGES.LOGIN_SUCCESS, '/admin/dashboard');
   } catch (error) {
     next(error);
   }

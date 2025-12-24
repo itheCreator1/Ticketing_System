@@ -3,10 +3,11 @@ const router = express.Router();
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const Comment = require('../models/Comment');
 const { validateRequest } = require('../middleware/validation');
-const { FLASH_KEYS, TICKET_MESSAGES, COMMENT_MESSAGES } = require('../constants/messages');
+const { TICKET_MESSAGES, COMMENT_MESSAGES } = require('../constants/messages');
 const ticketService = require('../services/ticketService');
 const { validateTicketUpdate } = require('../validators/ticketValidators');
 const { validateCommentCreation } = require('../validators/commentValidators');
+const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
 
 router.use(requireAuth);
 
@@ -29,8 +30,7 @@ router.get('/tickets/:id', async (req, res, next) => {
     const comments = await Comment.findByTicketId(req.params.id);
 
     if (!ticket) {
-      req.flash(FLASH_KEYS.ERROR, TICKET_MESSAGES.NOT_FOUND);
-      return res.redirect('/admin/dashboard');
+      return errorRedirect(req, res, TICKET_MESSAGES.NOT_FOUND, '/admin/dashboard');
     }
 
     res.render('admin/ticket-detail', {
@@ -46,8 +46,7 @@ router.get('/tickets/:id', async (req, res, next) => {
 router.post('/tickets/:id/update', requireAdmin, validateTicketUpdate, validateRequest, async (req, res, next) => {
   try {
     await ticketService.updateTicket(req.params.id, req.body);
-    req.flash(FLASH_KEYS.SUCCESS, TICKET_MESSAGES.UPDATED);
-    res.redirect(`/admin/tickets/${req.params.id}`);
+    successRedirect(req, res, TICKET_MESSAGES.UPDATED, `/admin/tickets/${req.params.id}`);
   } catch (error) {
     next(error);
   }
@@ -62,8 +61,7 @@ router.post('/tickets/:id/comments', validateCommentCreation, validateRequest, a
       is_internal: req.body.is_internal === 'true'
     });
 
-    req.flash(FLASH_KEYS.SUCCESS, COMMENT_MESSAGES.ADDED);
-    res.redirect(`/admin/tickets/${req.params.id}`);
+    successRedirect(req, res, COMMENT_MESSAGES.ADDED, `/admin/tickets/${req.params.id}`);
   } catch (error) {
     next(error);
   }
