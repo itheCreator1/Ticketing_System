@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 class User {
   static async findById(id) {
     const result = await pool.query(
-      'SELECT id, username, email, role, created_at FROM users WHERE id = $1',
+      'SELECT id, username, email, role, status, created_at FROM users WHERE id = $1',
       [id]
     );
     return result.rows[0];
@@ -29,7 +29,7 @@ class User {
 
   static async findAll() {
     const result = await pool.query(
-      'SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC'
+      'SELECT id, username, email, role, status, created_at FROM users ORDER BY created_at DESC'
     );
     return result.rows;
   }
