@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../partials/header') %>
+
+  <main class="admin-container">
+    <h2>Ticket Dashboard</h2>
+    <%- include('../partials/flash') %>
+
+    <div class="filters">
+      <form action="/admin/dashboard" method="GET" class="filter-form">
+        <select name="status">
+          <option value="">All Statuses</option>
+          <option value="open" <%= filters.status === 'open' ? 'selected' : '' %>>Open</option>
+          <option value="in_progress" <%= filters.status === 'in_progress' ? 'selected' : '' %>>In Progress</option>
+          <option value="closed" <%= filters.status === 'closed' ? 'selected' : '' %>>Closed</option>
+        </select>
+
+        <select name="priority">
+          <option value="">All Priorities</option>
+          <option value="low" <%= filters.priority === 'low' ? 'selected' : '' %>>Low</option>
+          <option value="medium" <%= filters.priority === 'medium' ? 'selected' : '' %>>Medium</option>
+          <option value="high" <%= filters.priority === 'high' ? 'selected' : '' %>>High</option>
+          <option value="critical" <%= filters.priority === 'critical' ? 'selected' : '' %>>Critical</option>
+        </select>
+
+        <input type="text" name="search" placeholder="Search tickets..." value="<%= filters.search || '' %>">
+        <button type="submit" class="btn btn-sm">Filter</button>
+        <% if (filters.status || filters.priority || filters.search) { %>
+          <a href="/admin/dashboard" class="btn btn-sm btn-secondary">Clear</a>
+        <% } %>
+      </form>
+    </div>
+
+    <% if (tickets.length === 0) { %>
+      <div class="empty-state">
+        <p>No tickets found. <%= filters.status || filters.priority || filters.search ? 'Try adjusting your filters.' : 'Tickets will appear here when users submit them.' %></p>
+      </div>
+    <% } else { %>
+      <div class="ticket-table-wrapper">
+        <table class="ticket-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Status</th>
+              <th>Priority</th>
+              <th>Reporter</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% tickets.forEach(ticket => { %>
+              <tr>
+                <td>#<%= ticket.id %></td>
+                <td class="ticket-title"><%= ticket.title %></td>
+                <td><span class="badge badge-<%= ticket.status %>"><%= ticket.status.replace('_', ' ') %></span></td>
+                <td><span class="badge badge-priority-<%= ticket.priority %>"><%= ticket.priority %></span></td>
+                <td><%= ticket.reporter_name %></td>
+                <td><%= new Date(ticket.created_at).toLocaleDateString() %></td>
+                <td>
+                  <a href="/admin/tickets/<%= ticket.id %>" class="btn btn-sm btn-primary">View</a>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ticket-stats">
+        <p>Showing <%= tickets.length %> ticket<%= tickets.length !== 1 ? 's' : '' %></p>
+      </div>
+    <% } %>
+  </main>
+
+  <%- include('../partials/footer') %>
+</body>
+</html>

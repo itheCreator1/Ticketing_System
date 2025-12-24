@@ -1,15 +1,39 @@
 {
   "name": "knii_ticketing",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple ticketing system with public submission and admin management",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "prod": "pm2 start ecosystem.config.js --env production",
+    "prod:stop": "pm2 stop ticketing-system",
+    "prod:restart": "pm2 restart ticketing-system",
+    "prod:logs": "pm2 logs ticketing-system",
+    "prod:monitor": "pm2 monit",
+    "init-db": "node scripts/init-db.js",
+    "seed-admin": "node scripts/seed-admin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["ticketing", "support", "express"],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express-session": "^1.17.3",
+    "connect-pg-simple": "^9.0.1",
+    "bcryptjs": "^2.4.3",
+    "express-validator": "^7.0.1",
+    "connect-flash": "^0.1.1",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "compression": "^1.7.4",
+    "pm2": "^5.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('../../partials/header') %>
+
+  <main class="admin-container">
+    <h2>Edit User: <%= targetUser.username %></h2>
+    <%- include('../../partials/flash') %>
+
+    <div class="user-edit-container">
+      <!-- Update User Details Form -->
+      <form action="/admin/users/<%= targetUser.id %>" method="POST" class="user-form">
+        <h3>User Details</h3>
+
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" value="<%= targetUser.username %>"
+                 pattern="[a-zA-Z0-9_]{3,50}">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" value="<%= targetUser.email %>">
+        </div>
+
+        <div class="form-group">
+          <label for="role">Role</label>
+          <select id="role" name="role">
+            <option value="admin" <%= targetUser.role === 'admin' ? 'selected' : '' %>>Admin</option>
+            <option value="super_admin" <%= targetUser.role === 'super_admin' ? 'selected' : '' %>>Super Admin</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status" name="status">
+            <option value="active" <%= targetUser.status === 'active' ? 'selected' : '' %>>Active</option>
+            <option value="inactive" <%= targetUser.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+          </select>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Update User</button>
+          <a href="/admin/users" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+
+      <!-- Reset Password Form -->
+      <form action="/admin/users/<%= targetUser.id %>/password" method="POST" class="user-form password-form">
+        <h3>Reset Password</h3>
+
+        <div class="form-group">
+          <label for="new-password">New Password</label>
+          <input type="password" id="new-password" name="password" minlength="8">
+          <div id="password-strength" class="password-strength"></div>
+          <small>Minimum 8 characters with uppercase, lowercase, number, and special character</small>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-warning"
+                  onclick="return confirm('Reset password for this user?');">
+            Reset Password
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="/js/password-strength.js"></script>
+</body>
+</html>
