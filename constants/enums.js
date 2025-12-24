@@ -16,8 +16,15 @@ const USER_ROLE = {
   SUPER_ADMIN: 'super_admin'
 };
 
+const USER_STATUS = {
+  ACTIVE: 'active',
+  INACTIVE: 'inactive',
+  DELETED: 'deleted'
+};
+
 module.exports = {
   TICKET_STATUS,
   TICKET_PRIORITY,
-  USER_ROLE
+  USER_ROLE,
+  USER_STATUS
 };
