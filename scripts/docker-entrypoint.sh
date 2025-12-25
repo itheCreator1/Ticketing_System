@@ -50,7 +50,7 @@ if [ "$ADMIN_EXISTS" = "f" ]; then
           username: 'admin',
           email: 'admin@example.com',
           password: 'admin123',
-          role: 'admin'
+          role: 'super_admin'
         });
         console.log('✓ Default admin user created');
       } catch (error) {
