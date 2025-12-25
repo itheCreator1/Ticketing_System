@@ -8,7 +8,9 @@ async function initDatabase() {
     '001_create_users.sql',
     '002_create_tickets.sql',
     '003_create_comments.sql',
-    '004_create_sessions.sql'
+    '004_create_sessions.sql',
+    '005_enhance_users_table.sql',
+    '006_create_audit_logs.sql'
   ];
 
   try {
