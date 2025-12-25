@@ -6,6 +6,7 @@ const authService = require('../services/authService');
 const { validateLogin } = require('../validators/authValidators');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
 const AuditLog = require('../models/AuditLog');
+const { loginLimiter } = require('../middleware/rateLimiter');
 
 router.get('/login', (req, res) => {
   if (req.session.user) {
@@ -14,7 +15,7 @@ router.get('/login', (req, res) => {
   res.render('auth/login', { title: 'Admin Login' });
 });
 
-router.post('/login', validateLogin, validateRequest, async (req, res, next) => {
+router.post('/login', loginLimiter, validateLogin, validateRequest, async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const user = await authService.authenticate(username, password);
