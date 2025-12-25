@@ -94,43 +94,44 @@ docker-compose logs -f web
 
 PostgreSQL automatically runs the SQL migration files from the `./migrations` folder on first startup, creating all necessary tables (users, tickets, comments, session).
 
-#### 4. Create Admin User
+#### 4. Initial Admin Setup
 
-After containers start, create an admin user:
+The system automatically creates a default super admin user on first startup:
 
-```bash
-# Create admin user interactively
-docker-compose exec web npm run seed-admin
-
-# Or create default admin user (non-interactive)
-docker-compose exec web node -e "
-const User = require('./models/User');
-(async () => {
-  try {
-    await User.create({
-      username: 'admin',
-      email: 'admin@example.com',
-      password: 'admin123',
-      role: 'admin'
-    });
-    console.log('✓ Admin user created: admin / admin123');
-  } catch (error) {
-    console.error('Error:', error.message);
-  } finally {
-    process.exit(0);
-  }
-})();
-"
-```
-
-Default admin credentials (if using non-interactive method):
+**Default Super Admin Credentials:**
 - **Username**: `admin`
 - **Password**: `admin123`
 - **Email**: `admin@example.com`
+- **Role**: `super_admin` (can manage other users)
 
-⚠️ **IMPORTANT**: Change the default password immediately after first login!
+⚠️ **CRITICAL SECURITY REQUIREMENT**:
+1. Login immediately after deployment
+2. Navigate to User Management and change the admin password
+3. Use a strong password meeting these requirements:
+   - Minimum 8 characters
+   - At least one uppercase letter
+   - At least one lowercase letter
+   - At least one number
+   - At least one special character
 
-#### 5. Verify Deployment
+#### 5. User Management Setup
+
+After logging in as super admin:
+
+1. **Access User Management**: Click "User Management" in the header
+2. **Change Admin Password**:
+   - Go to Edit → Reset Password
+   - Enter a strong password
+3. **Create Additional Users** (if needed):
+   - Click "Create New User"
+   - Set username, email, password, and role
+   - Choose `admin` for regular admins or `super_admin` for user managers
+
+**User Roles:**
+- **admin**: Can manage tickets and comments only
+- **super_admin**: All admin permissions + user management capabilities
+
+#### 6. Verify Deployment
 
 ```bash
 # Check service status
@@ -146,13 +147,14 @@ docker-compose logs db
 curl http://localhost:3000
 ```
 
-#### 6. Access the Application
+#### 7. Access the Application
 
 - **Public Ticket Submission**: `http://localhost:3000`
 - **Admin Login**: `http://localhost:3000/auth/login`
 - **Admin Dashboard**: `http://localhost:3000/admin/dashboard` (after login)
+- **User Management**: `http://localhost:3000/admin/users` (super_admin only)
 
-#### 7. Database Backups
+#### 8. Database Backups
 
 ```bash
 # Create a backup directory (already mounted in docker-compose.yml)
@@ -241,6 +243,11 @@ pm2 save
 - [ ] Reviewed Helmet security headers in index.js
 - [ ] Disabled development tools (nodemon, source maps)
 - [ ] Changed default admin password (admin/admin123)
+- [ ] Created at least one backup super_admin account
+- [ ] Tested account locking after failed login attempts
+- [ ] Verified audit logging is working
+- [ ] Reviewed user roles and permissions
+- [ ] Disabled or removed any test/demo user accounts
 
 ### 2. Monitoring
 
@@ -348,11 +355,53 @@ docker-compose exec db psql -U ticketing_user -d ticketing_db -c "SELECT 1;"
 ### Issue: Can't login to admin
 
 ```bash
-# Verify admin user exists
-docker-compose exec db psql -U ticketing_user -d ticketing_db -c "SELECT username, email FROM users;"
+# Verify admin user exists and check status
+docker-compose exec db psql -U ticketing_user -d ticketing_db -c "SELECT username, email, role, status, login_attempts FROM users;"
 
-# Re-run seed script if needed
-docker-compose exec web npm run seed-admin
+# Check if account is locked (login_attempts >= 5)
+# If locked, reset login attempts:
+docker-compose exec db psql -U ticketing_user -d ticketing_db -c "UPDATE users SET login_attempts = 0 WHERE username = 'admin';"
+
+# Check if account status is 'active'
+# If not, activate the account:
+docker-compose exec db psql -U ticketing_user -d ticketing_db -c "UPDATE users SET status = 'active' WHERE username = 'admin';"
+```
+
+### Issue: User account locked after failed login attempts
+
+When a user fails to login 5 times, their account is automatically locked for security.
+
+```bash
+# Check locked accounts
+docker-compose exec db psql -U ticketing_user -d ticketing_db -c "SELECT username, email, login_attempts FROM users WHERE login_attempts >= 5;"
+
+# Unlock specific user account
+docker-compose exec db psql -U ticketing_user -d ticketing_db -c "UPDATE users SET login_attempts = 0 WHERE username = 'USERNAME';"
+
+# Unlock all accounts (use with caution)
+docker-compose exec db psql -U ticketing_user -d ticketing_db -c "UPDATE users SET login_attempts = 0;"
+```
+
+### Issue: Can't access User Management page
+
+Only users with `super_admin` role can access the User Management page.
+
+```bash
+# Check user role
+docker-compose exec db psql -U ticketing_user -d ticketing_db -c "SELECT username, role FROM users WHERE username = 'admin';"
+
+# Upgrade user to super_admin
+docker-compose exec db psql -U ticketing_user -d ticketing_db -c "UPDATE users SET role = 'super_admin' WHERE username = 'admin';"
+```
+
+### Issue: Need to view audit logs
+
+```bash
+# View recent user management actions
+docker-compose exec db psql -U ticketing_user -d ticketing_db -c "SELECT al.created_at, u.username as actor, al.action, al.target_type, al.details FROM audit_logs al JOIN users u ON al.actor_id = u.id ORDER BY al.created_at DESC LIMIT 20;"
+
+# View logs for specific user
+docker-compose exec db psql -U ticketing_user -d ticketing_db -c "SELECT * FROM audit_logs WHERE actor_id = (SELECT id FROM users WHERE username = 'admin') ORDER BY created_at DESC;"
 ```
 
 ### Issue: Out of disk space
