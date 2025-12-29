@@ -12,6 +12,16 @@ class User {
 
   static async findByUsername(username) {
     const result = await pool.query(
+      'SELECT id, username, email, role, status, login_attempts, created_at, updated_at FROM users WHERE username = $1',
+      [username]
+    );
+    return result.rows[0];
+  }
+
+  // For authentication only - returns password_hash
+  // This method should ONLY be used by authService for password verification
+  static async findByUsernameWithPassword(username) {
+    const result = await pool.query(
       'SELECT * FROM users WHERE username = $1',
       [username]
     );

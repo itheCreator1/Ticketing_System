@@ -3,7 +3,7 @@ const User = require('../models/User');
 
 class AuthService {
   async authenticate(username, password) {
-    const user = await User.findByUsername(username);
+    const user = await User.findByUsernameWithPassword(username);
     if (!user) {
       return null;
     }
