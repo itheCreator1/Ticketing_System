@@ -1,12 +1,27 @@
 const { body, param } = require('express-validator');
 const { TICKET_PRIORITY, TICKET_STATUS } = require('../constants/enums');
-const { VALIDATION_MESSAGES } = require('../constants/validation');
+const { VALIDATION_MESSAGES, MAX_LENGTHS } = require('../constants/validation');
 
 const validateTicketCreation = [
-  body('title').trim().notEmpty().withMessage(VALIDATION_MESSAGES.TITLE_REQUIRED),
-  body('description').trim().notEmpty().withMessage(VALIDATION_MESSAGES.DESCRIPTION_REQUIRED),
-  body('reporter_email').isEmail().withMessage(VALIDATION_MESSAGES.EMAIL_INVALID),
-  body('reporter_name').trim().notEmpty().withMessage(VALIDATION_MESSAGES.NAME_REQUIRED),
+  body('title')
+    .trim()
+    .notEmpty().withMessage(VALIDATION_MESSAGES.TITLE_REQUIRED)
+    .isLength({ max: MAX_LENGTHS.TICKET_TITLE }).withMessage(VALIDATION_MESSAGES.TITLE_TOO_LONG),
+  body('description')
+    .trim()
+    .notEmpty().withMessage(VALIDATION_MESSAGES.DESCRIPTION_REQUIRED)
+    .isLength({ max: MAX_LENGTHS.TICKET_DESCRIPTION }).withMessage(VALIDATION_MESSAGES.DESCRIPTION_TOO_LONG),
+  body('reporter_email')
+    .isEmail().withMessage(VALIDATION_MESSAGES.EMAIL_INVALID)
+    .isLength({ max: MAX_LENGTHS.EMAIL }).withMessage(VALIDATION_MESSAGES.EMAIL_INVALID),
+  body('reporter_name')
+    .trim()
+    .notEmpty().withMessage(VALIDATION_MESSAGES.NAME_REQUIRED)
+    .isLength({ max: MAX_LENGTHS.NAME }).withMessage(VALIDATION_MESSAGES.NAME_TOO_LONG),
+  body('reporter_phone')
+    .optional()
+    .trim()
+    .isLength({ max: MAX_LENGTHS.PHONE_NUMBER }).withMessage(VALIDATION_MESSAGES.PHONE_TOO_LONG),
   body('priority').isIn(Object.values(TICKET_PRIORITY)).withMessage(VALIDATION_MESSAGES.PRIORITY_INVALID)
 ];
 
