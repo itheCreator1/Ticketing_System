@@ -124,6 +124,18 @@ class User {
     );
     return result.rows;
   }
+
+  // Clear all sessions for a specific user
+  static async clearUserSessions(userId) {
+    // PostgreSQL-specific: connect-pg-simple stores sessions in 'session' table
+    // Session data is in 'sess' JSONB column which contains user info
+    const query = `
+      DELETE FROM session
+      WHERE sess::jsonb->'user'->>'id' = $1
+    `;
+    const result = await pool.query(query, [userId.toString()]);
+    return result.rowCount;
+  }
 }
 
 module.exports = User;

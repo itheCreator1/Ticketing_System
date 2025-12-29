@@ -69,6 +69,11 @@ class UserService {
 
     const updatedUser = await User.update(targetId, updates);
 
+    // Clear user sessions if status changed to inactive or deleted
+    if (status && status !== 'active' && status !== targetUser.status) {
+      await User.clearUserSessions(targetId);
+    }
+
     // Audit log
     await AuditLog.create({
       actorId,
@@ -104,6 +109,9 @@ class UserService {
     }
 
     await User.softDelete(targetId);
+
+    // Clear all sessions for the deleted user
+    await User.clearUserSessions(targetId);
 
     // Audit log
     await AuditLog.create({
