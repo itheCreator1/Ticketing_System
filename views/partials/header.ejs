@@ -10,6 +10,7 @@
       <% if (user) { %>
         <span class="user-info">Welcome, <%= user.username %></span>
         <form action="/auth/logout" method="POST" style="display: inline;">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <button type="submit" class="btn btn-sm btn-logout">Logout</button>
         </form>
       <% } %>
