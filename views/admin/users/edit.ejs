@@ -16,6 +16,8 @@
     <div class="user-edit-container">
       <!-- Update User Details Form -->
       <form action="/admin/users/<%= targetUser.id %>" method="POST" class="user-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
         <h3>User Details</h3>
 
         <div class="form-group">
@@ -53,6 +55,8 @@
 
       <!-- Reset Password Form -->
       <form action="/admin/users/<%= targetUser.id %>/password" method="POST" class="user-form password-form">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
         <h3>Reset Password</h3>
 
         <div class="form-group">

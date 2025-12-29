@@ -55,6 +55,8 @@
       <div class="ticket-actions-card">
         <h3>Update Ticket</h3>
         <form action="/admin/tickets/<%= ticket.id %>/update" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
           <div class="form-group">
             <label for="status">Status</label>
             <select name="status" id="status">
@@ -111,6 +113,8 @@
       <div class="add-comment-card">
         <h4>Add Comment</h4>
         <form action="/admin/tickets/<%= ticket.id %>/comments" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
           <div class="form-group">
             <textarea name="content" id="content" rows="4" placeholder="Write your comment here..." required></textarea>
           </div>
