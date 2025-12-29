@@ -49,7 +49,7 @@ function requireSuperAdmin(req, res, next) {
   }
 
   if (req.session.user.role !== USER_ROLE.SUPER_ADMIN) {
-    return errorRedirect(req, res, 'Super admin access required', '/admin/dashboard');
+    return errorRedirect(req, res, AUTH_MESSAGES.SUPER_ADMIN_REQUIRED, '/admin/dashboard');
   }
 
   next();
