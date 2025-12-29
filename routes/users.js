@@ -9,7 +9,7 @@ const { loginLimiter } = require('../middleware/rateLimiter');
 const logger = require('../utils/logger');
 
 // GET /admin/users - List all users
-router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
+router.get('/', requireAuth, requireSuperAdmin, async (req, res, next) => {
   try {
     const users = await UserService.getAllUsers();
     res.render('admin/users/index', {
@@ -19,7 +19,7 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
     });
   } catch (error) {
     logger.error('Error fetching users', { error: error.message, stack: error.stack });
-    return errorRedirect(req, res, 'Failed to load users', '/admin/dashboard');
+    next(error);
   }
 });
 
@@ -37,7 +37,7 @@ router.post('/',
   requireSuperAdmin,
   validateUserCreate,
   validateRequest,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const { username, email, password, role } = req.body;
       await UserService.createUser({ username, email, password, role });
@@ -45,19 +45,21 @@ router.post('/',
       return successRedirect(req, res, 'User created successfully', '/admin/users');
     } catch (error) {
       logger.error('Error creating user', { error: error.message, stack: error.stack });
-      return errorRedirect(req, res, error.message || 'Failed to create user', '/admin/users/new');
+      next(error);
     }
   }
 );
 
 // GET /admin/users/:id/edit - Show edit user form
-router.get('/:id/edit', requireAuth, requireSuperAdmin, async (req, res) => {
+router.get('/:id/edit', requireAuth, requireSuperAdmin, async (req, res, next) => {
   try {
     const userId = parseInt(req.params.id);
     const targetUser = await UserService.getUserById(userId);
 
     if (!targetUser) {
-      return errorRedirect(req, res, 'User not found', '/admin/users');
+      const error = new Error('User not found');
+      error.status = 404;
+      return next(error);
     }
 
     res.render('admin/users/edit', {
@@ -67,7 +69,7 @@ router.get('/:id/edit', requireAuth, requireSuperAdmin, async (req, res) => {
     });
   } catch (error) {
     logger.error('Error loading user', { error: error.message, stack: error.stack });
-    return errorRedirect(req, res, 'Failed to load user', '/admin/users');
+    next(error);
   }
 });
 
@@ -77,7 +79,7 @@ router.post('/:id',
   requireSuperAdmin,
   validateUserUpdate,
   validateRequest,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const userId = parseInt(req.params.id);
       const { username, email, role, status } = req.body;
@@ -98,7 +100,7 @@ router.post('/:id',
       return successRedirect(req, res, 'User updated successfully', '/admin/users');
     } catch (error) {
       logger.error('Error updating user', { error: error.message, stack: error.stack });
-      return errorRedirect(req, res, error.message || 'Failed to update user', `/admin/users/${req.params.id}/edit`);
+      next(error);
     }
   }
 );
@@ -107,7 +109,7 @@ router.post('/:id',
 router.post('/:id/delete',
   requireAuth,
   requireSuperAdmin,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const userId = parseInt(req.params.id);
       await UserService.deleteUser(req.session.user.id, userId, req.ip);
@@ -115,7 +117,7 @@ router.post('/:id/delete',
       return successRedirect(req, res, 'User deleted successfully', '/admin/users');
     } catch (error) {
       logger.error('Error deleting user', { error: error.message, stack: error.stack });
-      return errorRedirect(req, res, error.message || 'Failed to delete user', '/admin/users');
+      next(error);
     }
   }
 );
@@ -127,7 +129,7 @@ router.post('/:id/password',
   loginLimiter,
   validatePasswordReset,
   validateRequest,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const userId = parseInt(req.params.id);
       const { password } = req.body;
@@ -137,7 +139,7 @@ router.post('/:id/password',
       return successRedirect(req, res, 'Password reset successfully', '/admin/users');
     } catch (error) {
       logger.error('Error resetting password', { error: error.message, stack: error.stack });
-      return errorRedirect(req, res, error.message || 'Failed to reset password', `/admin/users/${req.params.id}/edit`);
+      next(error);
     }
   }
 );
@@ -146,7 +148,7 @@ router.post('/:id/password',
 router.post('/:id/toggle-status',
   requireAuth,
   requireSuperAdmin,
-  async (req, res) => {
+  async (req, res, next) => {
     try {
       const userId = parseInt(req.params.id);
       const { status } = req.body;
@@ -156,7 +158,7 @@ router.post('/:id/toggle-status',
       return successRedirect(req, res, 'User status updated', '/admin/users');
     } catch (error) {
       logger.error('Error toggling status', { error: error.message, stack: error.stack });
-      return errorRedirect(req, res, error.message || 'Failed to update status', '/admin/users');
+      next(error);
     }
   }
 );
