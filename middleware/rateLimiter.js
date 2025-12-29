@@ -22,8 +22,26 @@ const loginLimiter = rateLimit({
   }
 });
 
+/**
+ * Rate limiter for public ticket submission
+ * Limits: 5 tickets per hour per IP address
+ *
+ * Prevents spam and abuse of the public ticket submission form
+ */
+const ticketSubmissionLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour in milliseconds
+  max: 5, // Limit each IP to 5 ticket submissions per hour
+  message: 'Too many ticket submissions from this IP, please try again later',
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: false,
+  handler: (req, res) => {
+    req.flash('error_msg', 'Too many ticket submissions. Please try again in an hour.');
+    res.redirect('/');
+  }
+});
+
 module.exports = {
-  loginLimiter
-  // Note: apiLimiter was removed as it was unused.
-  // Add it back when API endpoints require general rate limiting.
+  loginLimiter,
+  ticketSubmissionLimiter
 };

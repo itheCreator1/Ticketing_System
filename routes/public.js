@@ -4,6 +4,7 @@ const { validateRequest } = require('../middleware/validation');
 const { FLASH_KEYS, TICKET_MESSAGES } = require('../constants/messages');
 const ticketService = require('../services/ticketService');
 const { validateTicketCreation } = require('../validators/ticketValidators');
+const { ticketSubmissionLimiter } = require('../middleware/rateLimiter');
 
 router.get('/', (req, res) => {
   res.render('public/submit-ticket', {
@@ -12,7 +13,7 @@ router.get('/', (req, res) => {
   });
 });
 
-router.post('/submit-ticket', validateTicketCreation, validateRequest, async (req, res, next) => {
+router.post('/submit-ticket', ticketSubmissionLimiter, validateTicketCreation, validateRequest, async (req, res, next) => {
   try {
     const ticket = await ticketService.createTicket(req.body);
     req.flash(FLASH_KEYS.SUCCESS, TICKET_MESSAGES.CREATED);
