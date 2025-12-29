@@ -5,6 +5,7 @@ const { validateUserCreate, validateUserUpdate, validatePasswordReset } = requir
 const { validateRequest } = require('../middleware/validation');
 const UserService = require('../services/userService');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
+const { loginLimiter } = require('../middleware/rateLimiter');
 
 // GET /admin/users - List all users
 router.get('/', requireAuth, requireSuperAdmin, async (req, res) => {
@@ -122,6 +123,7 @@ router.post('/:id/delete',
 router.post('/:id/password',
   requireAuth,
   requireSuperAdmin,
+  loginLimiter,
   validatePasswordReset,
   validateRequest,
   async (req, res) => {
