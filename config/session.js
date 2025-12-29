@@ -9,20 +9,19 @@ const sessionConfig = {
   }),
   secret: (() => {
     if (!process.env.SESSION_SECRET) {
-      if (process.env.NODE_ENV === 'production') {
-        throw new Error(
-          'SESSION_SECRET environment variable is required in production. ' +
-          'Generate one using: openssl rand -base64 32'
-        );
-      } else {
-        console.warn(
-          '\x1b[33m%s\x1b[0m',
-          'WARNING: SESSION_SECRET not set. Using insecure default for development only. ' +
-          'Set SESSION_SECRET in .env for production.'
-        );
-        return 'insecure-dev-secret-change-for-production';
-      }
+      throw new Error(
+        'SESSION_SECRET environment variable is required. ' +
+        'Generate one using: openssl rand -base64 32'
+      );
     }
+
+    // Validate minimum length for security
+    if (process.env.SESSION_SECRET.length < 32) {
+      throw new Error(
+        'SESSION_SECRET must be at least 32 characters long for security'
+      );
+    }
+
     return process.env.SESSION_SECRET;
   })(),
   resave: false,
