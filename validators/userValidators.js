@@ -2,7 +2,6 @@ const { body, param } = require('express-validator');
 const { VALIDATION_MESSAGES } = require('../constants/validation');
 const { USER_ROLE, USER_STATUS } = require('../constants/enums');
 const User = require('../models/User');
-const pool = require('../config/database');
 const { passwordValidation } = require('./shared/passwordRules');
 
 const validateUserCreate = [
@@ -26,8 +25,8 @@ const validateUserCreate = [
     .withMessage(VALIDATION_MESSAGES.EMAIL_INVALID)
     .normalizeEmail()
     .custom(async (value) => {
-      const result = await pool.query('SELECT id FROM users WHERE email = $1', [value]);
-      if (result.rows.length > 0) {
+      const existingUser = await User.findByEmail(value);
+      if (existingUser) {
         throw new Error(VALIDATION_MESSAGES.EMAIL_IN_USE);
       }
       return true;

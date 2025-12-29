@@ -28,6 +28,14 @@ class User {
     return result.rows[0];
   }
 
+  static async findByEmail(email) {
+    const result = await pool.query(
+      'SELECT id, username, email FROM users WHERE email = $1',
+      [email]
+    );
+    return result.rows[0];
+  }
+
   static async create({ username, email, password, role = 'admin' }) {
     const password_hash = await bcrypt.hash(password, 10);
     const result = await pool.query(
