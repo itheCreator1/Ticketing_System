@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(grep:*)",
+      "Bash(wc:*)",
+      "Bash(dir /s /b \"c:\\\\Users\\\\Administrator\\\\Desktop\\\\mine\\\\KNII_Ticketing\")",
+      "Bash(findstr:*)",
+      "Bash(docker-compose up:*)",
+      "Bash(netstat:*)",
+      "Bash(tasklist:*)",
+      "Bash(docker-compose down:*)",
+      "Bash(docker stop:*)",
+      "Bash(docker rm:*)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(docker-compose logs:*)",
+      "Bash(dir /s /b \"c:\\\\Users\\\\Administrator\\\\Desktop\\\\mine\\\\KNII_Ticketing\\\\scripts\\\\docker-entrypoint.sh\")",
+      "Bash(Start-Sleep -Seconds 10)",
+      "Bash(docker run:*)",
+      "Bash(curl:*)",
+      "Bash(docker-compose exec:*)",
+      "Bash(docker-compose restart:*)",
+      "Bash(docker ps:*)",
+      "Bash(__NEW_LINE__ echo \"\")",
+      "Bash(python3:*)",
+      "Bash(__NEW_LINE__ echo \"=== Application Functionality Test ===\")",
+      "Bash(__NEW_LINE__ echo \"Ticket form:\")",
+      "Bash(cat:*)",
+      "Bash(python:*)",
+      "Bash(rm:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}

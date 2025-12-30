@@ -9,8 +9,8 @@ services:
     environment:
       - PORT=${PORT:-3000}
       - NODE_ENV=${NODE_ENV:-development}
-      - DATABASE_URL=${DATABASE_URL}
-      - SESSION_SECRET=${SESSION_SECRET}
+      - DATABASE_URL=${DATABASE_URL:-postgresql://ticketing_user:ticketing_pass@db:5432/ticketing_db}
+      - SESSION_SECRET=${SESSION_SECRET:-dev_session_secret_change_in_production_min_32_chars}
       - POSTGRES_USER=${POSTGRES_USER:-ticketing_user}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-ticketing_pass}
       - POSTGRES_DB=${POSTGRES_DB:-ticketing_db}

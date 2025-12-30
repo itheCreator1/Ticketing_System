@@ -13,9 +13,24 @@ function errorHandler(err, req, res, next) {
   const message = err.message || 'Something went wrong';
 
   if (req.accepts('html')) {
-    res.status(status).render('errors/500', {
+    // Determine which error template to render
+    let errorTemplate = 'errors/error'; // default generic template
+
+    if (status === 404) {
+      errorTemplate = 'errors/404';
+    } else if (status === 403) {
+      errorTemplate = 'errors/403';
+    } else if (status === 500) {
+      errorTemplate = 'errors/500';
+    }
+
+    res.status(status).render(errorTemplate, {
       title: 'Error',
-      message: process.env.NODE_ENV === 'production' ? 'Internal server error' : message
+      status: status, // Pass status for generic template
+      message: process.env.NODE_ENV === 'production'
+        ? (status === 500 ? 'Internal server error' : 'An error occurred')
+        : message,
+      user: res.locals.user || null
     });
   } else {
     res.status(status).json({
