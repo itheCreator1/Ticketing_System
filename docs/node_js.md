@@ -22,18 +22,16 @@
 12. [Logging Best Practices](#logging-best-practices)
 13. [Performance Patterns](#performance-patterns)
 14. [Environment Configuration](#environment-configuration)
-15. [Code Organization](#code-organization)
+15. [Code Organization Patterns](#code-organization-patterns)
 16. [Response Helpers](#response-helpers-knii-utilities)
-17. [Service Layer Pattern](#service-layer-pattern-knii-implementation)
-18. [Model Layer Pattern](#model-layer-pattern-knii-implementation)
-19. [Constants and Enums](#constants-and-enums-knii-pattern)
-20. [Validation Patterns](#validation-patterns-knii-implementation)
-21. [Migration Best Practices](#migration-best-practices)
-22. [Docker Configuration](#docker-configuration-knii-setup)
-23. [Anti-Patterns to Avoid](#anti-patterns-to-avoid)
-24. [Common Troubleshooting](#common-troubleshooting)
-25. [Testing Considerations](#testing-considerations)
-26. [Code Review Checklist](#code-review-checklist-knii-standards)
+17. [Constants and Enums](#constants-and-enums-knii-pattern)
+18. [Validation Patterns](#validation-patterns-knii-implementation)
+19. [Migration Best Practices](#migration-best-practices)
+20. [Docker Configuration](#docker-configuration-knii-setup)
+21. [Anti-Patterns to Avoid](#anti-patterns-to-avoid)
+22. [Common Troubleshooting](#common-troubleshooting)
+23. [Testing Considerations](#testing-considerations)
+24. [Code Review Checklist](#code-review-checklist-knii-standards)
 
 ---
 
@@ -164,10 +162,12 @@ async updateResource(resourceId, updates, userId) {
   const updated = await Resource.update(resourceId, updates);
 
   await AuditLog.create({
-    user_id: userId,
+    actorId: userId,
     action: 'resource_updated',
-    entity_type: 'resource',
-    entity_id: resourceId
+    targetType: 'resource',
+    targetId: resourceId,
+    details: { ...updates },
+    ipAddress: req.ip
   });
 
   return updated;
@@ -863,10 +863,12 @@ class TicketService {
     const updated = await Ticket.update(ticketId, updates);
 
     await AuditLog.create({
-      user_id: userId,
+      actorId: userId,
       action: 'ticket_updated',
-      entity_type: 'ticket',
-      entity_id: ticketId
+      targetType: 'ticket',
+      targetId: ticketId,
+      details: { ...updates },
+      ipAddress: req.ip
     });
 
     return updated;
@@ -1190,10 +1192,12 @@ class TicketService {
 
     // Audit logging
     await AuditLog.create({
-      user_id: createdBy,
+      actorId: createdBy,
       action: 'ticket_created',
-      entity_type: 'ticket',
-      entity_id: ticket.id
+      targetType: 'ticket',
+      targetId: ticket.id,
+      details: { title: ticketData.title, priority: ticketData.priority },
+      ipAddress: req.ip
     });
 
     return ticket;
@@ -1213,11 +1217,12 @@ class TicketService {
     const updated = await Ticket.update(ticketId, updates);
 
     await AuditLog.create({
-      user_id: userId,
+      actorId: userId,
       action: 'ticket_updated',
-      entity_type: 'ticket',
-      entity_id: ticketId,
-      changes: JSON.stringify(updates)
+      targetType: 'ticket',
+      targetId: ticketId,
+      details: updates,
+      ipAddress: req.ip
     });
 
     return updated;
@@ -1227,8 +1232,7 @@ class TicketService {
     // Business logic for status transitions
     const validTransitions = {
       [TICKET_STATUS.OPEN]: [TICKET_STATUS.IN_PROGRESS, TICKET_STATUS.CLOSED],
-      [TICKET_STATUS.IN_PROGRESS]: [TICKET_STATUS.OPEN, TICKET_STATUS.RESOLVED],
-      [TICKET_STATUS.RESOLVED]: [TICKET_STATUS.CLOSED, TICKET_STATUS.IN_PROGRESS],
+      [TICKET_STATUS.IN_PROGRESS]: [TICKET_STATUS.OPEN, TICKET_STATUS.CLOSED],
       [TICKET_STATUS.CLOSED]: []
     };
     return validTransitions[currentStatus]?.includes(newStatus) || false;
@@ -1656,7 +1660,6 @@ router.post('/users',
 const TICKET_STATUS = {
   OPEN: 'open',
   IN_PROGRESS: 'in_progress',
-  RESOLVED: 'resolved',
   CLOSED: 'closed'
 };
 
@@ -1723,17 +1726,19 @@ const VALIDATION_MESSAGES = {
   }
 };
 
-const LENGTH_LIMITS = {
-  TICKET_TITLE_MAX: 200,
-  TICKET_DESCRIPTION_MAX: 5000,
-  COMMENT_CONTENT_MAX: 2000,
-  USERNAME_MAX: 50,
-  EMAIL_MAX: 100
+const MAX_LENGTHS = {
+  TICKET_TITLE: 200,
+  TICKET_DESCRIPTION: 5000,
+  COMMENT_CONTENT: 2000,
+  PHONE_NUMBER: 20,
+  USERNAME: 50,
+  EMAIL: 100,
+  NAME: 100
 };
 
 module.exports = {
   VALIDATION_MESSAGES,
-  LENGTH_LIMITS
+  MAX_LENGTHS
 };
 ```
 

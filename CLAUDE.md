@@ -20,6 +20,11 @@ This file provides a quick reference for AI assistants. For comprehensive docume
   - Architecture patterns, security best practices, code organization
   - Error handling, validation, database practices
   - Troubleshooting guide and code review checklist
+- **[Debugging & Troubleshooting Rules](docs/debug_rules.md)** - Comprehensive debugging guide (4,087 lines)
+  - Winston/Morgan logging infrastructure, error handling flow
+  - Development and production debugging workflows
+  - Security debugging, performance optimization, common issues
+  - Command reference for Docker, PostgreSQL, PM2
 - **[Git Workflow Rules](docs/git_rules.md)** - Branch strategy and commit standards
 - **[Testing Guidelines](docs/testing_rules.md)** - Testing patterns and practices
 
