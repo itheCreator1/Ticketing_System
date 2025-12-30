@@ -28,7 +28,8 @@ const {
   doubleCsrfProtection, // CSRF protection middleware
 } = doubleCsrf({
   getSecret: () => process.env.SESSION_SECRET,
-  cookieName: '__Host-psifi.x-csrf-token',
+  // Use __Host- prefix only in production (requires HTTPS)
+  cookieName: process.env.NODE_ENV === 'production' ? '__Host-psifi.x-csrf-token' : 'psifi.x-csrf-token',
   cookieOptions: {
     sameSite: 'strict',
     path: '/',
@@ -37,7 +38,7 @@ const {
   },
   size: 64,
   ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
-  getTokenFromRequest: (req) => req.body._csrf,
+  getCsrfTokenFromRequest: (req) => req.body?._csrf,
   getSessionIdentifier: (req) => req.session?.id || ''
 });
 
@@ -74,8 +75,8 @@ app.use((req, res, next) => {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
   res.locals.user = req.session.user || null;
-  // Generate CSRF token for forms
-  res.locals.csrfToken = generateCsrfToken(req, res);
+  // Generate CSRF token for forms (with overwrite: false to preserve existing tokens)
+  res.locals.csrfToken = generateCsrfToken(req, res, { overwrite: false });
   next();
 });
 
