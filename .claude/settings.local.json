@@ -31,7 +31,30 @@
       "Bash(python:*)",
       "Bash(rm:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(npm test:*)",
+      "Bash(where npm)",
+      "Bash(node --version:*)",
+      "Bash(docker-compose ps:*)",
+      "Bash(cmd.exe /c \"node --version && npm --version\")",
+      "Bash(powershell.exe -Command \"node --version; npm --version\")",
+      "Bash(git push:*)",
+      "Bash(gh pr create:*)",
+      "Bash(git pull:*)",
+      "Bash(dir /s /b \"c:\\\\Users\\\\Administrator\\\\Desktop\\\\mine\\\\KNII_Ticketing\\\\tests\\\\unit\\\\models\")",
+      "Bash(node node_modules/jest/bin/jest.js:*)",
+      "Bash(dir /s /b \"c:\\\\Users\\\\Administrator\\\\Desktop\\\\mine\\\\KNII_Ticketing\\\\tests\\\\integration\")",
+      "Bash(git merge:*)",
+      "Bash(git tag:*)",
+      "Bash(dir /s /b \"c:\\\\Users\\\\Administrator\\\\Desktop\\\\mine\\\\KNII_Ticketing\\\\tests\\\\*.js\")",
+      "Bash(powershell.exe -Command \"\\(Get-ChildItem -Path tests -Filter *.test.js -Recurse | Measure-Object -Property Length -Sum\\).Sum\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem -Path tests -Filter *.js -Recurse | Select-Object Name\")",
+      "Bash(powershell.exe -Command \"\\(Get-Content tests\\\\**\\\\*.test.js | Measure-Object -Line\\).Lines\")",
+      "Bash(powershell.exe -Command \"Get-ChildItem -Path tests -Filter *.test.js -Recurse | Measure-Object | Select-Object -ExpandProperty Count\")",
+      "Bash(powershell.exe -Command \"Write-Host ''Unit Tests:''; \\(Get-ChildItem -Path tests\\\\unit -Filter *.test.js -Recurse\\).Count; Write-Host ''Integration Tests:''; \\(Get-ChildItem -Path tests\\\\integration -Filter *.test.js -Recurse\\).Count; Write-Host ''E2E Tests:''; \\(Get-ChildItem -Path tests\\\\e2e -Filter *.test.js -Recurse\\).Count\")",
+      "Bash(npm run test:*)",
+      "Bash(del nul)",
+      "Bash(git rm:*)"
     ]
   }
 }
