@@ -377,6 +377,12 @@ h1 {
   color: #721c24;
 }
 
+.badge-priority-unset {
+  background: #f8f9fa;
+  color: #6c757d;
+  border: 1px dashed #dee2e6;
+}
+
 .badge-internal {
   background: #6c757d;
   color: white;

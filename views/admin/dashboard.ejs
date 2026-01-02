@@ -24,6 +24,7 @@
 
         <select name="priority">
           <option value="">All Priorities</option>
+          <option value="unset" <%= filters.priority === 'unset' ? 'selected' : '' %>>Unset</option>
           <option value="low" <%= filters.priority === 'low' ? 'selected' : '' %>>Low</option>
           <option value="medium" <%= filters.priority === 'medium' ? 'selected' : '' %>>Medium</option>
           <option value="high" <%= filters.priority === 'high' ? 'selected' : '' %>>High</option>

@@ -69,6 +69,7 @@
           <div class="form-group">
             <label for="priority">Priority</label>
             <select name="priority" id="priority">
+              <option value="unset" <%= ticket.priority === 'unset' ? 'selected' : '' %>>Unset</option>
               <option value="low" <%= ticket.priority === 'low' ? 'selected' : '' %>>Low</option>
               <option value="medium" <%= ticket.priority === 'medium' ? 'selected' : '' %>>Medium</option>
               <option value="high" <%= ticket.priority === 'high' ? 'selected' : '' %>>High</option>
