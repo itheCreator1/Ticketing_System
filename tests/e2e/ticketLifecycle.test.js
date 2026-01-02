@@ -104,41 +104,36 @@ describe('Ticket Lifecycle E2E Tests', () => {
       );
       expect(statusUpdateLog).toBeDefined();
 
-      // Step 6: Admin adds internal comment
-      const internalCommentResponse = await request(app)
+      // Step 6: Admin adds first comment
+      const firstCommentResponse = await request(app)
         .post(`/admin/tickets/${ticket.id}/comments`)
         .set('Cookie', adminCookies)
         .send({
-          content: 'Checking database connection logs. Appears to be a network issue.',
-          is_internal: 'true'
+          content: 'Checking database connection logs. Appears to be a network issue.'
         });
 
-      expect(internalCommentResponse.status).toBe(302);
+      expect(firstCommentResponse.status).toBe(302);
 
-      // Verify internal comment created
+      // Verify first comment created
       const comments1 = await Comment.findByTicketId(ticket.id);
       expect(comments1.length).toBe(1);
       expect(comments1[0].content).toContain('network issue');
-      expect(comments1[0].is_internal).toBe(true);
       expect(comments1[0].user_id).toBe(admin.id);
 
-      // Step 7: Admin adds public comment
-      const publicCommentResponse = await request(app)
+      // Step 7: Admin adds second comment
+      const secondCommentResponse = await request(app)
         .post(`/admin/tickets/${ticket.id}/comments`)
         .set('Cookie', adminCookies)
         .send({
-          content: 'We are investigating the database connection issue. Our team is working on it.',
-          is_internal: 'false'
+          content: 'We are investigating the database connection issue. Our team is working on it.'
         });
 
-      expect(publicCommentResponse.status).toBe(302);
+      expect(secondCommentResponse.status).toBe(302);
 
-      // Verify public comment created
+      // Verify second comment created
       const comments2 = await Comment.findByTicketId(ticket.id);
       expect(comments2.length).toBe(2);
-      const publicComment = comments2.find(c => !c.is_internal);
-      expect(publicComment).toBeDefined();
-      expect(publicComment.content).toContain('investigating');
+      expect(comments2[1].content).toContain('investigating');
 
       // Step 8: Admin assigns ticket to themselves
       const assignResponse = await request(app)
@@ -169,8 +164,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
         .post(`/admin/tickets/${ticket.id}/comments`)
         .set('Cookie', adminCookies)
         .send({
-          content: 'Issue resolved. Firewall rules have been updated to allow database connections.',
-          is_internal: 'false'
+          content: 'Issue resolved. Firewall rules have been updated to allow database connections.'
         });
 
       expect(resolutionCommentResponse.status).toBe(302);
@@ -414,8 +408,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
         .post(`/admin/tickets/${ticket.id}/comments`)
         .set('Cookie', cookies1)
         .send({
-          content: 'I will investigate this issue.',
-          is_internal: 'false'
+          content: 'I will investigate this issue.'
         });
 
       // Admin 2 adds comment
@@ -423,8 +416,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
         .post(`/admin/tickets/${ticket.id}/comments`)
         .set('Cookie', cookies2)
         .send({
-          content: 'I can help with the database side.',
-          is_internal: 'true'
+          content: 'I can help with the database side.'
         });
 
       // Admin 1 adds another comment
@@ -432,27 +424,19 @@ describe('Ticket Lifecycle E2E Tests', () => {
         .post(`/admin/tickets/${ticket.id}/comments`)
         .set('Cookie', cookies1)
         .send({
-          content: 'Issue has been resolved.',
-          is_internal: 'false'
+          content: 'Issue has been resolved.'
         });
 
       // Assert
       const comments = await Comment.findByTicketId(ticket.id);
       expect(comments.length).toBe(3);
 
-      // Verify authors
+      // Verify authors (all comments are admin-only)
       const admin1Comments = comments.filter(c => c.user_id === admin1.id);
       const admin2Comments = comments.filter(c => c.user_id === admin2.id);
 
       expect(admin1Comments.length).toBe(2);
       expect(admin2Comments.length).toBe(1);
-
-      // Verify internal vs public
-      const internalComments = comments.filter(c => c.is_internal);
-      const publicComments = comments.filter(c => !c.is_internal);
-
-      expect(internalComments.length).toBe(1);
-      expect(publicComments.length).toBe(2);
     });
   });
 

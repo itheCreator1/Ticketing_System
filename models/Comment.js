@@ -2,15 +2,15 @@ const pool = require('../config/database');
 const logger = require('../utils/logger');
 
 class Comment {
-  static async create({ ticket_id, user_id, content, is_internal = false }) {
+  static async create({ ticket_id, user_id, content }) {
     const startTime = Date.now();
     try {
-      logger.info('Comment.create: Creating new comment', { ticketId: ticket_id, userId: user_id, isInternal: is_internal, contentLength: content?.length });
+      logger.info('Comment.create: Creating new comment', { ticketId: ticket_id, userId: user_id, contentLength: content?.length });
       const result = await pool.query(
-        `INSERT INTO comments (ticket_id, user_id, content, is_internal)
-         VALUES ($1, $2, $3, $4)
+        `INSERT INTO comments (ticket_id, user_id, content)
+         VALUES ($1, $2, $3)
          RETURNING *`,
-        [ticket_id, user_id, content, is_internal]
+        [ticket_id, user_id, content]
       );
       const duration = Date.now() - startTime;
 

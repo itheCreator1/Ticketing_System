@@ -60,14 +60,13 @@ expect.extend({
       typeof received.id === 'number' &&
       typeof received.ticket_id === 'number' &&
       typeof received.user_id === 'number' &&
-      typeof received.content === 'string' &&
-      typeof received.is_internal === 'boolean';
+      typeof received.content === 'string';
 
     return {
       message: () =>
         pass
           ? `expected ${JSON.stringify(received)} not to be a valid comment`
-          : `expected ${JSON.stringify(received)} to be a valid comment with id, ticket_id, user_id, content, and is_internal`,
+          : `expected ${JSON.stringify(received)} to be a valid comment with id, ticket_id, user_id, and content`,
       pass
     };
   },

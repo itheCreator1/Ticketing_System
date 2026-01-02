@@ -3340,20 +3340,18 @@ router.post('/tickets', requireAuth, validateTicketCreate, validateRequest, asyn
 router.post('/tickets/:id/comments', requireAuth, validateCommentCreate, validateRequest, async (req, res, next) => {
   try {
     const ticketId = parseInt(req.params.id);
-    const { content, is_internal } = req.body;
+    const { content } = req.body;
 
     // DEBUG: Log comment creation
     logger.info('Creating comment', {
       ticketId,
-      userId: req.session.user.id,
-      isInternal: is_internal === 'true'
+      userId: req.session.user.id
     });
 
     const comment = await Comment.create({
       ticketId,
       userId: req.session.user.id,
-      content,
-      isInternal: is_internal === 'true'
+      content
     });
 
     // DEBUG: Log successful creation

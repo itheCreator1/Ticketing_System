@@ -25,15 +25,14 @@ describe('Comment Model', () => {
   });
 
   describe('create', () => {
-    it('should create comment with all fields including is_internal', async () => {
+    it('should create comment with all required fields', async () => {
       // Arrange
-      const commentData = createCommentData({ is_internal: true });
+      const commentData = createCommentData();
       const mockComment = {
         id: 1,
         ticket_id: commentData.ticket_id,
         user_id: commentData.user_id,
         content: commentData.content,
-        is_internal: true,
         created_at: new Date()
       };
       pool.query.mockResolvedValue({ rows: [mockComment] });
@@ -43,39 +42,13 @@ describe('Comment Model', () => {
 
       // Assert
       expect(result).toEqual(mockComment);
-      expect(result.is_internal).toBe(true);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO comments'),
         expect.arrayContaining([
           commentData.ticket_id,
           commentData.user_id,
-          commentData.content,
-          true
+          commentData.content
         ])
-      );
-    });
-
-    it('should create comment with is_internal=false when not provided (default)', async () => {
-      // Arrange
-      const commentData = createCommentData({ is_internal: undefined });
-      const mockComment = {
-        id: 2,
-        ticket_id: commentData.ticket_id,
-        user_id: commentData.user_id,
-        content: commentData.content,
-        is_internal: false,
-        created_at: new Date()
-      };
-      pool.query.mockResolvedValue({ rows: [mockComment] });
-
-      // Act
-      const result = await Comment.create(commentData);
-
-      // Assert
-      expect(result.is_internal).toBe(false);
-      expect(pool.query).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.arrayContaining([false])
       );
     });
 
@@ -88,7 +61,6 @@ describe('Comment Model', () => {
         ticket_id: commentData.ticket_id,
         user_id: commentData.user_id,
         content: commentData.content,
-        is_internal: commentData.is_internal || false,
         created_at: now
       };
       pool.query.mockResolvedValue({ rows: [mockComment] });
@@ -101,7 +73,6 @@ describe('Comment Model', () => {
       expect(result).toHaveProperty('ticket_id');
       expect(result).toHaveProperty('user_id');
       expect(result).toHaveProperty('content');
-      expect(result).toHaveProperty('is_internal');
       expect(result).toHaveProperty('created_at');
     });
 
@@ -110,8 +81,7 @@ describe('Comment Model', () => {
       const commentData = createCommentData({
         ticket_id: 5,
         user_id: 10,
-        content: 'Test comment content',
-        is_internal: false
+        content: 'Test comment content'
       });
       const mockComment = { id: 4, ...commentData, created_at: new Date() };
       pool.query.mockResolvedValue({ rows: [mockComment] });
@@ -121,8 +91,8 @@ describe('Comment Model', () => {
 
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
-        expect.stringContaining('$1, $2, $3, $4'),
-        [5, 10, 'Test comment content', false]
+        expect.stringContaining('$1, $2, $3'),
+        [5, 10, 'Test comment content']
       );
     });
 
@@ -146,7 +116,6 @@ describe('Comment Model', () => {
           ticket_id: 5,
           user_id: 10,
           content: 'First comment',
-          is_internal: false,
           created_at: new Date('2024-01-01'),
           username: 'admin'
         },
@@ -155,7 +124,6 @@ describe('Comment Model', () => {
           ticket_id: 5,
           user_id: 11,
           content: 'Second comment',
-          is_internal: true,
           created_at: new Date('2024-01-02'),
           username: 'support'
         }

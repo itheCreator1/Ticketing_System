@@ -383,11 +383,6 @@ h1 {
   border: 1px dashed #dee2e6;
 }
 
-.badge-internal {
-  background: #6c757d;
-  color: white;
-}
-
 .ticket-stats {
   text-align: center;
   padding: 1rem;
@@ -484,11 +479,6 @@ h1 {
   margin-bottom: 1rem;
   background: #f8f9fa;
   border-radius: 4px;
-}
-
-.comment-internal {
-  border-left-color: #6c757d;
-  background: #f0f0f0;
 }
 
 .comment-header {

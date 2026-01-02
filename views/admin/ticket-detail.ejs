@@ -99,13 +99,10 @@
       <% if (comments.length > 0) { %>
         <div class="comments-list">
           <% comments.forEach(comment => { %>
-            <div class="comment <%= comment.is_internal ? 'comment-internal' : '' %>">
+            <div class="comment">
               <div class="comment-header">
                 <strong><%= comment.username %></strong>
                 <span class="comment-date"><%= new Date(comment.created_at).toLocaleString() %></span>
-                <% if (comment.is_internal) { %>
-                  <span class="badge badge-internal">Internal</span>
-                <% } %>
               </div>
               <div class="comment-body">
                 <%= comment.content %>
@@ -124,12 +121,6 @@
 
           <div class="form-group">
             <textarea name="content" id="content" rows="4" placeholder="Write your comment here..." required></textarea>
-          </div>
-          <div class="form-group checkbox-group">
-            <label>
-              <input type="checkbox" name="is_internal" value="true">
-              Internal comment (not visible to client)
-            </label>
           </div>
           <button type="submit" class="btn btn-primary">Add Comment</button>
         </form>

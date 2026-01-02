@@ -420,7 +420,7 @@ describe('Ticket Lifecycle', () => {
         // Add comment
         await agent
             .post(`/admin/tickets/${ticketId}/comments`)
-            .send({ content: 'Working on this', is_internal: 'false' })
+            .send({ content: 'Working on this' })
 
         // Close ticket
         await agent

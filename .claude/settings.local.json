@@ -63,7 +63,16 @@
       "Bash(npm install:*)",
       "Bash(node:*)",
       "Bash(npm run test:unit:*)",
-      "Bash(sort:*)"
+      "Bash(sort:*)",
+      "Bash(git push)",
+      "Bash(git show:*)",
+      "Bash(docker-compose exec web npm test:*)",
+      "Bash(docker system prune:*)",
+      "Bash(docker-compose build:*)",
+      "Bash(ls:*)",
+      "Bash(copy .env.example .env)",
+      "Bash(docker compose:*)",
+      "Bash(docker-compose:*)"
     ]
   }
 }

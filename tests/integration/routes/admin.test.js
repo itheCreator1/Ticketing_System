@@ -395,7 +395,7 @@ describe('Admin Routes Integration Tests', () => {
       expect(response.headers.location).toBe('/auth/login');
     });
 
-    it('should create public comment', async () => {
+    it('should create comment', async () => {
       // Arrange
       const ticket = await Ticket.create(createTicketData());
 
@@ -404,8 +404,7 @@ describe('Admin Routes Integration Tests', () => {
         .post(`/admin/tickets/${ticket.id}/comments`)
         .set('Cookie', adminCookies)
         .send({
-          content: 'This is a public comment',
-          is_internal: 'false'
+          content: 'This is a comment'
         });
 
       // Assert
@@ -413,31 +412,8 @@ describe('Admin Routes Integration Tests', () => {
 
       const comments = await Comment.findByTicketId(ticket.id);
       expect(comments.length).toBe(1);
-      expect(comments[0].content).toBe('This is a public comment');
-      expect(comments[0].is_internal).toBe(false);
+      expect(comments[0].content).toBe('This is a comment');
       expect(comments[0].user_id).toBe(adminUser.id);
-    });
-
-    it('should create internal comment', async () => {
-      // Arrange
-      const ticket = await Ticket.create(createTicketData());
-
-      // Act
-      const response = await request(app)
-        .post(`/admin/tickets/${ticket.id}/comments`)
-        .set('Cookie', adminCookies)
-        .send({
-          content: 'This is an internal note',
-          is_internal: 'true'
-        });
-
-      // Assert
-      expect(response.status).toBe(302);
-
-      const comments = await Comment.findByTicketId(ticket.id);
-      expect(comments.length).toBe(1);
-      expect(comments[0].content).toBe('This is an internal note');
-      expect(comments[0].is_internal).toBe(true);
     });
 
     it('should validate comment content is required', async () => {

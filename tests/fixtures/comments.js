@@ -6,25 +6,16 @@
  */
 
 module.exports = {
-  validPublicComment: {
+  validComment: {
     ticket_id: 1,
     user_id: 1,
-    content: 'This is a public comment visible to everyone.',
-    is_internal: false
-  },
-
-  validInternalComment: {
-    ticket_id: 1,
-    user_id: 1,
-    content: 'This is an internal comment only visible to admins.',
-    is_internal: true
+    content: 'This is a valid comment with meaningful content.'
   },
 
   longComment: {
     ticket_id: 1,
     user_id: 1,
-    content: 'This is a longer comment with more detailed information about the issue. It contains multiple sentences and provides comprehensive context about the problem being discussed. This helps demonstrate how the system handles longer form content.',
-    is_internal: false
+    content: 'This is a longer comment with more detailed information about the issue. It contains multiple sentences and provides comprehensive context about the problem being discussed. This helps demonstrate how the system handles longer form content.'
   },
 
   // Invalid content (for validation testing)
@@ -34,16 +25,5 @@ module.exports = {
     'a'.repeat(2001),             // Exceeds MAX_LENGTHS.COMMENT_CONTENT (2000)
     null,
     undefined
-  ],
-
-  // Invalid is_internal values
-  invalidIsInternal: [
-    'yes',
-    'no',
-    1,
-    0,
-    null,
-    undefined,
-    {}
   ]
 };

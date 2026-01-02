@@ -69,7 +69,6 @@ function createCommentData(overrides = {}) {
     ticket_id: 1,
     user_id: 1,
     content: 'This is a test comment with meaningful content.',
-    is_internal: false,
     ...overrides
   };
 }

@@ -57,8 +57,7 @@ router.post('/tickets/:id/comments', validateTicketId, validateCommentCreation, 
     await Comment.create({
       ticket_id: req.params.id,
       user_id: req.session.user.id,
-      content: req.body.content,
-      is_internal: req.body.is_internal === 'true'
+      content: req.body.content
     });
 
     successRedirect(req, res, COMMENT_MESSAGES.ADDED, `/admin/tickets/${req.params.id}`);

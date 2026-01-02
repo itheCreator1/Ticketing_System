@@ -137,7 +137,7 @@ tickets (id, title, description, status, priority, reporter_name, reporter_depar
   - reporter_department: 'IT Support' | 'General Support' | 'Human Resources' | 'Finance' | 'Facilities'
   - reporter_desk: 'Director' | 'Manager' | 'Nursing Station' | 'Doctors office' | 'Secretary' | 'Not Specified'
 
-comments (id, ticket_id → tickets.id, user_id → users.id, content, is_internal, created_at)
+comments (id, ticket_id → tickets.id, user_id → users.id, content, created_at)
 
 audit_logs (id, actor_id → users.id, action, target_type, target_id, details JSONB, ip_address, created_at)
 
@@ -430,7 +430,7 @@ models/* → config/database.js (pool)
 3. Update relevant model to use new column
 4. Never modify existing migration files
 
-**Current migration number**: 008 (last: modify_ticket_reporter_fields)
+**Current migration number**: 009 (last: remove_is_internal)
 
 ### Add a new model method
 ```javascript
