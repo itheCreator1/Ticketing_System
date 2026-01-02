@@ -10,7 +10,8 @@ module.exports = {
     title: 'Valid Test Ticket',
     description: 'This is a valid ticket description with adequate detail.',
     reporter_name: 'John Doe',
-    reporter_email: 'john.doe@example.com',
+    reporter_department: 'IT Support',
+    reporter_desk: 'Manager',
     reporter_phone: '+1234567890',
     priority: 'medium',
     status: 'open'
@@ -20,7 +21,8 @@ module.exports = {
     title: 'Urgent Production Issue',
     description: 'Production system is down and users cannot access the application.',
     reporter_name: 'Jane Smith',
-    reporter_email: 'jane.smith@example.com',
+    reporter_department: 'IT Support',
+    reporter_desk: 'Director',
     reporter_phone: '+1987654321',
     priority: 'critical',
     status: 'open'
@@ -30,7 +32,8 @@ module.exports = {
     title: 'Resolved Issue',
     description: 'This issue has been resolved and closed.',
     reporter_name: 'Bob Johnson',
-    reporter_email: 'bob.johnson@example.com',
+    reporter_department: 'General Support',
+    reporter_desk: 'Secretary',
     priority: 'low',
     status: 'closed'
   },
@@ -47,6 +50,18 @@ module.exports = {
   // Invalid priority values
   invalidPriorities: ['urgent', 'normal', '', null, undefined, 123],
 
+  // Valid department values
+  validDepartments: ['IT Support', 'General Support', 'Human Resources', 'Finance', 'Facilities'],
+
+  // Invalid department values
+  invalidDepartments: ['Invalid Dept', 'Engineering', '', null, undefined, 123],
+
+  // Valid desk values
+  validDesks: ['Director', 'Manager', 'Nursing Station', 'Doctors office', 'Secretary'],
+
+  // Invalid desk values
+  invalidDesks: ['Invalid Desk', 'Receptionist', '', null, undefined, 123],
+
   // Invalid titles (for validation testing)
   invalidTitles: [
     '',                           // Empty
@@ -60,17 +75,6 @@ module.exports = {
   invalidDescriptions: [
     '',                           // Empty
     'a'.repeat(5001),             // Exceeds MAX_LENGTHS.TICKET_DESCRIPTION (5000)
-    null,
-    undefined
-  ],
-
-  // Invalid emails (for validation testing)
-  invalidEmails: [
-    'not-an-email',
-    '@example.com',
-    'user@',
-    'user @example.com',
-    '',
     null,
     undefined
   ]

@@ -37,7 +37,8 @@ describe('Public Routes Integration Tests', () => {
       expect(response.text).toContain('title');
       expect(response.text).toContain('description');
       expect(response.text).toContain('reporter_name');
-      expect(response.text).toContain('reporter_email');
+      expect(response.text).toContain('reporter_department');
+      expect(response.text).toContain('reporter_desk');
     });
 
     it('should include CSRF token in form', async () => {
@@ -69,7 +70,8 @@ describe('Public Routes Integration Tests', () => {
         title: 'Integration Test Ticket',
         description: 'This ticket was created by an integration test',
         reporter_name: 'John Doe',
-        reporter_email: 'john@example.com',
+        reporter_department: 'IT Support',
+        reporter_desk: 'Manager',
         reporter_phone: '+1234567890'
       });
 
@@ -88,7 +90,8 @@ describe('Public Routes Integration Tests', () => {
       expect(tickets[0].title).toBe(ticketData.title);
       expect(tickets[0].description).toBe(ticketData.description);
       expect(tickets[0].reporter_name).toBe(ticketData.reporter_name);
-      expect(tickets[0].reporter_email).toBe(ticketData.reporter_email);
+      expect(tickets[0].reporter_department).toBe(ticketData.reporter_department);
+      expect(tickets[0].reporter_desk).toBe(ticketData.reporter_desk);
       expect(tickets[0].priority).toBe('unset'); // Default priority
       expect(tickets[0].status).toBe('open');
     });
@@ -139,9 +142,9 @@ describe('Public Routes Integration Tests', () => {
       expect(response.headers.location).toBe('back');
     });
 
-    it('should validate required fields - reporter_email', async () => {
+    it('should validate required fields - reporter_department', async () => {
       // Arrange
-      const ticketData = createTicketData({ reporter_email: '' });
+      const ticketData = createTicketData({ reporter_department: '' });
 
       // Act
       const response = await request(app)
@@ -153,9 +156,9 @@ describe('Public Routes Integration Tests', () => {
       expect(response.headers.location).toBe('back');
     });
 
-    it('should validate email format', async () => {
+    it('should validate required fields - reporter_desk', async () => {
       // Arrange
-      const ticketData = createTicketData({ reporter_email: 'invalid-email' });
+      const ticketData = createTicketData({ reporter_desk: '' });
 
       // Act
       const response = await request(app)

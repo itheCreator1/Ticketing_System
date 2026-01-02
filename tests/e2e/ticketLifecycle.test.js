@@ -35,7 +35,8 @@ describe('Ticket Lifecycle E2E Tests', () => {
         title: 'Cannot access database',
         description: 'Getting connection timeout errors when trying to connect to production database',
         reporter_name: 'John Doe',
-        reporter_email: 'john.doe@company.com',
+        reporter_department: 'IT Support',
+        reporter_desk: 'Manager',
         reporter_phone: '+1234567890',
         priority: 'high'
       });

@@ -50,7 +50,8 @@ describe('Ticket Model', () => {
           ticketData.title,
           ticketData.description,
           ticketData.reporter_name,
-          ticketData.reporter_email,
+          ticketData.reporter_department,
+          ticketData.reporter_desk,
           ticketData.reporter_phone,
           ticketData.priority
         ])
@@ -89,7 +90,8 @@ describe('Ticket Model', () => {
         title: ticketData.title,
         description: ticketData.description,
         reporter_name: ticketData.reporter_name,
-        reporter_email: ticketData.reporter_email,
+        reporter_department: ticketData.reporter_department,
+        reporter_desk: ticketData.reporter_desk,
         reporter_phone: ticketData.reporter_phone,
         priority: ticketData.priority,
         status: 'open',
@@ -118,7 +120,8 @@ describe('Ticket Model', () => {
         title: 'Test Ticket',
         description: 'Test Description',
         reporter_name: 'John Doe',
-        reporter_email: 'john@example.com',
+        reporter_department: 'IT Support',
+        reporter_desk: 'Manager',
         reporter_phone: '555-1234',
         priority: 'high'
       });
@@ -130,8 +133,8 @@ describe('Ticket Model', () => {
 
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
-        expect.stringContaining('$1, $2, $3, $4, $5, $6'),
-        ['Test Ticket', 'Test Description', 'John Doe', 'john@example.com', '555-1234', 'high']
+        expect.stringContaining('$1, $2, $3, $4, $5, $6, $7'),
+        ['Test Ticket', 'Test Description', 'John Doe', 'IT Support', 'Manager', '555-1234', 'high']
       );
     });
 
@@ -156,7 +159,8 @@ describe('Ticket Model', () => {
         status: 'open',
         priority: 'medium',
         reporter_name: 'John Doe',
-        reporter_email: 'john@example.com',
+        reporter_department: 'IT Support',
+        reporter_desk: 'Manager',
         reporter_phone: '555-1234',
         assigned_to: 5,
         assigned_to_username: 'admin',

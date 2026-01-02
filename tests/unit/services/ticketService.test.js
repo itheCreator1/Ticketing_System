@@ -48,7 +48,8 @@ describe('TicketService', () => {
         title: 'System Error',
         description: 'Application crashes on startup',
         reporter_name: 'John Doe',
-        reporter_email: 'john@example.com',
+        reporter_department: 'IT Support',
+        reporter_desk: 'Manager',
         reporter_phone: '555-1234',
         priority: 'critical'
       });
@@ -63,7 +64,8 @@ describe('TicketService', () => {
         title: 'System Error',
         description: 'Application crashes on startup',
         reporter_name: 'John Doe',
-        reporter_email: 'john@example.com',
+        reporter_department: 'IT Support',
+        reporter_desk: 'Manager',
         reporter_phone: '555-1234',
         priority: 'critical'
       }));

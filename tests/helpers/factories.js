@@ -43,11 +43,15 @@ function createUserData(overrides = {}) {
  * @returns {Object} Ticket data object
  */
 function createTicketData(overrides = {}) {
+  const departments = ['IT Support', 'General Support', 'Human Resources', 'Finance', 'Facilities'];
+  const desks = ['Director', 'Manager', 'Nursing Station', 'Doctors office', 'Secretary'];
+
   return {
     title: `Test Ticket ${Date.now()}`,
     description: 'This is a test ticket description with enough detail to be meaningful.',
     reporter_name: 'Test Reporter',
-    reporter_email: generateUniqueEmail(),
+    reporter_department: departments[Math.floor(Math.random() * departments.length)],
+    reporter_desk: desks[Math.floor(Math.random() * desks.length)],
     reporter_phone: '+1234567890',
     priority: 'medium',
     status: 'open',

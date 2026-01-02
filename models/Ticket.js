@@ -2,27 +2,28 @@ const pool = require('../config/database');
 const logger = require('../utils/logger');
 
 class Ticket {
-  static async create({ title, description, reporter_name, reporter_email, reporter_phone, priority = 'unset' }) {
+  static async create({ title, description, reporter_name, reporter_department, reporter_desk, reporter_phone, priority = 'unset' }) {
     const startTime = Date.now();
     try {
-      logger.info('Ticket.create: Creating new ticket', { reporterEmail: reporter_email, priority, titleLength: title?.length });
+      logger.info('Ticket.create: Creating new ticket', { reporterDepartment: reporter_department, reporterDesk: reporter_desk, priority, titleLength: title?.length });
       const result = await pool.query(
-        `INSERT INTO tickets (title, description, reporter_name, reporter_email, reporter_phone, priority, status)
-         VALUES ($1, $2, $3, $4, $5, $6, 'open')
+        `INSERT INTO tickets (title, description, reporter_name, reporter_department, reporter_desk, reporter_phone, priority, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, 'open')
          RETURNING *`,
-        [title, description, reporter_name, reporter_email, reporter_phone, priority]
+        [title, description, reporter_name || null, reporter_department, reporter_desk, reporter_phone, priority]
       );
       const duration = Date.now() - startTime;
 
       if (duration > 500) {
-        logger.warn('Ticket.create: Slow query detected', { reporterEmail: reporter_email, priority, duration });
+        logger.warn('Ticket.create: Slow query detected', { reporterDepartment: reporter_department, reporterDesk: reporter_desk, priority, duration });
       }
 
-      logger.info('Ticket.create: Ticket created successfully', { ticketId: result.rows[0].id, reporterEmail: reporter_email, priority, duration });
+      logger.info('Ticket.create: Ticket created successfully', { ticketId: result.rows[0].id, reporterDepartment: reporter_department, reporterDesk: reporter_desk, priority, duration });
       return result.rows[0];
     } catch (error) {
       logger.error('Ticket.create: Database error', {
-        reporterEmail: reporter_email,
+        reporterDepartment: reporter_department,
+        reporterDesk: reporter_desk,
         priority,
         error: error.message,
         stack: error.stack,

@@ -27,13 +27,32 @@
       </div>
 
       <div class="form-group">
-        <label for="reporter_name">Your Name *</label>
-        <input type="text" id="reporter_name" name="reporter_name" required placeholder="John Doe">
+        <label for="reporter_name">Your Name (optional)</label>
+        <input type="text" id="reporter_name" name="reporter_name" placeholder="John Doe">
       </div>
 
       <div class="form-group">
-        <label for="reporter_email">Your Email *</label>
-        <input type="email" id="reporter_email" name="reporter_email" required placeholder="john@example.com">
+        <label for="reporter_department">Department *</label>
+        <select id="reporter_department" name="reporter_department" required>
+          <option value="">Select Department</option>
+          <option value="IT Support">IT Support</option>
+          <option value="General Support">General Support</option>
+          <option value="Human Resources">Human Resources</option>
+          <option value="Finance">Finance</option>
+          <option value="Facilities">Facilities</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="reporter_desk">Desk *</label>
+        <select id="reporter_desk" name="reporter_desk" required>
+          <option value="">Select Desk</option>
+          <option value="Director">Director</option>
+          <option value="Manager">Manager</option>
+          <option value="Nursing Station">Nursing Station</option>
+          <option value="Doctors office">Doctors office</option>
+          <option value="Secretary">Secretary</option>
+        </select>
       </div>
 
       <div class="form-group">

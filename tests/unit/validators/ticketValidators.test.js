@@ -32,8 +32,9 @@ describe('Ticket Validators', () => {
         body: {
           title: 'Valid Ticket Title',
           description: 'This is a valid ticket description with sufficient detail.',
-          reporter_email: 'reporter@example.com',
           reporter_name: 'John Doe',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           reporter_phone: '555-1234',
           priority: 'medium'
         }
@@ -46,14 +47,14 @@ describe('Ticket Validators', () => {
       expect(result.isEmpty()).toBe(true);
     });
 
-    it('should pass validation with minimal valid data (no phone)', async () => {
+    it('should pass validation with minimal valid data (no name, no phone)', async () => {
       // Arrange
       const req = createMockRequest({
         body: {
           title: 'Ticket',
           description: 'Description',
-          reporter_email: 'test@example.com',
-          reporter_name: 'Tester',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           priority: 'low'
         }
       });
@@ -70,8 +71,8 @@ describe('Ticket Validators', () => {
       const req = createMockRequest({
         body: {
           description: 'Description',
-          reporter_email: 'test@example.com',
-          reporter_name: 'Tester',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           priority: 'medium'
         }
       });
@@ -91,7 +92,8 @@ describe('Ticket Validators', () => {
         body: {
           title: '   ',
           description: 'Description',
-          reporter_email: 'test@example.com',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           priority: 'medium'
         }
@@ -113,7 +115,8 @@ describe('Ticket Validators', () => {
         body: {
           title: longTitle,
           description: 'Description',
-          reporter_email: 'test@example.com',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           priority: 'medium'
         }
@@ -133,7 +136,8 @@ describe('Ticket Validators', () => {
       const req = createMockRequest({
         body: {
           title: 'Title',
-          reporter_email: 'test@example.com',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           priority: 'medium'
         }
@@ -155,7 +159,8 @@ describe('Ticket Validators', () => {
         body: {
           title: 'Title',
           description: longDescription,
-          reporter_email: 'test@example.com',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           priority: 'medium'
         }
@@ -170,14 +175,14 @@ describe('Ticket Validators', () => {
       expect(errors.some(e => e.path === 'description')).toBe(true);
     });
 
-    it('should fail when reporter_email is invalid', async () => {
+    it('should pass when reporter_name is missing (optional)', async () => {
       // Arrange
       const req = createMockRequest({
         body: {
           title: 'Title',
           description: 'Description',
-          reporter_email: 'invalid-email',
-          reporter_name: 'Tester',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           priority: 'medium'
         }
       });
@@ -186,51 +191,7 @@ describe('Ticket Validators', () => {
       const result = await runValidators(validateTicketCreation, req);
 
       // Assert
-      expect(result.isEmpty()).toBe(false);
-      const errors = result.array();
-      expect(errors.some(e => e.path === 'reporter_email')).toBe(true);
-    });
-
-    it('should fail when reporter_email exceeds maximum length', async () => {
-      // Arrange
-      const longEmail = 'a'.repeat(90) + '@example.com'; // Over 100 chars
-      const req = createMockRequest({
-        body: {
-          title: 'Title',
-          description: 'Description',
-          reporter_email: longEmail,
-          reporter_name: 'Tester',
-          priority: 'medium'
-        }
-      });
-
-      // Act
-      const result = await runValidators(validateTicketCreation, req);
-
-      // Assert
-      expect(result.isEmpty()).toBe(false);
-      const errors = result.array();
-      expect(errors.some(e => e.path === 'reporter_email')).toBe(true);
-    });
-
-    it('should fail when reporter_name is missing', async () => {
-      // Arrange
-      const req = createMockRequest({
-        body: {
-          title: 'Title',
-          description: 'Description',
-          reporter_email: 'test@example.com',
-          priority: 'medium'
-        }
-      });
-
-      // Act
-      const result = await runValidators(validateTicketCreation, req);
-
-      // Assert
-      expect(result.isEmpty()).toBe(false);
-      const errors = result.array();
-      expect(errors.some(e => e.path === 'reporter_name')).toBe(true);
+      expect(result.isEmpty()).toBe(true);
     });
 
     it('should fail when reporter_name exceeds maximum length', async () => {
@@ -240,7 +201,8 @@ describe('Ticket Validators', () => {
         body: {
           title: 'Title',
           description: 'Description',
-          reporter_email: 'test@example.com',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           reporter_name: longName,
           priority: 'medium'
         }
@@ -262,7 +224,8 @@ describe('Ticket Validators', () => {
         body: {
           title: 'Title',
           description: 'Description',
-          reporter_email: 'test@example.com',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           reporter_phone: longPhone,
           priority: 'medium'
@@ -284,7 +247,8 @@ describe('Ticket Validators', () => {
         body: {
           title: 'Title',
           description: 'Description',
-          reporter_email: 'test@example.com',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           priority: 'invalid_priority'
         }
@@ -307,7 +271,8 @@ describe('Ticket Validators', () => {
           body: {
             title: 'Title',
             description: 'Description',
-            reporter_email: 'test@example.com',
+            reporter_department: 'IT Support',
+            reporter_desk: 'Manager',
             reporter_name: 'Tester',
             priority
           }
@@ -324,7 +289,8 @@ describe('Ticket Validators', () => {
         body: {
           title: '  Ticket Title  ',
           description: '  Description  ',
-          reporter_email: 'test@example.com',
+          reporter_department: 'IT Support',
+          reporter_desk: 'Manager',
           reporter_name: '  John Doe  ',
           reporter_phone: '  555-1234  ',
           priority: 'medium'

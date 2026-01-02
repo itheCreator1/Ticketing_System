@@ -395,7 +395,8 @@ describe('Validation Middleware Integration Tests', () => {
           title: '', // Invalid - required
           description: '', // Invalid - required
           reporter_name: '',
-          reporter_email: ''
+          reporter_department: '',
+          reporter_desk: ''
         });
 
       // Assert

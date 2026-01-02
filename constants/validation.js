@@ -5,7 +5,9 @@ const MAX_LENGTHS = {
   PHONE_NUMBER: 20,
   USERNAME: 50,
   EMAIL: 100,
-  NAME: 100
+  NAME: 100,
+  DEPARTMENT: 100,
+  DESK: 100
 };
 
 const VALIDATION_MESSAGES = {
@@ -18,6 +20,10 @@ const VALIDATION_MESSAGES = {
   NAME_REQUIRED: 'Name is required',
   NAME_TOO_LONG: `Name cannot exceed ${MAX_LENGTHS.NAME} characters`,
   PHONE_TOO_LONG: `Phone number cannot exceed ${MAX_LENGTHS.PHONE_NUMBER} characters`,
+  DEPARTMENT_REQUIRED: 'Department is required',
+  DEPARTMENT_INVALID: 'Invalid department selected',
+  DESK_REQUIRED: 'Desk is required',
+  DESK_INVALID: 'Invalid desk selected',
   PRIORITY_INVALID: 'Invalid priority',
   STATUS_INVALID: 'Invalid status',
   USERNAME_REQUIRED: 'Username is required',

@@ -7,7 +7,8 @@ class TicketService {
     const startTime = Date.now();
     try {
       logger.info('ticketService.createTicket: Creating new ticket', {
-        reporterEmail: ticketData.reporter_email,
+        reporterDepartment: ticketData.reporter_department,
+        reporterDesk: ticketData.reporter_desk,
         priority: ticketData.priority,
         titleLength: ticketData.title?.length
       });
@@ -17,7 +18,8 @@ class TicketService {
 
       logger.info('ticketService.createTicket: Ticket created successfully', {
         ticketId: ticket.id,
-        reporterEmail: ticketData.reporter_email,
+        reporterDepartment: ticketData.reporter_department,
+        reporterDesk: ticketData.reporter_desk,
         priority: ticket.priority,
         status: ticket.status,
         duration
@@ -27,7 +29,8 @@ class TicketService {
     } catch (error) {
       const duration = Date.now() - startTime;
       logger.error('ticketService.createTicket: Failed to create ticket', {
-        reporterEmail: ticketData.reporter_email,
+        reporterDepartment: ticketData.reporter_department,
+        reporterDesk: ticketData.reporter_desk,
         priority: ticketData.priority,
         error: error.message,
         stack: error.stack,

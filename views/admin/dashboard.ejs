@@ -64,7 +64,7 @@
                 <td class="ticket-title"><%= ticket.title %></td>
                 <td><span class="badge badge-<%= ticket.status %>"><%= ticket.status.replace('_', ' ') %></span></td>
                 <td><span class="badge badge-priority-<%= ticket.priority %>"><%= ticket.priority %></span></td>
-                <td><%= ticket.reporter_name %></td>
+                <td><%= ticket.reporter_name || 'Anonymous' %></td>
                 <td><%= new Date(ticket.created_at).toLocaleDateString() %></td>
                 <td>
                   <a href="/admin/tickets/<%= ticket.id %>" class="btn btn-sm btn-primary">View</a>

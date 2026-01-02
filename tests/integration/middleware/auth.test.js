@@ -232,7 +232,8 @@ describe('Auth Middleware Integration Tests', () => {
         title: 'Test Ticket',
         description: 'Test Description',
         reporter_name: 'John Doe',
-        reporter_email: 'john@example.com',
+        reporter_department: 'IT Support',
+        reporter_desk: 'Manager',
         status: 'open'
       };
 
@@ -269,7 +270,8 @@ describe('Auth Middleware Integration Tests', () => {
         title: 'Test Ticket',
         description: 'Test Description',
         reporter_name: 'John Doe',
-        reporter_email: 'john@example.com',
+        reporter_department: 'IT Support',
+        reporter_desk: 'Manager',
         status: 'open'
       };
 
@@ -293,7 +295,8 @@ describe('Auth Middleware Integration Tests', () => {
         title: 'Test Ticket',
         description: 'Test Description',
         reporter_name: 'John Doe',
-        reporter_email: 'john@example.com',
+        reporter_department: 'IT Support',
+        reporter_desk: 'Manager',
         status: 'open'
       });
 
@@ -317,7 +320,8 @@ describe('Auth Middleware Integration Tests', () => {
         title: 'Test',
         description: 'Test',
         reporter_name: 'Test',
-        reporter_email: 'test@example.com'
+        reporter_department: 'IT Support',
+        reporter_desk: 'Manager'
       });
 
       const response = await request(app)
@@ -458,7 +462,8 @@ describe('Auth Middleware Integration Tests', () => {
         title: 'Test',
         description: 'Test',
         reporter_name: 'Test',
-        reporter_email: 'test@example.com'
+        reporter_department: 'IT Support',
+        reporter_desk: 'Manager'
       });
 
       // Act - No auth, should fail at requireAuth

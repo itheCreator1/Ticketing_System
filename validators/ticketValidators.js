@@ -1,5 +1,5 @@
 const { body, param } = require('express-validator');
-const { TICKET_PRIORITY, TICKET_STATUS } = require('../constants/enums');
+const { TICKET_PRIORITY, TICKET_STATUS, REPORTER_DEPARTMENT, REPORTER_DESK } = require('../constants/enums');
 const { VALIDATION_MESSAGES, MAX_LENGTHS } = require('../constants/validation');
 
 const validateTicketCreation = [
@@ -11,13 +11,18 @@ const validateTicketCreation = [
     .trim()
     .notEmpty().withMessage(VALIDATION_MESSAGES.DESCRIPTION_REQUIRED)
     .isLength({ max: MAX_LENGTHS.TICKET_DESCRIPTION }).withMessage(VALIDATION_MESSAGES.DESCRIPTION_TOO_LONG),
-  body('reporter_email')
-    .isEmail().withMessage(VALIDATION_MESSAGES.EMAIL_INVALID)
-    .isLength({ max: MAX_LENGTHS.EMAIL }).withMessage(VALIDATION_MESSAGES.EMAIL_INVALID),
   body('reporter_name')
+    .optional({ checkFalsy: true })
     .trim()
-    .notEmpty().withMessage(VALIDATION_MESSAGES.NAME_REQUIRED)
     .isLength({ max: MAX_LENGTHS.NAME }).withMessage(VALIDATION_MESSAGES.NAME_TOO_LONG),
+  body('reporter_department')
+    .trim()
+    .notEmpty().withMessage(VALIDATION_MESSAGES.DEPARTMENT_REQUIRED)
+    .isIn(Object.values(REPORTER_DEPARTMENT)).withMessage(VALIDATION_MESSAGES.DEPARTMENT_INVALID),
+  body('reporter_desk')
+    .trim()
+    .notEmpty().withMessage(VALIDATION_MESSAGES.DESK_REQUIRED)
+    .isIn(Object.values(REPORTER_DESK)).withMessage(VALIDATION_MESSAGES.DESK_INVALID),
   body('reporter_phone')
     .optional()
     .trim()

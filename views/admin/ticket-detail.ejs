@@ -28,13 +28,19 @@
           <span class="info-label">Priority:</span>
           <span class="badge badge-priority-<%= ticket.priority %>"><%= ticket.priority %></span>
         </div>
+        <% if (ticket.reporter_name) { %>
+          <div class="info-row">
+            <span class="info-label">Reporter:</span>
+            <span><%= ticket.reporter_name %></span>
+          </div>
+        <% } %>
         <div class="info-row">
-          <span class="info-label">Reporter:</span>
-          <span><%= ticket.reporter_name %></span>
+          <span class="info-label">Department:</span>
+          <span><%= ticket.reporter_department %></span>
         </div>
         <div class="info-row">
-          <span class="info-label">Email:</span>
-          <span><a href="mailto:<%= ticket.reporter_email %>"><%= ticket.reporter_email %></a></span>
+          <span class="info-label">Desk:</span>
+          <span><%= ticket.reporter_desk %></span>
         </div>
         <% if (ticket.reporter_phone) { %>
           <div class="info-row">
