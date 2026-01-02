@@ -1,7 +1,7 @@
 {
   "name": "knii_ticketing",
-  "version": "1.0.0",
-  "description": "A simple ticketing system with public submission and admin management",
+  "version": "2.1.0",
+  "description": "A professional ticketing system with department/desk tracking, public submission and admin management",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
