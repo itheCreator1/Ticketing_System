@@ -57,13 +57,13 @@ describe('Ticket Model', () => {
       );
     });
 
-    it('should create ticket with default priority=medium when not provided', async () => {
+    it('should create ticket with default priority=unset when not provided', async () => {
       // Arrange
       const ticketData = createTicketData({ priority: undefined });
       const mockTicket = {
         id: 2,
         ...ticketData,
-        priority: 'medium',
+        priority: 'unset',
         status: 'open',
         created_at: new Date()
       };
@@ -73,10 +73,10 @@ describe('Ticket Model', () => {
       const result = await Ticket.create(ticketData);
 
       // Assert
-      expect(result.priority).toBe('medium');
+      expect(result.priority).toBe('unset');
       expect(pool.query).toHaveBeenCalledWith(
         expect.any(String),
-        expect.arrayContaining(['medium'])
+        expect.arrayContaining(['unset'])
       );
     });
 

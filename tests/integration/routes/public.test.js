@@ -70,8 +70,7 @@ describe('Public Routes Integration Tests', () => {
         description: 'This ticket was created by an integration test',
         reporter_name: 'John Doe',
         reporter_email: 'john@example.com',
-        reporter_phone: '+1234567890',
-        priority: 'high'
+        reporter_phone: '+1234567890'
       });
 
       // Act
@@ -90,7 +89,7 @@ describe('Public Routes Integration Tests', () => {
       expect(tickets[0].description).toBe(ticketData.description);
       expect(tickets[0].reporter_name).toBe(ticketData.reporter_name);
       expect(tickets[0].reporter_email).toBe(ticketData.reporter_email);
-      expect(tickets[0].priority).toBe(ticketData.priority);
+      expect(tickets[0].priority).toBe('unset'); // Default priority
       expect(tickets[0].status).toBe('open');
     });
 
@@ -185,7 +184,7 @@ describe('Public Routes Integration Tests', () => {
       expect(tickets[0].reporter_phone).toBeNull();
     });
 
-    it('should default priority to medium when not specified', async () => {
+    it('should default priority to unset when not specified', async () => {
       // Arrange
       const ticketData = createTicketData();
       delete ticketData.priority;
@@ -199,7 +198,7 @@ describe('Public Routes Integration Tests', () => {
       expect(response.status).toBe(200);
 
       const tickets = await Ticket.findAll({ limit: 10, offset: 0 });
-      expect(tickets[0].priority).toBe('medium');
+      expect(tickets[0].priority).toBe('unset');
     });
 
     it('should accept valid priority values', async () => {
