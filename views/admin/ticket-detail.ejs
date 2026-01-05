@@ -4,123 +4,158 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
-  <link rel="stylesheet" href="/css/style.css">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/custom.css">
 </head>
-<body>
+<body class="bg-light">
   <%- include('../partials/header') %>
 
-  <main class="admin-container">
-    <div class="breadcrumb">
-      <a href="/admin/dashboard">← Back to Dashboard</a>
-    </div>
+  <main class="container-fluid px-4 py-4">
+    <nav aria-label="breadcrumb" class="mb-3">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Ticket #<%= ticket.id %></li>
+      </ol>
+    </nav>
 
-    <h2>Ticket #<%= ticket.id %>: <%= ticket.title %></h2>
+    <h2 class="mb-4">Ticket #<%= ticket.id %>: <%= ticket.title %></h2>
     <%- include('../partials/flash') %>
 
-    <div class="ticket-detail-grid">
-      <div class="ticket-info-card">
-        <h3>Ticket Information</h3>
-        <div class="info-row">
-          <span class="info-label">Status:</span>
-          <span class="badge badge-<%= ticket.status %>"><%= ticket.status.replace('_', ' ') %></span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Priority:</span>
-          <span class="badge badge-priority-<%= ticket.priority %>"><%= ticket.priority %></span>
-        </div>
-        <% if (ticket.reporter_name) { %>
-          <div class="info-row">
-            <span class="info-label">Reporter:</span>
-            <span><%= ticket.reporter_name %></span>
-          </div>
-        <% } %>
-        <div class="info-row">
-          <span class="info-label">Department:</span>
-          <span><%= ticket.reporter_department %></span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Desk:</span>
-          <span><%= ticket.reporter_desk %></span>
-        </div>
-        <% if (ticket.reporter_phone) { %>
-          <div class="info-row">
-            <span class="info-label">Phone:</span>
-            <span><a href="tel:<%= ticket.reporter_phone %>"><%= ticket.reporter_phone %></a></span>
-          </div>
-        <% } %>
-        <div class="info-row">
-          <span class="info-label">Created:</span>
-          <span><%= new Date(ticket.created_at).toLocaleString() %></span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Last Updated:</span>
-          <span><%= new Date(ticket.updated_at).toLocaleString() %></span>
-        </div>
-      </div>
-
-      <div class="ticket-actions-card">
-        <h3>Update Ticket</h3>
-        <form action="/admin/tickets/<%= ticket.id %>/update" method="POST">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-
-          <div class="form-group">
-            <label for="status">Status</label>
-            <select name="status" id="status">
-              <option value="open" <%= ticket.status === 'open' ? 'selected' : '' %>>Open</option>
-              <option value="in_progress" <%= ticket.status === 'in_progress' ? 'selected' : '' %>>In Progress</option>
-              <option value="closed" <%= ticket.status === 'closed' ? 'selected' : '' %>>Closed</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="priority">Priority</label>
-            <select name="priority" id="priority">
-              <option value="unset" <%= ticket.priority === 'unset' ? 'selected' : '' %>>Unset</option>
-              <option value="low" <%= ticket.priority === 'low' ? 'selected' : '' %>>Low</option>
-              <option value="medium" <%= ticket.priority === 'medium' ? 'selected' : '' %>>Medium</option>
-              <option value="high" <%= ticket.priority === 'high' ? 'selected' : '' %>>High</option>
-              <option value="critical" <%= ticket.priority === 'critical' ? 'selected' : '' %>>Critical</option>
-            </select>
-          </div>
-
-          <button type="submit" class="btn btn-primary">Update Ticket</button>
-        </form>
-      </div>
-    </div>
-
-    <div class="ticket-description-card">
-      <h3>Description</h3>
-      <p class="ticket-description"><%= ticket.description %></p>
-    </div>
-
-    <div class="comments-section">
-      <h3>Comments (<%= comments.length %>)</h3>
-
-      <% if (comments.length > 0) { %>
-        <div class="comments-list">
-          <% comments.forEach(comment => { %>
-            <div class="comment">
-              <div class="comment-header">
-                <strong><%= comment.username %></strong>
-                <span class="comment-date"><%= new Date(comment.created_at).toLocaleString() %></span>
-              </div>
-              <div class="comment-body">
-                <%= comment.content %>
-              </div>
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h3 class="h5 card-title mb-3">Ticket Information</h3>
+            <div class="mb-2">
+              <span class="fw-semibold">Status:</span>
+              <% if (ticket.status === 'open') { %>
+                <span class="badge bg-info text-dark ms-2"><%= ticket.status.replace('_', ' ') %></span>
+              <% } else if (ticket.status === 'in_progress') { %>
+                <span class="badge bg-warning text-dark ms-2"><%= ticket.status.replace('_', ' ') %></span>
+              <% } else { %>
+                <span class="badge bg-success ms-2"><%= ticket.status.replace('_', ' ') %></span>
+              <% } %>
             </div>
-          <% }); %>
+            <div class="mb-2">
+              <span class="fw-semibold">Priority:</span>
+              <% if (ticket.priority === 'unset') { %>
+                <span class="badge bg-light text-dark border ms-2"><%= ticket.priority %></span>
+              <% } else if (ticket.priority === 'low') { %>
+                <span class="badge bg-secondary ms-2"><%= ticket.priority %></span>
+              <% } else if (ticket.priority === 'medium') { %>
+                <span class="badge bg-info ms-2"><%= ticket.priority %></span>
+              <% } else if (ticket.priority === 'high') { %>
+                <span class="badge bg-warning text-dark ms-2"><%= ticket.priority %></span>
+              <% } else if (ticket.priority === 'critical') { %>
+                <span class="badge bg-danger ms-2"><%= ticket.priority %></span>
+              <% } %>
+            </div>
+            <% if (ticket.reporter_name) { %>
+              <div class="mb-2">
+                <span class="fw-semibold">Reporter:</span>
+                <span class="ms-2"><%= ticket.reporter_name %></span>
+              </div>
+            <% } %>
+            <div class="mb-2">
+              <span class="fw-semibold">Department:</span>
+              <span class="ms-2"><%= ticket.reporter_department %></span>
+            </div>
+            <div class="mb-2">
+              <span class="fw-semibold">Desk:</span>
+              <span class="ms-2"><%= ticket.reporter_desk %></span>
+            </div>
+            <% if (ticket.reporter_phone) { %>
+              <div class="mb-2">
+                <span class="fw-semibold">Phone:</span>
+                <span class="ms-2"><a href="tel:<%= ticket.reporter_phone %>"><%= ticket.reporter_phone %></a></span>
+              </div>
+            <% } %>
+            <div class="mb-2">
+              <span class="fw-semibold">Created:</span>
+              <span class="ms-2 text-muted"><%= new Date(ticket.created_at).toLocaleString() %></span>
+            </div>
+            <div class="mb-0">
+              <span class="fw-semibold">Last Updated:</span>
+              <span class="ms-2 text-muted"><%= new Date(ticket.updated_at).toLocaleString() %></span>
+            </div>
+          </div>
         </div>
-      <% } else { %>
-        <p class="no-comments">No comments yet. Be the first to add one!</p>
-      <% } %>
+      </div>
 
-      <div class="add-comment-card">
-        <h4>Add Comment</h4>
+      <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h3 class="h5 card-title mb-3">Update Ticket</h3>
+            <form action="/admin/tickets/<%= ticket.id %>/update" method="POST">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+              <div class="mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select name="status" id="status" class="form-select">
+                  <option value="open" <%= ticket.status === 'open' ? 'selected' : '' %>>Open</option>
+                  <option value="in_progress" <%= ticket.status === 'in_progress' ? 'selected' : '' %>>In Progress</option>
+                  <option value="closed" <%= ticket.status === 'closed' ? 'selected' : '' %>>Closed</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="priority" class="form-label">Priority</label>
+                <select name="priority" id="priority" class="form-select">
+                  <option value="unset" <%= ticket.priority === 'unset' ? 'selected' : '' %>>Unset</option>
+                  <option value="low" <%= ticket.priority === 'low' ? 'selected' : '' %>>Low</option>
+                  <option value="medium" <%= ticket.priority === 'medium' ? 'selected' : '' %>>Medium</option>
+                  <option value="high" <%= ticket.priority === 'high' ? 'selected' : '' %>>High</option>
+                  <option value="critical" <%= ticket.priority === 'critical' ? 'selected' : '' %>>Critical</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">Update Ticket</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h3 class="h5 card-title mb-3">Description</h3>
+        <p class="ticket-description mb-0"><%= ticket.description %></p>
+      </div>
+    </div>
+
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="h5 card-title mb-3">Comments (<%= comments.length %>)</h3>
+
+        <% if (comments.length > 0) { %>
+          <div class="mb-4">
+            <% comments.forEach(comment => { %>
+              <div class="comment">
+                <div class="comment-header">
+                  <strong><%= comment.username %></strong>
+                  <span class="comment-meta ms-2"><%= new Date(comment.created_at).toLocaleString() %></span>
+                </div>
+                <div class="comment-content mt-2">
+                  <%= comment.content %>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        <% } else { %>
+          <p class="text-muted mb-4">No comments yet. Be the first to add one!</p>
+        <% } %>
+
+        <h4 class="h6 mb-3">Add Comment</h4>
         <form action="/admin/tickets/<%= ticket.id %>/comments" method="POST">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-          <div class="form-group">
-            <textarea name="content" id="content" rows="4" placeholder="Write your comment here..." required></textarea>
+          <div class="mb-3">
+            <textarea name="content" id="content" rows="4" class="form-control" placeholder="Write your comment here..." required></textarea>
           </div>
           <button type="submit" class="btn btn-primary">Add Comment</button>
         </form>
@@ -129,5 +164,10 @@
   </main>
 
   <%- include('../partials/footer') %>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+          crossorigin="anonymous"></script>
 </body>
 </html>

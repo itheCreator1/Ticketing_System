@@ -1,0 +1,131 @@
+/* Custom CSS for KNII Ticketing System - Bootstrap 5 Overrides */
+
+/* Bootstrap variable overrides */
+:root {
+  --bs-border-radius: 0.375rem;
+}
+
+/* Password Strength Indicator */
+.password-strength {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.password-strength.weak {
+  color: var(--bs-danger);
+}
+
+.password-strength.medium {
+  color: var(--bs-warning);
+}
+
+.password-strength.strong {
+  color: var(--bs-success);
+}
+
+/* Success Icon (Public success page) */
+.success-icon {
+  width: 80px;
+  height: 80px;
+  line-height: 80px;
+  margin: 0 auto 1.5rem;
+  background: var(--bs-success);
+  color: white;
+  font-size: 3rem;
+  border-radius: 50%;
+  display: inline-block;
+  text-align: center;
+}
+
+/* Ticket Description Formatting */
+.ticket-description {
+  white-space: pre-wrap;
+  line-height: 1.8;
+}
+
+/* Comment Styling */
+.comment {
+  border-left: 3px solid var(--bs-primary);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: var(--bs-light);
+  border-radius: var(--bs-border-radius);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.comment-meta {
+  font-size: 0.875rem;
+  color: var(--bs-secondary);
+}
+
+.comment-content {
+  white-space: pre-wrap;
+  line-height: 1.6;
+}
+
+/* Smooth transitions */
+.btn,
+.form-control,
+.form-select {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Modern subtle shadows */
+.card {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+/* Error page */
+.error-code {
+  font-size: 6rem;
+  color: var(--bs-primary);
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .error-code {
+    font-size: 4rem;
+  }
+}
+
+/* Navbar brand styling */
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+/* Table responsiveness improvements */
+.table-responsive {
+  border-radius: var(--bs-border-radius);
+}
+
+/* Ticket title column */
+.ticket-title {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Ticket stats footer */
+.ticket-stats {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--bs-light);
+  border-radius: var(--bs-border-radius);
+  font-size: 0.9rem;
+  color: var(--bs-secondary);
+}

@@ -37,7 +37,7 @@ const {
   size: 64,
   ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
   getCsrfTokenFromRequest: (req) => req.body?._csrf,
-  getSessionIdentifier: (req) => req.session?.id || ''
+  getSessionIdentifier: (req) => req.sessionID || ''
 });
 
 app.set('view engine', 'ejs');
@@ -47,8 +47,8 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"]
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net"]
     }
   }
 }));

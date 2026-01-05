@@ -1,19 +1,31 @@
-<header class="admin-header">
-  <nav class="admin-nav">
-    <div class="nav-left">
-      <h1><a href="/admin/dashboard">KNII Ticketing</a></h1>
-      <% if (user && user.role === 'super_admin') { %>
-        <a href="/admin/users" class="nav-link">User Management</a>
-      <% } %>
-    </div>
-    <div class="nav-right">
-      <% if (user) { %>
-        <span class="user-info">Welcome, <%= user.username %></span>
-        <form action="/auth/logout" method="POST" style="display: inline;">
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-          <button type="submit" class="btn btn-sm btn-logout">Logout</button>
-        </form>
-      <% } %>
-    </div>
-  </nav>
-</header>
+<nav class="navbar navbar-dark bg-dark navbar-expand-lg">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" href="/admin/dashboard">KNII Ticketing</a>
+
+    <% if (user) { %>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <% if (user.role === 'super_admin') { %>
+            <li class="nav-item">
+              <a href="/admin/users" class="nav-link">User Management</a>
+            </li>
+          <% } %>
+        </ul>
+
+        <div class="d-flex align-items-center gap-3">
+          <span class="navbar-text text-light">
+            Welcome, <%= user.username %>
+          </span>
+          <form action="/auth/logout" method="POST" class="d-inline">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
+          </form>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</nav>

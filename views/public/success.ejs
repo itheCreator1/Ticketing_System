@@ -4,17 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
-  <link rel="stylesheet" href="/css/style.css">
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/custom.css">
 </head>
-<body>
-  <div class="container">
-    <div class="success-message">
-      <div class="success-icon">✓</div>
-      <h1>Ticket Submitted Successfully!</h1>
-      <p>Your ticket has been received and assigned ID: <strong>#<%= ticketId %></strong></p>
-      <p>We will review your issue and get back to you as soon as possible.</p>
-      <a href="/" class="btn btn-primary">Submit Another Ticket</a>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="card shadow text-center" style="max-width: 600px; margin: 0 auto;">
+      <div class="card-body p-5">
+        <div class="success-icon">✓</div>
+        <h1 class="h3 mb-3 text-success">Ticket Submitted Successfully!</h1>
+        <p class="mb-2">Your ticket has been received and assigned ID: <strong class="text-primary">#<%= ticketId %></strong></p>
+        <p class="text-muted mb-4">We will review your issue and get back to you as soon as possible.</p>
+        <a href="/" class="btn btn-primary btn-lg">Submit Another Ticket</a>
+      </div>
     </div>
   </div>
+
+  <!-- Bootstrap 5 JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+          crossorigin="anonymous"></script>
 </body>
 </html>
