@@ -2,29 +2,31 @@ const pool = require('../config/database');
 const logger = require('../utils/logger');
 
 class Ticket {
-  static async create({ title, description, reporter_name, reporter_department, reporter_desk, reporter_phone, priority = 'unset' }) {
+  static async create({ title, description, reporter_name, reporter_department, reporter_desk, reporter_phone, reporter_id, priority = 'unset', status = 'open' }) {
     const startTime = Date.now();
     try {
-      logger.info('Ticket.create: Creating new ticket', { reporterDepartment: reporter_department, reporterDesk: reporter_desk, priority, titleLength: title?.length });
+      logger.info('Ticket.create: Creating new ticket', { reporterDepartment: reporter_department, reporterDesk: reporter_desk, reporterId: reporter_id, priority, status, titleLength: title?.length });
       const result = await pool.query(
-        `INSERT INTO tickets (title, description, reporter_name, reporter_department, reporter_desk, reporter_phone, priority, status)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, 'open')
+        `INSERT INTO tickets (title, description, reporter_name, reporter_department, reporter_desk, reporter_phone, reporter_id, priority, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
          RETURNING *`,
-        [title, description, reporter_name || null, reporter_department, reporter_desk, reporter_phone, priority]
+        [title, description, reporter_name || null, reporter_department, reporter_desk, reporter_phone, reporter_id || null, priority, status]
       );
       const duration = Date.now() - startTime;
 
       if (duration > 500) {
-        logger.warn('Ticket.create: Slow query detected', { reporterDepartment: reporter_department, reporterDesk: reporter_desk, priority, duration });
+        logger.warn('Ticket.create: Slow query detected', { reporterDepartment: reporter_department, reporterDesk: reporter_desk, reporterId: reporter_id, priority, status, duration });
       }
 
-      logger.info('Ticket.create: Ticket created successfully', { ticketId: result.rows[0].id, reporterDepartment: reporter_department, reporterDesk: reporter_desk, priority, duration });
+      logger.info('Ticket.create: Ticket created successfully', { ticketId: result.rows[0].id, reporterDepartment: reporter_department, reporterDesk: reporter_desk, reporterId: reporter_id, priority, status, duration });
       return result.rows[0];
     } catch (error) {
       logger.error('Ticket.create: Database error', {
         reporterDepartment: reporter_department,
         reporterDesk: reporter_desk,
+        reporterId: reporter_id,
         priority,
+        status,
         error: error.message,
         stack: error.stack,
         code: error.code
@@ -107,6 +109,60 @@ class Ticket {
       return result.rows;
     } catch (error) {
       logger.error('Ticket.findAll: Database error', {
+        filters,
+        error: error.message,
+        stack: error.stack,
+        code: error.code
+      });
+      throw error;
+    }
+  }
+
+  static async findByDepartment(userId, filters = {}) {
+    const startTime = Date.now();
+    try {
+      logger.debug('Ticket.findByDepartment: Starting query', { userId, filters });
+      let query = `
+        SELECT t.*, u.username as assigned_to_username
+        FROM tickets t
+        LEFT JOIN users u ON t.assigned_to = u.id
+        WHERE t.reporter_id = $1
+      `;
+      const params = [userId];
+      let paramIndex = 2;
+
+      if (filters.status) {
+        query += ` AND t.status = $${paramIndex}`;
+        params.push(filters.status);
+        paramIndex++;
+      }
+
+      if (filters.priority) {
+        query += ` AND t.priority = $${paramIndex}`;
+        params.push(filters.priority);
+        paramIndex++;
+      }
+
+      if (filters.search) {
+        query += ` AND (t.title ILIKE $${paramIndex} OR t.description ILIKE $${paramIndex})`;
+        params.push(`%${filters.search}%`);
+        paramIndex++;
+      }
+
+      query += ' ORDER BY t.created_at DESC';
+
+      const result = await pool.query(query, params);
+      const duration = Date.now() - startTime;
+
+      if (duration > 500) {
+        logger.warn('Ticket.findByDepartment: Slow query detected', { userId, filters, duration, rowCount: result.rows.length });
+      }
+
+      logger.debug('Ticket.findByDepartment: Query completed', { userId, filters, rowCount: result.rows.length, duration });
+      return result.rows;
+    } catch (error) {
+      logger.error('Ticket.findByDepartment: Database error', {
+        userId,
         filters,
         error: error.message,
         stack: error.stack,
