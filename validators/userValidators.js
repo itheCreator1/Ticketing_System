@@ -35,7 +35,7 @@ const validateUserCreate = [
   passwordValidation('password'),
 
   body('role')
-    .isIn([USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN])
+    .isIn([USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.DEPARTMENT])
     .withMessage(VALIDATION_MESSAGES.ROLE_INVALID)
 ];
 
@@ -59,7 +59,7 @@ const validateUserUpdate = [
 
   body('role')
     .optional()
-    .isIn([USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN])
+    .isIn([USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.DEPARTMENT])
     .withMessage(VALIDATION_MESSAGES.ROLE_INVALID),
 
   body('status')
