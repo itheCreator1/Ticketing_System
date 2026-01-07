@@ -30,7 +30,7 @@ describe('Validation Middleware Integration Tests', () => {
     it('should accept GET requests without CSRF token', async () => {
       // Act
       const response = await request(app)
-        .get('/');
+        .get('/auth/login');
 
       // Assert
       expect(response.status).toBe(200);
@@ -39,7 +39,7 @@ describe('Validation Middleware Integration Tests', () => {
     it('should accept HEAD requests without CSRF token', async () => {
       // Act
       const response = await request(app)
-        .head('/');
+        .head('/auth/login');
 
       // Assert
       expect(response.status).toBe(200);
