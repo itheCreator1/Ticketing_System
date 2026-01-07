@@ -148,6 +148,46 @@ class Comment {
       throw error;
     }
   }
+
+  static async getLastCommentsByTicketIds(ticketIds) {
+    const startTime = Date.now();
+    try {
+      if (!ticketIds || ticketIds.length === 0) {
+        logger.debug('Comment.getLastCommentsByTicketIds: Empty ticket IDs array');
+        return [];
+      }
+
+      logger.debug('Comment.getLastCommentsByTicketIds: Starting query', { ticketCount: ticketIds.length });
+      const result = await pool.query(`
+        SELECT DISTINCT ON (c.ticket_id)
+          c.ticket_id,
+          c.content,
+          u.username,
+          c.created_at
+        FROM comments c
+        JOIN users u ON c.user_id = u.id
+        WHERE c.ticket_id = ANY($1::int[])
+        ORDER BY c.ticket_id, c.created_at DESC
+      `, [ticketIds]);
+
+      const duration = Date.now() - startTime;
+
+      if (duration > 500) {
+        logger.warn('Comment.getLastCommentsByTicketIds: Slow query detected', { ticketCount: ticketIds.length, duration });
+      }
+
+      logger.debug('Comment.getLastCommentsByTicketIds: Query completed', { ticketCount: ticketIds.length, resultCount: result.rows.length, duration });
+      return result.rows;
+    } catch (error) {
+      logger.error('Comment.getLastCommentsByTicketIds: Database error', {
+        ticketCount: ticketIds?.length,
+        error: error.message,
+        stack: error.stack,
+        code: error.code
+      });
+      throw error;
+    }
+  }
 }
 
 module.exports = Comment;

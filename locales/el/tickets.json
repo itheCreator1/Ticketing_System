@@ -129,12 +129,37 @@
     "actions": "Ενέργειες",
     "anonymous": "Ανώνυμος",
     "allTickets": "Όλα τα Αιτήματα",
-    "myTickets": "Τα Αιτήματά μου"
+    "myTickets": "Τα Αιτήματά μου",
+    "select": "Επιλογή",
+    "age": "Ηλικία",
+    "ageNew": "Νέο",
+    "ageDays": "{{count}} ημέρα",
+    "ageDays_plural": "{{count}} ημέρες",
+    "ageWeeks": "{{count}} εβδομάδα",
+    "ageWeeks_plural": "{{count}} εβδομάδες",
+    "quickAssign": "Γρήγορη Ανάθεση"
   },
   "filters": {
     "title": "Φίλτρα"
   },
   "search": {
     "placeholder": "Αναζήτηση αιτημάτων..."
+  },
+  "bulkUpdate": {
+    "label": "Μαζική ενημέρωση επιλεγμένων:",
+    "statusNoChange": "Κατάσταση (χωρίς αλλαγή)",
+    "priorityNoChange": "Προτεραιότητα (χωρίς αλλαγή)",
+    "assignmentNoChange": "Ανάθεση (χωρίς αλλαγή)",
+    "unassign": "-- Χωρίς Ανάθεση --",
+    "updateSelected": "Ενημέρωση Επιλεγμένων",
+    "selectAtLeastOneTicket": "Παρακαλώ επιλέξτε τουλάχιστον ένα αίτημα",
+    "selectAtLeastOneField": "Παρακαλώ επιλέξτε τουλάχιστον ένα πεδίο για ενημέρωση (κατάσταση, προτεραιότητα ή ανάθεση)",
+    "confirmUpdate": "Ενημέρωση {{count}} επιλεγμένων αιτημάτων;"
+  },
+  "pagination": {
+    "previous": "Προηγούμενη",
+    "next": "Επόμενη",
+    "pageInfo": "Σελίδα {{current}} από {{total}}",
+    "showingOfTotal": "Εμφάνιση {{count}} από {{total}} αιτημάτων"
   }
 }

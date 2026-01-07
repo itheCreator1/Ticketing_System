@@ -33,11 +33,11 @@
               <label for="status" class="form-label"><%= t('common:labels.status') %></label>
               <select name="status" id="status" class="form-select">
                 <option value=""><%= t('tickets:status.all') %></option>
-                <option value="open" <%= filters.status === 'open' ? 'selected' : '' %>><%= t('tickets:status.open') %></option>
-                <option value="in_progress" <%= filters.status === 'in_progress' ? 'selected' : '' %>><%= t('tickets:status.in_progress') %></option>
-                <option value="waiting_on_admin" <%= filters.status === 'waiting_on_admin' ? 'selected' : '' %>><%= t('tickets:status.waiting_on_admin') %></option>
-                <option value="waiting_on_department" <%= filters.status === 'waiting_on_department' ? 'selected' : '' %>><%= t('tickets:status.waiting_on_department') %></option>
-                <option value="closed" <%= filters.status === 'closed' ? 'selected' : '' %>><%= t('tickets:status.closed') %></option>
+                <option value="open" <%= filters.status === 'open' ? 'selected' : '' %>><%= t('tickets:status.open') %> (<%= statusCounts.open || 0 %>)</option>
+                <option value="in_progress" <%= filters.status === 'in_progress' ? 'selected' : '' %>><%= t('tickets:status.in_progress') %> (<%= statusCounts.in_progress || 0 %>)</option>
+                <option value="waiting_on_admin" <%= filters.status === 'waiting_on_admin' ? 'selected' : '' %>><%= t('tickets:status.waiting_on_admin') %> (<%= statusCounts.waiting_on_admin || 0 %>)</option>
+                <option value="waiting_on_department" <%= filters.status === 'waiting_on_department' ? 'selected' : '' %>><%= t('tickets:status.waiting_on_department') %> (<%= statusCounts.waiting_on_department || 0 %>)</option>
+                <option value="closed" <%= filters.status === 'closed' ? 'selected' : '' %>><%= t('tickets:status.closed') %> (<%= statusCounts.closed || 0 %>)</option>
               </select>
             </div>
 
@@ -45,11 +45,11 @@
               <label for="priority" class="form-label"><%= t('common:labels.priority') %></label>
               <select name="priority" id="priority" class="form-select">
                 <option value=""><%= t('tickets:priority.all') %></option>
-                <option value="unset" <%= filters.priority === 'unset' ? 'selected' : '' %>><%= t('tickets:priority.unset') %></option>
-                <option value="low" <%= filters.priority === 'low' ? 'selected' : '' %>><%= t('tickets:priority.low') %></option>
-                <option value="medium" <%= filters.priority === 'medium' ? 'selected' : '' %>><%= t('tickets:priority.medium') %></option>
-                <option value="high" <%= filters.priority === 'high' ? 'selected' : '' %>><%= t('tickets:priority.high') %></option>
-                <option value="critical" <%= filters.priority === 'critical' ? 'selected' : '' %>><%= t('tickets:priority.critical') %></option>
+                <option value="unset" <%= filters.priority === 'unset' ? 'selected' : '' %>><%= t('tickets:priority.unset') %> (<%= priorityCounts.unset || 0 %>)</option>
+                <option value="low" <%= filters.priority === 'low' ? 'selected' : '' %>><%= t('tickets:priority.low') %> (<%= priorityCounts.low || 0 %>)</option>
+                <option value="medium" <%= filters.priority === 'medium' ? 'selected' : '' %>><%= t('tickets:priority.medium') %> (<%= priorityCounts.medium || 0 %>)</option>
+                <option value="high" <%= filters.priority === 'high' ? 'selected' : '' %>><%= t('tickets:priority.high') %> (<%= priorityCounts.high || 0 %>)</option>
+                <option value="critical" <%= filters.priority === 'critical' ? 'selected' : '' %>><%= t('tickets:priority.critical') %> (<%= priorityCounts.critical || 0 %>)</option>
               </select>
             </div>
 
@@ -76,68 +76,166 @@
         <p class="mb-0"><%= t('tickets:emptyState.noTicketsFound') %>. <%= filters.status || filters.priority || filters.search ? t('tickets:emptyState.adjustFilters') : t('tickets:emptyState.ticketsWillAppear') %></p>
       </div>
     <% } else { %>
-      <div class="card mb-4">
-        <div class="card-header-enhanced">
-          <h3 class="card-title-icon">
-            <i class="bi bi-table"></i>
-            <%= t('tickets:table.allTickets') %>
-          </h3>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="table">
-            <thead>
-              <tr>
-                <th><%= t('tickets:table.id') %></th>
-                <th><%= t('tickets:table.title') %></th>
-                <th><%= t('tickets:table.status') %></th>
-                <th><%= t('tickets:table.priority') %></th>
-                <th><%= t('tickets:table.reporter') %></th>
-                <th><%= t('tickets:table.lastComment') %></th>
-                <th><%= t('tickets:table.created') %></th>
-                <th><%= t('tickets:table.actions') %></th>
-              </tr>
-            </thead>
-            <tbody>
-              <% tickets.forEach(ticket => { %>
-                <tr>
-                  <td><span class="ticket-id">#<%= ticket.id %></span></td>
-                  <td>
-                    <%= ticket.title %>
-                    <% if (ticket.reporter_department === 'Internal') { %>
-                      <%- include('../partials/badges/badge', { color: 'warning', text: t('tickets:badges.internal'), size: 'sm', cssClass: 'ml-2' }) %>
-                    <% } %>
-                  </td>
-                  <td>
-                    <%- include('../partials/badges/status-badge', { status: ticket.status, withIcon: true }) %>
-                  </td>
-                  <td>
-                    <%- include('../partials/badges/priority-badge', { priority: ticket.priority, withIcon: true }) %>
-                  </td>
-                  <td><%= ticket.reporter_name || t('tickets:table.anonymous') %></td>
-                  <td class="text-sm text-gray-600 max-w-xs truncate">
-                    <% if (ticket.last_comment) { %>
-                      <%= ticket.last_comment.length > 100 ? ticket.last_comment.substring(0, 100) + '...' : ticket.last_comment %>
-                    <% } else { %>
-                      <span class="text-gray-400"><%= t('common:labels.noComments') %></span>
-                    <% } %>
-                  </td>
-                  <td><%= new Date(ticket.created_at).toLocaleDateString(language === 'el' ? 'el-GR' : 'en-US') %></td>
-                  <td>
-                    <a href="/admin/tickets/<%= ticket.id %>" class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> <%= t('common:buttons.view') %></a>
-                  </td>
-                </tr>
-              <% }); %>
-            </tbody>
-          </table>
-        </div>
-      </div>
+      <form method="POST" action="/admin/tickets/bulk-update" id="bulkUpdateForm"
+            data-select-at-least-one-ticket="<%= t('tickets:bulkUpdate.selectAtLeastOneTicket') %>"
+            data-select-at-least-one-field="<%= t('tickets:bulkUpdate.selectAtLeastOneField') %>"
+            data-confirm-update-template="<%= t('tickets:bulkUpdate.confirmUpdate', { count: '__COUNT__' }) %>">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <!-- Preserve current filters -->
+        <input type="hidden" name="status" value="<%= filters.status || '' %>">
+        <input type="hidden" name="priority" value="<%= filters.priority || '' %>">
+        <input type="hidden" name="search" value="<%= filters.search || '' %>">
+        <input type="hidden" name="page" value="<%= filters.page || '1' %>">
 
-      <div class="text-gray-600">
-        <%= t('tickets:stats.showing', { count: tickets.length }) %>
-      </div>
+        <!-- Bulk Update Controls -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="flex flex-wrap gap-2 items-end">
+              <label class="form-label text-sm text-gray-600 mb-0"><%= t('tickets:bulkUpdate.label') %></label>
+              <select name="status" class="form-select form-select-sm">
+                <option value=""><%= t('tickets:bulkUpdate.statusNoChange') %></option>
+                <option value="open"><%= t('tickets:status.open') %></option>
+                <option value="in_progress"><%= t('tickets:status.in_progress') %></option>
+                <option value="closed"><%= t('tickets:status.closed') %></option>
+              </select>
+              <select name="priority" class="form-select form-select-sm">
+                <option value=""><%= t('tickets:bulkUpdate.priorityNoChange') %></option>
+                <option value="unset"><%= t('tickets:priority.unset') %></option>
+                <option value="low"><%= t('tickets:priority.low') %></option>
+                <option value="medium"><%= t('tickets:priority.medium') %></option>
+                <option value="high"><%= t('tickets:priority.high') %></option>
+                <option value="critical"><%= t('tickets:priority.critical') %></option>
+              </select>
+              <select name="assigned_to" class="form-select form-select-sm">
+                <option value=""><%= t('tickets:bulkUpdate.assignmentNoChange') %></option>
+                <option value="__unassign__"><%= t('tickets:bulkUpdate.unassign') %></option>
+                <% users.forEach(u => { %>
+                  <option value="<%= u.id %>"><%= u.username %></option>
+                <% }); %>
+              </select>
+              <button type="submit" class="btn btn-primary btn-sm" id="bulkUpdateBtn" disabled>
+                <%= t('tickets:bulkUpdate.updateSelected') %> (<span id="selectedCount">0</span>)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb-4">
+          <div class="overflow-x-auto">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="width: 40px;">
+                    <input type="checkbox" id="selectAll" class="form-check-input" aria-label="<%= t('tickets:table.select') %>">
+                  </th>
+                  <th><%= t('tickets:table.id') %></th>
+                  <th><%= t('tickets:table.title') %></th>
+                  <th><%= t('tickets:table.status') %></th>
+                  <th><%= t('tickets:table.priority') %></th>
+                  <th><%= t('tickets:table.age') %></th>
+                  <th><%= t('tickets:table.lastComment') %></th>
+                  <th><%= t('tickets:table.reporter') %></th>
+                  <th><%= t('tickets:table.quickAssign') %></th>
+                  <th><%= t('tickets:table.actions') %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% tickets.forEach(ticket => {
+                  const age = calculateTicketAge(ticket.created_at);
+                  const lastComment = lastComments[ticket.id];
+                  const ageText = age.unit === 'new'
+                    ? t('tickets:table.ageNew')
+                    : t('tickets:table.age' + (age.unit === 'days' ? 'Days' : 'Weeks'), { count: age.count });
+                %>
+                  <tr>
+                    <td>
+                      <input type="checkbox" name="ticketIds" value="<%= ticket.id %>" class="form-check-input ticket-checkbox">
+                    </td>
+                    <td><span class="ticket-id">#<%= ticket.id %></span></td>
+                    <td>
+                      <%= ticket.title %>
+                      <% if (ticket.reporter_department === 'Internal') { %>
+                        <%- include('../partials/badges/badge', { color: 'warning', text: t('tickets:badges.internal'), size: 'sm', cssClass: 'ml-2' }) %>
+                      <% } %>
+                    </td>
+                    <td>
+                      <%- include('../partials/badges/status-badge', { status: ticket.status, withIcon: true }) %>
+                    </td>
+                    <td>
+                      <%- include('../partials/badges/priority-badge', { priority: ticket.priority, withIcon: true }) %>
+                    </td>
+                    <td>
+                      <%- include('../partials/badges/badge', { color: age.color, text: ageText, size: 'sm' }) %>
+                    </td>
+                    <td class="text-sm text-gray-600 max-w-xs truncate">
+                      <% if (lastComment) { %>
+                        <div class="truncate" title="<%= lastComment.content %>">
+                          <strong><%= lastComment.username %>:</strong>
+                          <%= lastComment.content.length > 50 ? lastComment.content.substring(0, 50) + '...' : lastComment.content %>
+                        </div>
+                      <% } else { %>
+                        <span class="text-gray-400"><%= t('common:labels.noComments') %></span>
+                      <% } %>
+                    </td>
+                    <td><%= ticket.reporter_name || t('tickets:table.anonymous') %></td>
+                    <td>
+                      <form method="POST" action="/admin/tickets/<%= ticket.id %>/quick-assign" class="quick-assign-form inline">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <input type="hidden" name="status" value="<%= filters.status || '' %>">
+                        <input type="hidden" name="priority" value="<%= filters.priority || '' %>">
+                        <input type="hidden" name="search" value="<%= filters.search || '' %>">
+                        <input type="hidden" name="page" value="<%= filters.page || '1' %>">
+                        <select name="assigned_to" class="form-select form-select-sm quick-assign-select" aria-label="<%= t('tickets:table.quickAssign') %>">
+                          <option value=""><%= t('common:labels.assignedTo') %>: <%= t('tickets:form.unassigned') %></option>
+                          <% users.forEach(u => { %>
+                            <option value="<%= u.id %>" <%= ticket.assigned_to === u.id ? 'selected' : '' %>>
+                              <%= u.username %>
+                            </option>
+                          <% }); %>
+                        </select>
+                      </form>
+                    </td>
+                    <td>
+                      <a href="/admin/tickets/<%= ticket.id %>" class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> <%= t('common:buttons.view') %></a>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <% if (pagination && pagination.totalPages > 1) { %>
+          <% const qs = (extra) => {
+            const params = new URLSearchParams();
+            if (filters.status) params.append('status', filters.status);
+            if (filters.priority) params.append('priority', filters.priority);
+            if (filters.search) params.append('search', filters.search);
+            params.append('page', extra);
+            return '?' + params.toString();
+          }; %>
+          <nav aria-label="<%= t('tickets:pagination.pageInfo', { current: pagination.currentPage, total: pagination.totalPages }) %>" class="flex justify-center items-center gap-2 mt-4">
+            <a href="<%= qs(pagination.currentPage - 1) %>" class="btn btn-sm <%= !pagination.hasPrevPage ? 'btn-secondary pointer-events-none opacity-50' : 'btn-outline-secondary' %>">
+              <%= t('tickets:pagination.previous') %>
+            </a>
+            <span class="text-sm text-gray-600"><%= t('tickets:pagination.pageInfo', { current: pagination.currentPage, total: pagination.totalPages }) %></span>
+            <a href="<%= qs(pagination.currentPage + 1) %>" class="btn btn-sm <%= !pagination.hasNextPage ? 'btn-secondary pointer-events-none opacity-50' : 'btn-outline-secondary' %>">
+              <%= t('tickets:pagination.next') %>
+            </a>
+          </nav>
+          <p class="text-center text-sm text-gray-600 mt-2">
+            <%= t('tickets:pagination.showingOfTotal', { count: tickets.length, total: pagination.totalCount }) %>
+          </p>
+        <% } else { %>
+          <div class="text-gray-600 mt-2">
+            <%= t('tickets:stats.showing', { count: tickets.length }) %>
+          </div>
+        <% } %>
+      </form>
     <% } %>
   </main>
 
   <%- include('../partials/footer') %>
+  <script src="/js/admin-dashboard.js"></script>
 </body>
 </html>
