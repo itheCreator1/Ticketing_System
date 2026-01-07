@@ -17,6 +17,7 @@ const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/users');
+const clientRoutes = require('./routes/client');
 
 const app = express();
 
@@ -82,6 +83,7 @@ app.use('/', publicRoutes);
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/admin/users', userRoutes);
+app.use('/client', clientRoutes);
 
 app.use((req, res) => {
   res.status(404).render('errors/404', { title: '404 - Page Not Found' });

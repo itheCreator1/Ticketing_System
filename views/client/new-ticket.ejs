@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+        crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/custom.css">
+</head>
+<body class="bg-light">
+  <%- include('../partials/header') %>
+
+  <main class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2>Create New Ticket</h2>
+      <a href="/client/dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    <%- include('../partials/flash') %>
+
+    <div class="card shadow-sm">
+      <div class="card-body p-4">
+        <form action="/client/tickets" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+          <div class="mb-3">
+            <label for="title" class="form-label">Issue Title *</label>
+            <input type="text" id="title" name="title" class="form-control" required placeholder="Brief description of the issue">
+          </div>
+
+          <div class="mb-3">
+            <label for="description" class="form-label">Description *</label>
+            <textarea id="description" name="description" rows="6" class="form-control" required placeholder="Please provide as much detail as possible about the issue"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label for="reporter_name" class="form-label">Your Name (optional)</label>
+            <input type="text" id="reporter_name" name="reporter_name" class="form-control" placeholder="John Doe">
+          </div>
+
+          <div class="mb-3">
+            <label for="reporter_department" class="form-label">Department *</label>
+            <select id="reporter_department" name="reporter_department" class="form-select" required>
+              <option value="">Select Department</option>
+              <% Object.values(REPORTER_DEPARTMENT).forEach(dept => { %>
+                <option value="<%= dept %>"><%= dept %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="reporter_desk" class="form-label">Desk *</label>
+            <select id="reporter_desk" name="reporter_desk" class="form-select" required>
+              <option value="">Select Desk</option>
+              <% Object.values(REPORTER_DESK).forEach(desk => { %>
+                <option value="<%= desk %>"><%= desk %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label for="reporter_phone" class="form-label">Phone Number (optional)</label>
+            <input type="tel" id="reporter_phone" name="reporter_phone" class="form-control" placeholder="+1 (555) 123-4567">
+          </div>
+
+          <div class="mb-4">
+            <label for="priority" class="form-label">Priority (optional)</label>
+            <select id="priority" name="priority" class="form-select">
+              <option value="unset">Unset</option>
+              <% Object.values(TICKET_PRIORITY).forEach(prio => { %>
+                <% if (prio !== 'unset') { %>
+                  <option value="<%= prio %>"><%= prio.charAt(0).toUpperCase() + prio.slice(1) %></option>
+                <% } %>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-primary btn-lg">Create Ticket</button>
+            <a href="/client/dashboard" class="btn btn-outline-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+          crossorigin="anonymous"></script>
+</body>
+</html>
