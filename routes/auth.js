@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { validateRequest } = require('../middleware/validation');
 const { AUTH_MESSAGES } = require('../constants/messages');
+const { USER_ROLE } = require('../constants/enums');
 const authService = require('../services/authService');
 const { validateLogin } = require('../validators/authValidators');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
@@ -10,7 +11,11 @@ const { loginLimiter } = require('../middleware/rateLimiter');
 
 router.get('/login', (req, res) => {
   if (req.session.user) {
-    return res.redirect('/admin/dashboard');
+    // Role-based redirect
+    const redirectPath = req.session.user.role === USER_ROLE.DEPARTMENT
+      ? '/client/dashboard'
+      : '/admin/dashboard';
+    return res.redirect(redirectPath);
   }
   res.render('auth/login', { title: 'Admin Login' });
 });
@@ -36,7 +41,12 @@ router.post('/login', loginLimiter, validateLogin, validateRequest, async (req, 
       ipAddress: req.ip
     });
 
-    successRedirect(req, res, AUTH_MESSAGES.LOGIN_SUCCESS, '/admin/dashboard');
+    // Role-based redirect after login
+    const redirectPath = user.role === USER_ROLE.DEPARTMENT
+      ? '/client/dashboard'
+      : '/admin/dashboard';
+
+    successRedirect(req, res, AUTH_MESSAGES.LOGIN_SUCCESS, redirectPath);
   } catch (error) {
     next(error);
   }
@@ -45,7 +55,11 @@ router.post('/login', loginLimiter, validateLogin, validateRequest, async (req, 
 router.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.redirect('/admin/dashboard');
+      // Role-based fallback redirect on error
+      const redirectPath = req.session.user?.role === USER_ROLE.DEPARTMENT
+        ? '/client/dashboard'
+        : '/admin/dashboard';
+      return res.redirect(redirectPath);
     }
     res.clearCookie('connect.sid');
     res.redirect('/auth/login');

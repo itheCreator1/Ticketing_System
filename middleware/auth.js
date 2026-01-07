@@ -43,6 +43,18 @@ function requireAdmin(req, res, next) {
   next();
 }
 
+function requireDepartment(req, res, next) {
+  if (!req.session.user) {
+    return errorRedirect(req, res, AUTH_MESSAGES.UNAUTHORIZED, '/auth/login');
+  }
+
+  if (req.session.user.role !== USER_ROLE.DEPARTMENT) {
+    return errorRedirect(req, res, AUTH_MESSAGES.FORBIDDEN, '/admin/dashboard');
+  }
+
+  next();
+}
+
 function requireSuperAdmin(req, res, next) {
   if (!req.session.user) {
     return errorRedirect(req, res, AUTH_MESSAGES.UNAUTHORIZED, '/auth/login');
@@ -58,5 +70,6 @@ function requireSuperAdmin(req, res, next) {
 module.exports = {
   requireAuth,
   requireAdmin,
+  requireDepartment,
   requireSuperAdmin
 };

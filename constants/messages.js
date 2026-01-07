@@ -15,7 +15,9 @@ const AUTH_MESSAGES = {
 const TICKET_MESSAGES = {
   CREATED: 'Your ticket has been submitted successfully!',
   UPDATED: 'Ticket updated successfully',
-  NOT_FOUND: 'Ticket not found'
+  NOT_FOUND: 'Ticket not found',
+  UNAUTHORIZED_ACCESS: 'You do not have permission to access this ticket',
+  STATUS_CHANGED: 'Ticket status updated successfully'
 };
 
 const COMMENT_MESSAGES = {

@@ -1,7 +1,9 @@
 const TICKET_STATUS = {
   OPEN: 'open',
   IN_PROGRESS: 'in_progress',
-  CLOSED: 'closed'
+  CLOSED: 'closed',
+  WAITING_ON_ADMIN: 'waiting_on_admin',
+  WAITING_ON_DEPARTMENT: 'waiting_on_department'
 };
 
 const TICKET_PRIORITY = {
@@ -14,7 +16,8 @@ const TICKET_PRIORITY = {
 
 const USER_ROLE = {
   ADMIN: 'admin',
-  SUPER_ADMIN: 'super_admin'
+  SUPER_ADMIN: 'super_admin',
+  DEPARTMENT: 'department'
 };
 
 const USER_STATUS = {
@@ -36,7 +39,13 @@ const REPORTER_DESK = {
   MANAGER: 'Manager',
   NURSING_STATION: 'Nursing Station',
   DOCTORS_OFFICE: 'Doctors office',
-  SECRETARY: 'Secretary'
+  SECRETARY: 'Secretary',
+  NOT_SPECIFIED: 'Not Specified'
+};
+
+const COMMENT_VISIBILITY = {
+  PUBLIC: 'public',
+  INTERNAL: 'internal'
 };
 
 module.exports = {
@@ -45,5 +54,6 @@ module.exports = {
   USER_ROLE,
   USER_STATUS,
   REPORTER_DEPARTMENT,
-  REPORTER_DESK
+  REPORTER_DESK,
+  COMMENT_VISIBILITY
 };
