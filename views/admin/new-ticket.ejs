@@ -50,9 +50,9 @@
               <label for="reporter_department" class="form-label">Department *</label>
               <select id="reporter_department" name="reporter_department" class="form-select" required>
                 <option value="">Select Department</option>
-                <% Object.values(REPORTER_DEPARTMENT).forEach(dept => { %>
-                  <option value="<%= dept %>" <%= dept === 'Internal' ? 'selected' : '' %>>
-                    <%= dept %>
+                <% departments.forEach(dept => { %>
+                  <option value="<%= dept.name %>" <%= dept.name === 'Internal' ? 'selected' : '' %>>
+                    <%= dept.name %>
                   </option>
                 <% }) %>
               </select>

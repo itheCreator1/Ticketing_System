@@ -17,7 +17,9 @@ const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const userRoutes = require('./routes/users');
+const departmentRoutes = require('./routes/departments');
 const clientRoutes = require('./routes/client');
+const errorReportingRoutes = require('./routes/errorReporting');
 
 const app = express();
 
@@ -76,6 +78,10 @@ app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   // Generate CSRF token for forms (with overwrite: false to preserve existing tokens)
   res.locals.csrfToken = generateCsrfToken(req, res, { overwrite: false });
+
+  // Add request timing for debugging
+  req.startTime = new Date();
+
   next();
 });
 
@@ -83,7 +89,9 @@ app.use('/', publicRoutes);
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/admin/users', userRoutes);
+app.use('/admin/departments', departmentRoutes);
 app.use('/client', clientRoutes);
+app.use('/api/errors', errorReportingRoutes);
 
 app.use((req, res) => {
   res.status(404).render('errors/404', { title: '404 - Page Not Found' });

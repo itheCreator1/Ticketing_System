@@ -129,3 +129,70 @@
   font-size: 0.9rem;
   color: var(--bs-secondary);
 }
+
+/* Troubleshooting Panel Styles */
+.troubleshooting-panel .card {
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.troubleshooting-panel .card-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.troubleshooting-section {
+  margin-bottom: 1.5rem;
+}
+
+.troubleshooting-section h6 {
+  color: var(--bs-primary);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.troubleshooting-section ul li {
+  margin-bottom: 0.25rem;
+}
+
+.troubleshooting-section .bi-dot {
+  font-size: 0.75rem;
+}
+
+/* Error icon animations */
+.error-icon {
+  animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+/* Enhanced error code styling */
+.error-code {
+  font-size: 5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .error-code {
+    font-size: 3rem;
+  }
+}
+
+/* Search box styling */
+.search-box {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Quick action buttons */
+.btn .bi {
+  font-size: 1rem;
+}

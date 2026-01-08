@@ -4,9 +4,9 @@ const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const { validateUserCreate, validateUserUpdate, validatePasswordReset } = require('../validators/userValidators');
 const { validateRequest } = require('../middleware/validation');
 const userService = require('../services/userService');
+const departmentService = require('../services/departmentService');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
 const { loginLimiter } = require('../middleware/rateLimiter');
-const { REPORTER_DEPARTMENT } = require('../constants/enums');
 const logger = require('../utils/logger');
 
 // GET /admin/users - List all users
@@ -25,12 +25,18 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res, next) => {
 });
 
 // GET /admin/users/new - Show create user form
-router.get('/new', requireAuth, requireSuperAdmin, (req, res) => {
-  res.render('admin/users/create', {
-    title: 'Create User',
-    user: req.session.user,
-    REPORTER_DEPARTMENT
-  });
+router.get('/new', requireAuth, requireSuperAdmin, async (req, res, next) => {
+  try {
+    const departments = await departmentService.getActiveDepartments(false);
+    res.render('admin/users/create', {
+      title: 'Create User',
+      user: req.session.user,
+      departments
+    });
+  } catch (error) {
+    logger.error('Error loading create user form', { error: error.message });
+    next(error);
+  }
 });
 
 // POST /admin/users - Create new user
@@ -67,11 +73,13 @@ router.get('/:id/edit', requireAuth, requireSuperAdmin, async (req, res, next) =
       return next(error);
     }
 
+    const departments = await departmentService.getActiveDepartments(false);
+
     res.render('admin/users/edit', {
       title: 'Edit User',
       targetUser,
       user: req.session.user,
-      REPORTER_DEPARTMENT
+      departments
     });
   } catch (error) {
     logger.error('Error loading user', { error: error.message, stack: error.stack });

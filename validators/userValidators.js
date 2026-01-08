@@ -1,7 +1,8 @@
 const { body, param } = require('express-validator');
 const { VALIDATION_MESSAGES } = require('../constants/validation');
-const { USER_ROLE, USER_STATUS, REPORTER_DEPARTMENT } = require('../constants/enums');
+const { USER_ROLE, USER_STATUS } = require('../constants/enums');
 const User = require('../models/User');
+const Department = require('../models/Department');
 const { passwordValidation } = require('./shared/passwordRules');
 
 const validateUserCreate = [
@@ -39,28 +40,30 @@ const validateUserCreate = [
     .withMessage(VALIDATION_MESSAGES.ROLE_INVALID),
 
   body('department')
-    .custom((value, { req }) => {
+    .custom(async (value, { req }) => {
       const role = req.body.role;
       const logger = require('../utils/logger');
 
       // Trim the value for validation
       const trimmedValue = value ? value.trim() : '';
 
-      logger.debug('Department validation', {
-        role,
-        department: trimmedValue,
-        originalValue: value,
-        valueType: typeof value,
-        isEmpty: !trimmedValue,
-        validDepartments: Object.values(REPORTER_DEPARTMENT)
-      });
-
       // If role is department, department must be provided and valid
       if (role === USER_ROLE.DEPARTMENT) {
         if (!trimmedValue) {
           throw new Error('Department is required for department role users');
         }
-        if (!Object.values(REPORTER_DEPARTMENT).includes(trimmedValue)) {
+
+        // Fetch active departments from database (exclude system departments)
+        const validDepartments = await Department.findAll(false);
+        const validNames = validDepartments.map(d => d.name);
+
+        logger.debug('Department validation', {
+          role,
+          department: trimmedValue,
+          validDepartments: validNames
+        });
+
+        if (!validNames.includes(trimmedValue)) {
           throw new Error('Invalid department selected');
         }
       }
@@ -105,7 +108,7 @@ const validateUserUpdate = [
   body('department')
     .optional({ nullable: true, checkFalsy: true })
     .trim()
-    .custom((value, { req }) => {
+    .custom(async (value, { req }) => {
       const role = req.body.role;
 
       // Only validate if role is being updated
@@ -115,7 +118,12 @@ const validateUserUpdate = [
           if (!value) {
             throw new Error('Department is required for department role users');
           }
-          if (!Object.values(REPORTER_DEPARTMENT).includes(value)) {
+
+          // Fetch active departments from database (exclude system departments)
+          const validDepartments = await Department.findAll(false);
+          const validNames = validDepartments.map(d => d.name);
+
+          if (!validNames.includes(value)) {
             throw new Error('Invalid department selected');
           }
         }
@@ -128,7 +136,11 @@ const validateUserUpdate = [
 
       // If role is not being updated, just validate department format if provided
       if (role === undefined && value) {
-        if (!Object.values(REPORTER_DEPARTMENT).includes(value)) {
+        // Fetch active departments from database (exclude system departments)
+        const validDepartments = await Department.findAll(false);
+        const validNames = validDepartments.map(d => d.name);
+
+        if (!validNames.includes(value)) {
           throw new Error('Invalid department selected');
         }
       }

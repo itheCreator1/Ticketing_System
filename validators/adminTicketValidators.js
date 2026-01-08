@@ -1,6 +1,7 @@
 const { body } = require('express-validator');
-const { TICKET_PRIORITY, TICKET_STATUS, REPORTER_DESK, REPORTER_DEPARTMENT } = require('../constants/enums');
+const { TICKET_PRIORITY, TICKET_STATUS, REPORTER_DESK } = require('../constants/enums');
 const { VALIDATION_MESSAGES, MAX_LENGTHS } = require('../constants/validation');
+const Department = require('../models/Department');
 
 /**
  * Validator for admin ticket creation
@@ -22,7 +23,16 @@ const validateAdminTicketCreation = [
   body('reporter_department')
     .trim()
     .notEmpty().withMessage(VALIDATION_MESSAGES.DEPARTMENT_REQUIRED)
-    .isIn(Object.values(REPORTER_DEPARTMENT)).withMessage(VALIDATION_MESSAGES.DEPARTMENT_INVALID),
+    .custom(async (value) => {
+      // Fetch all departments including system ('Internal')
+      const validDepartments = await Department.findAll(true);
+      const validNames = validDepartments.map(d => d.name);
+
+      if (!validNames.includes(value)) {
+        throw new Error(VALIDATION_MESSAGES.DEPARTMENT_INVALID);
+      }
+      return true;
+    }),
 
   body('reporter_desk')
     .trim()

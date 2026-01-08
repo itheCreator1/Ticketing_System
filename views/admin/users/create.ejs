@@ -58,8 +58,8 @@
             <label for="department" class="form-label">Department *</label>
             <select id="department" name="department" class="form-select">
               <option value="">Select Department</option>
-              <% Object.values(REPORTER_DEPARTMENT).forEach(dept => { %>
-                <option value="<%= dept %>"><%= dept %></option>
+              <% departments.forEach(dept => { %>
+                <option value="<%= dept.name %>"><%= dept.name %></option>
               <% }) %>
             </select>
             <small class="form-text text-muted">Required for department role users</small>

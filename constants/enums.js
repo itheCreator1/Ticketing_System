@@ -26,6 +26,10 @@ const USER_STATUS = {
   DELETED: 'deleted'
 };
 
+/**
+ * @deprecated Departments are now database-driven. Use Department.findAll() instead.
+ * This constant is kept for backward compatibility only.
+ */
 const REPORTER_DEPARTMENT = {
   IT_SUPPORT: 'IT Support',
   GENERAL_SUPPORT: 'General Support',

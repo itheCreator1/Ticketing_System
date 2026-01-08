@@ -6,11 +6,12 @@ const { validateRequest } = require('../middleware/validation');
 const { TICKET_MESSAGES, COMMENT_MESSAGES } = require('../constants/messages');
 const ticketService = require('../services/ticketService');
 const adminTicketService = require('../services/adminTicketService');
+const departmentService = require('../services/departmentService');
 const { validateTicketUpdate, validateTicketId } = require('../validators/ticketValidators');
 const { validateAdminTicketCreation } = require('../validators/adminTicketValidators');
 const { validateCommentCreation } = require('../validators/commentValidators');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
-const { REPORTER_DESK, REPORTER_DEPARTMENT } = require('../constants/enums');
+const { REPORTER_DESK } = require('../constants/enums');
 const logger = require('../utils/logger');
 
 router.use(requireAuth);
@@ -30,12 +31,18 @@ router.get('/dashboard', async (req, res, next) => {
 
 // GET /admin/tickets/new - Display internal ticket creation form
 // IMPORTANT: Must come before /tickets/:id to avoid matching "new" as an id
-router.get('/tickets/new', requireAdmin, (req, res) => {
-  res.render('admin/new-ticket', {
-    title: 'Create Admin Ticket',
-    REPORTER_DESK,
-    REPORTER_DEPARTMENT
-  });
+router.get('/tickets/new', requireAdmin, async (req, res, next) => {
+  try {
+    const departments = await departmentService.getActiveDepartments(true);
+    res.render('admin/new-ticket', {
+      title: 'Create Admin Ticket',
+      REPORTER_DESK,
+      departments
+    });
+  } catch (error) {
+    logger.error('Error loading ticket creation form', { error: error.message });
+    next(error);
+  }
 });
 
 router.get('/tickets/:id', validateTicketId, validateRequest, async (req, res, next) => {
