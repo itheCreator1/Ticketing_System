@@ -10,7 +10,7 @@ const {
 } = require('../validators/clientValidators');
 const clientTicketService = require('../services/clientTicketService');
 const { TICKET_MESSAGES, COMMENT_MESSAGES } = require('../constants/messages');
-const { TICKET_STATUS, TICKET_PRIORITY, REPORTER_DESK } = require('../constants/enums');
+const { TICKET_STATUS, TICKET_PRIORITY } = require('../constants/enums');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
 const logger = require('../utils/logger');
 
@@ -54,8 +54,7 @@ router.get('/dashboard', async (req, res, next) => {
  */
 router.get('/tickets/new', (req, res) => {
   res.render('client/new-ticket', {
-    title: 'Create New Ticket',
-    REPORTER_DESK
+    title: 'Create New Ticket'
   });
 });
 

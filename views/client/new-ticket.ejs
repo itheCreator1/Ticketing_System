@@ -36,16 +36,6 @@
             <textarea id="description" name="description" rows="6" class="form-control" required placeholder="Please provide as much detail as possible about the issue"></textarea>
           </div>
 
-          <div class="mb-3">
-            <label for="reporter_desk" class="form-label">Desk *</label>
-            <select id="reporter_desk" name="reporter_desk" class="form-select" required>
-              <option value="">Select Desk</option>
-              <% Object.values(REPORTER_DESK).forEach(desk => { %>
-                <option value="<%= desk %>"><%= desk %></option>
-              <% }) %>
-            </select>
-          </div>
-
           <div class="mb-4">
             <label for="reporter_phone" class="form-label">Phone Number (optional)</label>
             <input type="tel" id="reporter_phone" name="reporter_phone" class="form-control" placeholder="+1 (555) 123-4567">

@@ -11,7 +11,6 @@ const { validateTicketUpdate, validateTicketId } = require('../validators/ticket
 const { validateAdminTicketCreation } = require('../validators/adminTicketValidators');
 const { validateCommentCreation } = require('../validators/commentValidators');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
-const { REPORTER_DESK } = require('../constants/enums');
 const logger = require('../utils/logger');
 
 router.use(requireAuth);
@@ -36,7 +35,6 @@ router.get('/tickets/new', requireAdmin, async (req, res, next) => {
     const departments = await departmentService.getActiveDepartments(true);
     res.render('admin/new-ticket', {
       title: 'Create Admin Ticket',
-      REPORTER_DESK,
       departments
     });
   } catch (error) {

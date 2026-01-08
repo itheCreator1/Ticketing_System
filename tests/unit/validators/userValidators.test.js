@@ -13,10 +13,13 @@ const {
   validatePasswordReset
 } = require('../../../validators/userValidators');
 const User = require('../../../models/User');
+const Department = require('../../../models/Department');
 const { createMockRequest } = require('../../helpers/mocks');
 
 // Mock User model for async validators
 jest.mock('../../../models/User');
+// Mock Department model for dynamic department validation
+jest.mock('../../../models/Department');
 
 /**
  * Helper function to run validators and collect errors
@@ -31,6 +34,15 @@ async function runValidators(validators, req) {
 describe('User Validators', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Mock Department.findAll() to return list of valid departments
+    Department.findAll.mockResolvedValue([
+      { id: 1, name: 'IT Support', active: true, is_system: false },
+      { id: 2, name: 'General Support', active: true, is_system: false },
+      { id: 3, name: 'Human Resources', active: true, is_system: false },
+      { id: 4, name: 'Finance', active: true, is_system: false },
+      { id: 5, name: 'Facilities', active: true, is_system: false }
+    ]);
   });
 
   describe('validateUserCreate', () => {
