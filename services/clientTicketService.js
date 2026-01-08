@@ -17,7 +17,6 @@ class ClientTicketService {
     try {
       logger.info('clientTicketService.createTicket: Creating ticket for department user', {
         userId,
-        desk: ticketData.reporter_desk,
         titleLength: ticketData.title?.length
       });
 
@@ -38,7 +37,6 @@ class ClientTicketService {
         title: ticketData.title,
         description: ticketData.description,
         reporter_department: user.department,  // AUTO-POPULATED from user
-        reporter_desk: ticketData.reporter_desk,
         reporter_phone: ticketData.reporter_phone,
         reporter_id: userId,  // Ownership enforcement
         priority: 'unset',  // FORCED - department users cannot set priority

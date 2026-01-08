@@ -21,7 +21,6 @@ class AdminTicketService {
    * @param {string} ticketData.title - Ticket title
    * @param {string} ticketData.description - Ticket description
    * @param {string} ticketData.reporter_department - Department (admin selectable)
-   * @param {string} ticketData.reporter_desk - Desk location
    * @param {string} [ticketData.reporter_phone] - Optional phone number
    * @param {string} [ticketData.priority='unset'] - Optional priority
    * @param {string} [ticketData.status='open'] - Optional status
@@ -35,7 +34,6 @@ class AdminTicketService {
       logger.info('adminTicketService.createAdminTicket: Creating admin ticket', {
         adminUserId,
         department: ticketData.reporter_department,
-        desk: ticketData.reporter_desk,
         priority: ticketData.priority,
         titleLength: ticketData.title?.length
       });
@@ -61,7 +59,6 @@ class AdminTicketService {
         title: ticketData.title,
         description: ticketData.description,
         reporter_department: ticketData.reporter_department,  // From form input
-        reporter_desk: ticketData.reporter_desk,
         reporter_phone: ticketData.reporter_phone || null,
         reporter_name: admin.username,  // Auto-populate with admin username
         reporter_id: adminUserId,  // Link to creating admin
