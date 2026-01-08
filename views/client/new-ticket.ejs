@@ -37,21 +37,6 @@
           </div>
 
           <div class="mb-3">
-            <label for="reporter_name" class="form-label">Your Name (optional)</label>
-            <input type="text" id="reporter_name" name="reporter_name" class="form-control" placeholder="John Doe">
-          </div>
-
-          <div class="mb-3">
-            <label for="reporter_department" class="form-label">Department *</label>
-            <select id="reporter_department" name="reporter_department" class="form-select" required>
-              <option value="">Select Department</option>
-              <% Object.values(REPORTER_DEPARTMENT).forEach(dept => { %>
-                <option value="<%= dept %>"><%= dept %></option>
-              <% }) %>
-            </select>
-          </div>
-
-          <div class="mb-3">
             <label for="reporter_desk" class="form-label">Desk *</label>
             <select id="reporter_desk" name="reporter_desk" class="form-select" required>
               <option value="">Select Desk</option>
@@ -61,21 +46,9 @@
             </select>
           </div>
 
-          <div class="mb-3">
+          <div class="mb-4">
             <label for="reporter_phone" class="form-label">Phone Number (optional)</label>
             <input type="tel" id="reporter_phone" name="reporter_phone" class="form-control" placeholder="+1 (555) 123-4567">
-          </div>
-
-          <div class="mb-4">
-            <label for="priority" class="form-label">Priority (optional)</label>
-            <select id="priority" name="priority" class="form-select">
-              <option value="unset">Unset</option>
-              <% Object.values(TICKET_PRIORITY).forEach(prio => { %>
-                <% if (prio !== 'unset') { %>
-                  <option value="<%= prio %>"><%= prio.charAt(0).toUpperCase() + prio.slice(1) %></option>
-                <% } %>
-              <% }) %>
-            </select>
           </div>
 
           <div class="d-grid gap-2">

@@ -6,6 +6,7 @@ const { validateRequest } = require('../middleware/validation');
 const userService = require('../services/userService');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
 const { loginLimiter } = require('../middleware/rateLimiter');
+const { REPORTER_DEPARTMENT } = require('../constants/enums');
 const logger = require('../utils/logger');
 
 // GET /admin/users - List all users
@@ -27,7 +28,8 @@ router.get('/', requireAuth, requireSuperAdmin, async (req, res, next) => {
 router.get('/new', requireAuth, requireSuperAdmin, (req, res) => {
   res.render('admin/users/create', {
     title: 'Create User',
-    user: req.session.user
+    user: req.session.user,
+    REPORTER_DEPARTMENT
   });
 });
 
@@ -39,8 +41,8 @@ router.post('/',
   validateRequest,
   async (req, res, next) => {
     try {
-      const { username, email, password, role } = req.body;
-      await userService.createUser({ username, email, password, role });
+      const { username, email, password, role, department } = req.body;
+      await userService.createUser({ username, email, password, role, department });
 
       return successRedirect(req, res, 'User created successfully', '/admin/users');
     } catch (error) {
@@ -65,7 +67,8 @@ router.get('/:id/edit', requireAuth, requireSuperAdmin, async (req, res, next) =
     res.render('admin/users/edit', {
       title: 'Edit User',
       targetUser,
-      user: req.session.user
+      user: req.session.user,
+      REPORTER_DEPARTMENT
     });
   } catch (error) {
     logger.error('Error loading user', { error: error.message, stack: error.stack });
@@ -82,13 +85,14 @@ router.post('/:id',
   async (req, res, next) => {
     try {
       const userId = parseInt(req.params.id);
-      const { username, email, role, status } = req.body;
+      const { username, email, role, status, department } = req.body;
       const updates = {};
 
       if (username) updates.username = username;
       if (email) updates.email = email;
       if (role) updates.role = role;
       if (status) updates.status = status;
+      if (department !== undefined) updates.department = department || null;
 
       await userService.updateUser(
         req.session.user.id,

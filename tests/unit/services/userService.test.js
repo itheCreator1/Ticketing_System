@@ -140,6 +140,45 @@ describe('UserService', () => {
       expect(User.create).toHaveBeenCalledWith(userData);
     });
 
+    it('should create department user with department field', async () => {
+      // Arrange
+      const userData = createUserData({ role: 'department', department: 'IT Support' });
+      const mockCreatedUser = { id: 10, ...userData };
+      User.create.mockResolvedValue(mockCreatedUser);
+
+      // Act
+      const result = await userService.createUser(userData);
+
+      // Assert
+      expect(result).toEqual(mockCreatedUser);
+      expect(User.create).toHaveBeenCalledWith(userData);
+    });
+
+    it('should throw error when creating department user without department', async () => {
+      // Arrange
+      // Manually create userData to bypass factory's auto-add logic
+      const userData = {
+        username: 'testuser',
+        email: 'test@example.com',
+        password: 'ValidPass123!',
+        role: 'department'
+        // Deliberately omit department field
+      };
+
+      // Act & Assert
+      await expect(userService.createUser(userData)).rejects.toThrow('Department is required for department role users');
+      expect(User.create).not.toHaveBeenCalled();
+    });
+
+    it('should throw error when non-department user has department set', async () => {
+      // Arrange
+      const userData = createUserData({ role: 'admin', department: 'IT Support' });
+
+      // Act & Assert
+      await expect(userService.createUser(userData)).rejects.toThrow('Department can only be set for department role users');
+      expect(User.create).not.toHaveBeenCalled();
+    });
+
     it('should propagate database errors', async () => {
       // Arrange
       const userData = createUserData();
@@ -449,6 +488,52 @@ describe('UserService', () => {
         details: { changes: updates },
         ipAddress: '10.0.0.5'
       });
+    });
+
+    it('should throw error when changing to department role without department', async () => {
+      // Arrange
+      const mockUser = { id: 5, username: 'user5', role: 'admin', status: 'active', department: null };
+      User.findById.mockResolvedValue(mockUser);
+
+      // Act & Assert
+      await expect(
+        userService.updateUser(1, 5, { role: 'department' }, '127.0.0.1')
+      ).rejects.toThrow('Department is required for department role users');
+      expect(User.update).not.toHaveBeenCalled();
+    });
+
+    it('should allow changing to department role with department provided', async () => {
+      // Arrange
+      const mockUser = { id: 5, username: 'user5', role: 'admin', status: 'active', department: null };
+      const mockUpdatedUser = { ...mockUser, role: 'department', department: 'IT Support' };
+
+      User.findById.mockResolvedValue(mockUser);
+      User.update.mockResolvedValue(mockUpdatedUser);
+      AuditLog.create.mockResolvedValue({});
+
+      // Act
+      const result = await userService.updateUser(1, 5, { role: 'department', department: 'IT Support' }, '127.0.0.1');
+
+      // Assert
+      expect(result.role).toBe('department');
+      expect(result.department).toBe('IT Support');
+      expect(User.update).toHaveBeenCalled();
+    });
+
+    it('should auto-clear department when changing from department to admin role', async () => {
+      // Arrange
+      const mockUser = { id: 5, username: 'user5', role: 'department', status: 'active', department: 'IT Support' };
+      const mockUpdatedUser = { ...mockUser, role: 'admin', department: null };
+
+      User.findById.mockResolvedValue(mockUser);
+      User.update.mockResolvedValue(mockUpdatedUser);
+      AuditLog.create.mockResolvedValue({});
+
+      // Act
+      const result = await userService.updateUser(1, 5, { role: 'admin' }, '127.0.0.1');
+
+      // Assert
+      expect(User.update).toHaveBeenCalledWith(5, { role: 'admin', department: null });
     });
   });
 

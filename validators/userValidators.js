@@ -1,6 +1,6 @@
 const { body, param } = require('express-validator');
 const { VALIDATION_MESSAGES } = require('../constants/validation');
-const { USER_ROLE, USER_STATUS } = require('../constants/enums');
+const { USER_ROLE, USER_STATUS, REPORTER_DEPARTMENT } = require('../constants/enums');
 const User = require('../models/User');
 const { passwordValidation } = require('./shared/passwordRules');
 
@@ -36,7 +36,13 @@ const validateUserCreate = [
 
   body('role')
     .isIn([USER_ROLE.ADMIN, USER_ROLE.SUPER_ADMIN, USER_ROLE.DEPARTMENT])
-    .withMessage(VALIDATION_MESSAGES.ROLE_INVALID)
+    .withMessage(VALIDATION_MESSAGES.ROLE_INVALID),
+
+  body('department')
+    .optional({ nullable: true, checkFalsy: true })
+    .trim()
+    .isIn(Object.values(REPORTER_DEPARTMENT))
+    .withMessage('Invalid department selected')
 ];
 
 const validateUserUpdate = [
@@ -65,7 +71,13 @@ const validateUserUpdate = [
   body('status')
     .optional()
     .isIn([USER_STATUS.ACTIVE, USER_STATUS.INACTIVE])
-    .withMessage('Invalid status')
+    .withMessage('Invalid status'),
+
+  body('department')
+    .optional({ nullable: true, checkFalsy: true })
+    .trim()
+    .isIn(Object.values(REPORTER_DEPARTMENT))
+    .withMessage('Invalid department selected')
 ];
 
 const validatePasswordReset = [

@@ -1,5 +1,6 @@
 const Ticket = require('../models/Ticket');
 const Comment = require('../models/Comment');
+const User = require('../models/User');
 const logger = require('../utils/logger');
 
 /**
@@ -16,16 +17,32 @@ class ClientTicketService {
     try {
       logger.info('clientTicketService.createTicket: Creating ticket for department user', {
         userId,
-        department: ticketData.reporter_department,
         desk: ticketData.reporter_desk,
         titleLength: ticketData.title?.length
       });
 
-      // Force reporter_id to current user (ownership enforcement)
+      // CRITICAL: Fetch user to get their department
+      const user = await User.findById(userId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      // CRITICAL: Department users MUST have a department set
+      if (!user.department) {
+        throw new Error('Department not set for user. Please contact an administrator.');
+      }
+
+      // Auto-populate department from user profile
+      // Force priority to 'unset' (department users cannot set priority)
       const ticket = await Ticket.create({
-        ...ticketData,
-        reporter_id: userId,
-        status: 'open' // Department-created tickets always start as 'open'
+        title: ticketData.title,
+        description: ticketData.description,
+        reporter_department: user.department,  // AUTO-POPULATED from user
+        reporter_desk: ticketData.reporter_desk,
+        reporter_phone: ticketData.reporter_phone,
+        reporter_id: userId,  // Ownership enforcement
+        priority: 'unset',  // FORCED - department users cannot set priority
+        status: 'open'  // Department-created tickets always start as 'open'
       });
 
       const duration = Date.now() - startTime;
@@ -33,7 +50,7 @@ class ClientTicketService {
       logger.info('clientTicketService.createTicket: Ticket created successfully', {
         ticketId: ticket.id,
         userId,
-        department: ticketData.reporter_department,
+        department: user.department,  // Log actual department used
         duration
       });
 
@@ -42,7 +59,6 @@ class ClientTicketService {
       const duration = Date.now() - startTime;
       logger.error('clientTicketService.createTicket: Failed to create ticket', {
         userId,
-        department: ticketData.reporter_department,
         error: error.message,
         stack: error.stack,
         duration

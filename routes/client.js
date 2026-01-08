@@ -10,7 +10,7 @@ const {
 } = require('../validators/clientValidators');
 const clientTicketService = require('../services/clientTicketService');
 const { TICKET_MESSAGES, COMMENT_MESSAGES } = require('../constants/messages');
-const { TICKET_STATUS, TICKET_PRIORITY, REPORTER_DEPARTMENT, REPORTER_DESK } = require('../constants/enums');
+const { TICKET_STATUS, TICKET_PRIORITY, REPORTER_DESK } = require('../constants/enums');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
 const logger = require('../utils/logger');
 
@@ -55,9 +55,7 @@ router.get('/dashboard', async (req, res, next) => {
 router.get('/tickets/new', (req, res) => {
   res.render('client/new-ticket', {
     title: 'Create New Ticket',
-    REPORTER_DEPARTMENT,
-    REPORTER_DESK,
-    TICKET_PRIORITY
+    REPORTER_DESK
   });
 });
 
@@ -70,11 +68,8 @@ router.post('/tickets', validateClientTicketCreation, validateRequest, async (re
     const ticketData = {
       title: req.body.title,
       description: req.body.description,
-      reporter_name: req.body.reporter_name,
-      reporter_department: req.body.reporter_department,
       reporter_desk: req.body.reporter_desk,
-      reporter_phone: req.body.reporter_phone,
-      priority: req.body.priority || 'unset'
+      reporter_phone: req.body.reporter_phone
     };
 
     const ticket = await clientTicketService.createTicket(req.session.user.id, ticketData);
@@ -82,7 +77,7 @@ router.post('/tickets', validateClientTicketCreation, validateRequest, async (re
     logger.info('Department user created ticket', {
       ticketId: ticket.id,
       userId: req.session.user.id,
-      department: ticketData.reporter_department
+      department: ticket.reporter_department
     });
 
     successRedirect(req, res, TICKET_MESSAGES.CREATED, `/client/tickets/${ticket.id}`);

@@ -22,6 +22,15 @@ module.exports = {
     status: 'active'
   },
 
+  validDepartmentUser: {
+    username: 'testdeptuser',
+    email: 'deptuser@test.com',
+    password: 'DeptUser123!',
+    role: 'department',
+    status: 'active',
+    department: 'IT Support'
+  },
+
   inactiveUser: {
     username: 'inactiveuser',
     email: 'inactive@test.com',

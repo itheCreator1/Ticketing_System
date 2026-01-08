@@ -35,6 +35,7 @@ describe('User Model', () => {
         email: 'test@example.com',
         role: 'admin',
         status: 'active',
+        department: null,
         created_at: new Date()
       };
       pool.query.mockResolvedValue({ rows: [mockUser] });
@@ -45,7 +46,7 @@ describe('User Model', () => {
       // Assert
       expect(result).toEqual(mockUser);
       expect(pool.query).toHaveBeenCalledWith(
-        expect.stringContaining('SELECT id, username, email, role, status, created_at'),
+        expect.stringContaining('SELECT id, username, email, role, status, department, created_at'),
         [1]
       );
       expect(pool.query).toHaveBeenCalledWith(
@@ -194,7 +195,8 @@ describe('User Model', () => {
         id: 1,
         username: userData.username,
         email: userData.email,
-        role: 'admin'
+        role: 'admin',
+        department: null
       };
 
       bcrypt.hash.mockResolvedValue(hashedPassword);
@@ -207,7 +209,7 @@ describe('User Model', () => {
       expect(bcrypt.hash).toHaveBeenCalledWith(userData.password, 10);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO users'),
-        [userData.username, userData.email, hashedPassword, 'admin']
+        [userData.username, userData.email, hashedPassword, 'admin', null]
       );
       expect(result).toEqual(mockCreatedUser);
     });
@@ -242,6 +244,38 @@ describe('User Model', () => {
         expect.any(String),
         expect.arrayContaining(['super_admin'])
       );
+    });
+
+    it('should create department user with department field', async () => {
+      // Arrange
+      const userData = {
+        username: 'deptuser',
+        email: 'dept@example.com',
+        password: 'Pass123!',
+        role: 'department',
+        department: 'IT Support'
+      };
+      const hashedPassword = 'hashed_password';
+      const mockCreatedUser = {
+        id: 1,
+        username: userData.username,
+        email: userData.email,
+        role: 'department',
+        department: 'IT Support'
+      };
+
+      bcrypt.hash.mockResolvedValue(hashedPassword);
+      pool.query.mockResolvedValue({ rows: [mockCreatedUser] });
+
+      // Act
+      const result = await User.create(userData);
+
+      // Assert
+      expect(pool.query).toHaveBeenCalledWith(
+        expect.stringContaining('INSERT INTO users'),
+        [userData.username, userData.email, hashedPassword, 'department', 'IT Support']
+      );
+      expect(result.department).toBe('IT Support');
     });
 
     it('should throw error on duplicate username', async () => {
@@ -365,6 +399,38 @@ describe('User Model', () => {
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('deleted_at = CURRENT_TIMESTAMP'),
         expect.any(Array)
+      );
+    });
+
+    it('should update department when provided', async () => {
+      // Arrange
+      const mockUpdatedUser = { id: 1, department: 'Finance' };
+      pool.query.mockResolvedValue({ rows: [mockUpdatedUser] });
+
+      // Act
+      const result = await User.update(1, { department: 'Finance' });
+
+      // Assert
+      expect(result).toEqual(mockUpdatedUser);
+      expect(pool.query).toHaveBeenCalledWith(
+        expect.stringContaining('department = $1'),
+        expect.arrayContaining(['Finance', 1])
+      );
+    });
+
+    it('should set department to null when provided', async () => {
+      // Arrange
+      const mockUpdatedUser = { id: 1, department: null };
+      pool.query.mockResolvedValue({ rows: [mockUpdatedUser] });
+
+      // Act
+      const result = await User.update(1, { department: null });
+
+      // Assert
+      expect(result).toEqual(mockUpdatedUser);
+      expect(pool.query).toHaveBeenCalledWith(
+        expect.stringContaining('department = $1'),
+        expect.arrayContaining([null, 1])
       );
     });
 

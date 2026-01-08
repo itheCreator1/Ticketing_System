@@ -27,7 +27,7 @@ function generateUniqueUsername() {
  * @returns {Object} User data object
  */
 function createUserData(overrides = {}) {
-  return {
+  const baseData = {
     username: generateUniqueUsername(),
     email: generateUniqueEmail(),
     password: 'ValidPass123!',
@@ -35,6 +35,19 @@ function createUserData(overrides = {}) {
     status: 'active',
     ...overrides
   };
+
+  // Auto-add department for department role users if not explicitly set
+  if (baseData.role === 'department' && !baseData.department) {
+    const departments = ['IT Support', 'General Support', 'Human Resources', 'Finance', 'Facilities'];
+    baseData.department = departments[Math.floor(Math.random() * departments.length)];
+  }
+
+  // Ensure non-department roles don't have department set
+  if (baseData.role !== 'department' && baseData.department === undefined) {
+    baseData.department = null;
+  }
+
+  return baseData;
 }
 
 /**
@@ -49,11 +62,10 @@ function createTicketData(overrides = {}) {
   return {
     title: `Test Ticket ${Date.now()}`,
     description: 'This is a test ticket description with enough detail to be meaningful.',
-    reporter_name: 'Test Reporter',
     reporter_department: departments[Math.floor(Math.random() * departments.length)],
     reporter_desk: desks[Math.floor(Math.random() * desks.length)],
     reporter_phone: '+1234567890',
-    priority: 'medium',
+    priority: 'unset',  // Default to 'unset' (department users cannot set priority)
     status: 'open',
     ...overrides
   };

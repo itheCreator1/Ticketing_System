@@ -8,7 +8,7 @@ class User {
     try {
       logger.debug('User.findById: Starting query', { userId: id });
       const result = await pool.query(
-        'SELECT id, username, email, role, status, created_at FROM users WHERE id = $1',
+        'SELECT id, username, email, role, status, department, created_at FROM users WHERE id = $1',
         [id]
       );
       const duration = Date.now() - startTime;
@@ -35,7 +35,7 @@ class User {
     try {
       logger.debug('User.findByUsername: Starting query', { username });
       const result = await pool.query(
-        'SELECT id, username, email, role, status, login_attempts, created_at, updated_at FROM users WHERE username = $1',
+        'SELECT id, username, email, role, status, department, login_attempts, created_at, updated_at FROM users WHERE username = $1',
         [username]
       );
       const duration = Date.now() - startTime;
@@ -91,7 +91,7 @@ class User {
     try {
       logger.debug('User.findByEmail: Starting query', { email });
       const result = await pool.query(
-        'SELECT id, username, email FROM users WHERE email = $1',
+        'SELECT id, username, email, role, department FROM users WHERE email = $1',
         [email]
       );
       const duration = Date.now() - startTime;
@@ -113,14 +113,14 @@ class User {
     }
   }
 
-  static async create({ username, email, password, role = 'admin' }) {
+  static async create({ username, email, password, role = 'admin', department = null }) {
     const startTime = Date.now();
     try {
-      logger.debug('User.create: Starting user creation', { username, email, role });
+      logger.debug('User.create: Starting user creation', { username, email, role, department });
       const password_hash = await bcrypt.hash(password, 10);
       const result = await pool.query(
-        'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id, username, email, role',
-        [username, email, password_hash, role]
+        'INSERT INTO users (username, email, password_hash, role, department) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, role, department',
+        [username, email, password_hash, role, department]
       );
       const duration = Date.now() - startTime;
 
@@ -148,7 +148,7 @@ class User {
     try {
       logger.debug('User.findAll: Starting query');
       const result = await pool.query(
-        'SELECT id, username, email, role, status, created_at FROM users ORDER BY created_at DESC'
+        'SELECT id, username, email, role, status, department, created_at FROM users ORDER BY created_at DESC'
       );
       const duration = Date.now() - startTime;
 
@@ -169,13 +169,13 @@ class User {
   }
 
   // Update user fields (excluding password)
-  static async update(id, { username, email, role, status }) {
+  static async update(id, { username, email, role, status, department }) {
     const startTime = Date.now();
     const fields = [];
     const values = [];
     let paramCount = 1;
 
-    const updates = { username, email, role, status };
+    const updates = { username, email, role, status, department };
     const changedFields = Object.keys(updates).filter(key => updates[key] !== undefined);
 
     try {
@@ -200,6 +200,10 @@ class User {
           fields.push(`deleted_at = CURRENT_TIMESTAMP`);
         }
       }
+      if (department !== undefined) {
+        fields.push(`department = $${paramCount++}`);
+        values.push(department);
+      }
 
       fields.push(`updated_at = CURRENT_TIMESTAMP`);
       values.push(id);
@@ -208,7 +212,7 @@ class User {
         UPDATE users
         SET ${fields.join(', ')}
         WHERE id = $${paramCount}
-        RETURNING id, username, email, role, status, created_at, updated_at
+        RETURNING id, username, email, role, status, department, created_at, updated_at
       `;
 
       const result = await pool.query(query, values);
@@ -376,7 +380,7 @@ class User {
     try {
       logger.debug('User.findAllActive: Starting query');
       const result = await pool.query(
-        "SELECT id, username, email, role, status, created_at, last_login_at FROM users WHERE status != 'deleted' ORDER BY created_at DESC"
+        "SELECT id, username, email, role, status, department, created_at, last_login_at FROM users WHERE status != 'deleted' ORDER BY created_at DESC"
       );
       const duration = Date.now() - startTime;
 

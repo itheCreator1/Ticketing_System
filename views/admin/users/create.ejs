@@ -21,7 +21,7 @@
 
     <div class="card shadow-sm" style="max-width: 600px;">
       <div class="card-body p-4">
-        <form action="/admin/users" method="POST">
+        <form action="/admin/users" method="POST" id="createUserForm">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
           <div class="mb-3">
@@ -54,6 +54,17 @@
             <small class="form-text text-muted">Department users can submit and manage their own tickets</small>
           </div>
 
+          <div class="mb-4" id="department-field" style="display: none;">
+            <label for="department" class="form-label">Department *</label>
+            <select id="department" name="department" class="form-select">
+              <option value="">Select Department</option>
+              <% Object.values(REPORTER_DEPARTMENT).forEach(dept => { %>
+                <option value="<%= dept %>"><%= dept %></option>
+              <% }) %>
+            </select>
+            <small class="form-text text-muted">Required for department role users</small>
+          </div>
+
           <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary">Create User</button>
             <a href="/admin/users" class="btn btn-secondary">Cancel</a>
@@ -71,5 +82,33 @@
           crossorigin="anonymous"></script>
   <!-- Password Strength -->
   <script src="/js/password-strength.js"></script>
+  <!-- Department Field Toggle -->
+  <script>
+    const roleSelect = document.getElementById('role');
+    const deptField = document.getElementById('department-field');
+    const deptSelect = document.getElementById('department');
+    const form = document.getElementById('createUserForm');
+
+    roleSelect.addEventListener('change', function() {
+      if (this.value === 'department') {
+        deptField.style.display = 'block';
+        deptSelect.required = true;
+      } else {
+        deptField.style.display = 'none';
+        deptSelect.required = false;
+        deptSelect.value = '';
+      }
+    });
+
+    // Validate on form submit
+    form.addEventListener('submit', function(e) {
+      if (roleSelect.value === 'department' && !deptSelect.value) {
+        e.preventDefault();
+        alert('Please select a department for department role users');
+        deptSelect.focus();
+        return false;
+      }
+    });
+  </script>
 </body>
 </html>

@@ -19,18 +19,34 @@ class UserService {
 
   async createUser(userData) {
     const startTime = Date.now();
+    const { username, email, role, department } = userData;
+
     try {
-      logger.info('userService.createUser: Creating new user', { username: userData.username, email: userData.email, role: userData.role });
+      logger.info('userService.createUser: Creating new user', { username, email, role, department });
+
+      // Validate department requirement for department role
+      if (role === 'department' && !department) {
+        logger.warn('userService.createUser: Department is required for department role', { username, role });
+        throw new Error('Department is required for department role users');
+      }
+
+      // Validate department must be null for non-department roles
+      if (role !== 'department' && department) {
+        logger.warn('userService.createUser: Department can only be set for department role', { username, role, department });
+        throw new Error('Department can only be set for department role users');
+      }
+
       const user = await User.create(userData);
       const duration = Date.now() - startTime;
-      logger.info('userService.createUser: User created successfully', { userId: user.id, username: user.username, email: user.email, role: user.role, duration });
+      logger.info('userService.createUser: User created successfully', { userId: user.id, username: user.username, email: user.email, role: user.role, department: user.department, duration });
       return user;
     } catch (error) {
       const duration = Date.now() - startTime;
       logger.error('userService.createUser: Failed to create user', {
-        username: userData.username,
-        email: userData.email,
-        role: userData.role,
+        username,
+        email,
+        role,
+        department,
         error: error.message,
         stack: error.stack,
         duration
@@ -82,7 +98,7 @@ class UserService {
   // NEW: Update user (with business logic validation)
   async updateUser(actorId, targetId, updates, ipAddress) {
     const startTime = Date.now();
-    const { username, email, role, status } = updates;
+    const { username, email, role, status, department } = updates;
     const changedFields = Object.keys(updates).filter(key => updates[key] !== undefined);
 
     try {
@@ -93,6 +109,23 @@ class UserService {
       if (!targetUser) {
         logger.warn('userService.updateUser: Target user not found', { actorId, targetId });
         throw new Error('User not found');
+      }
+
+      // Validate department requirement based on role changes
+      const finalRole = role !== undefined ? role : targetUser.role;
+      const finalDepartment = department !== undefined ? department : targetUser.department;
+
+      if (finalRole === 'department' && !finalDepartment) {
+        logger.warn('userService.updateUser: Department is required for department role', { actorId, targetId, finalRole });
+        throw new Error('Department is required for department role users');
+      }
+
+      if (finalRole !== 'department' && finalDepartment) {
+        // Auto-clear department if changing from department to admin/super_admin
+        if (role !== undefined && targetUser.role === 'department') {
+          updates.department = null;
+          logger.info('userService.updateUser: Clearing department for non-department role', { actorId, targetId, newRole: finalRole });
+        }
       }
 
       // Prevent downgrading last super_admin

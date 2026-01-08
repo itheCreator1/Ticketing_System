@@ -37,6 +37,7 @@
                 <th>Username</th>
                 <th>Email</th>
                 <th>Role</th>
+                <th>Department</th>
                 <th>Status</th>
                 <th>Last Login</th>
                 <th>Created</th>
@@ -56,6 +57,13 @@
                       <span class="badge bg-primary">Admin</span>
                     <% } else if (u.role === 'department') { %>
                       <span class="badge bg-info">Department</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (u.department) { %>
+                      <span class="badge bg-secondary"><%= u.department %></span>
+                    <% } else { %>
+                      <span class="text-muted">N/A</span>
                     <% } %>
                   </td>
                   <td>

@@ -44,12 +44,12 @@ describe('Ticket Model', () => {
       // Assert
       expect(result).toEqual(mockTicket);
       expect(result.status).toBe('open');
+      // Department user tickets don't have reporter_name, so just check key fields
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO tickets'),
         expect.arrayContaining([
           ticketData.title,
           ticketData.description,
-          ticketData.reporter_name,
           ticketData.reporter_department,
           ticketData.reporter_desk,
           ticketData.reporter_phone,

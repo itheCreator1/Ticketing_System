@@ -48,6 +48,17 @@
                 </select>
               </div>
 
+              <div class="mb-3" id="department-field" style="<%= targetUser.role === 'department' ? '' : 'display: none;' %>">
+                <label for="department" class="form-label">Department</label>
+                <select id="department" name="department" class="form-select">
+                  <option value="">Select Department</option>
+                  <% Object.values(REPORTER_DEPARTMENT).forEach(dept => { %>
+                    <option value="<%= dept %>" <%= targetUser.department === dept ? 'selected' : '' %>><%= dept %></option>
+                  <% }) %>
+                </select>
+                <small class="form-text text-muted">Required for department role users</small>
+              </div>
+
               <div class="mb-4">
                 <label for="status" class="form-label">Status</label>
                 <select id="status" name="status" class="form-select">
@@ -102,5 +113,19 @@
           crossorigin="anonymous"></script>
   <!-- Password Strength -->
   <script src="/js/password-strength.js"></script>
+  <!-- Department Field Toggle -->
+  <script>
+    document.getElementById('role').addEventListener('change', function() {
+      const deptField = document.getElementById('department-field');
+      const deptSelect = document.getElementById('department');
+
+      if (this.value === 'department') {
+        deptField.style.display = 'block';
+      } else {
+        deptField.style.display = 'none';
+        deptSelect.value = '';
+      }
+    });
+  </script>
 </body>
 </html>
