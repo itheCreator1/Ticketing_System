@@ -16,7 +16,10 @@
   <%- include('../partials/header') %>
 
   <main class="container-fluid px-4 py-4">
-    <h2 class="mb-4">Ticket Dashboard</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="mb-0">Ticket Dashboard</h2>
+      <a href="/admin/tickets/new" class="btn btn-success">+ Create Internal Ticket</a>
+    </div>
     <%- include('../partials/flash') %>
 
     <div class="card shadow-sm mb-4">
@@ -88,7 +91,12 @@
               <% tickets.forEach(ticket => { %>
                 <tr>
                   <td>#<%= ticket.id %></td>
-                  <td class="ticket-title"><%= ticket.title %></td>
+                  <td class="ticket-title">
+                    <%= ticket.title %>
+                    <% if (ticket.reporter_department === 'Internal') { %>
+                      <span class="badge bg-warning text-dark ms-2">Internal</span>
+                    <% } %>
+                  </td>
                   <td>
                     <% if (ticket.status === 'open') { %>
                       <span class="badge bg-info text-dark"><%= ticket.status.replace('_', ' ') %></span>

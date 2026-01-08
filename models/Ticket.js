@@ -127,6 +127,7 @@ class Ticket {
         FROM tickets t
         LEFT JOIN users u ON t.assigned_to = u.id
         WHERE t.reporter_id = $1
+          AND t.reporter_department != 'Internal'
       `;
       const params = [userId];
       let paramIndex = 2;

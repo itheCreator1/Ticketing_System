@@ -31,7 +31,8 @@ const REPORTER_DEPARTMENT = {
   GENERAL_SUPPORT: 'General Support',
   HUMAN_RESOURCES: 'Human Resources',
   FINANCE: 'Finance',
-  FACILITIES: 'Facilities'
+  FACILITIES: 'Facilities',
+  INTERNAL: 'Internal'
 };
 
 const REPORTER_DESK = {

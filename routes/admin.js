@@ -5,9 +5,13 @@ const Comment = require('../models/Comment');
 const { validateRequest } = require('../middleware/validation');
 const { TICKET_MESSAGES, COMMENT_MESSAGES } = require('../constants/messages');
 const ticketService = require('../services/ticketService');
+const adminTicketService = require('../services/adminTicketService');
 const { validateTicketUpdate, validateTicketId } = require('../validators/ticketValidators');
+const { validateAdminTicketCreation } = require('../validators/adminTicketValidators');
 const { validateCommentCreation } = require('../validators/commentValidators');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
+const { REPORTER_DESK } = require('../constants/enums');
+const logger = require('../utils/logger');
 
 router.use(requireAuth);
 
@@ -66,6 +70,49 @@ router.post('/tickets/:id/comments', validateTicketId, validateCommentCreation, 
 
     successRedirect(req, res, COMMENT_MESSAGES.ADDED, `/admin/tickets/${req.params.id}`);
   } catch (error) {
+    next(error);
+  }
+});
+
+// GET /admin/tickets/new - Display internal ticket creation form
+router.get('/tickets/new', requireAdmin, (req, res) => {
+  res.render('admin/new-ticket', {
+    title: 'Create Internal Ticket',
+    REPORTER_DESK
+  });
+});
+
+// POST /admin/tickets - Create internal ticket
+router.post('/tickets', requireAdmin, validateAdminTicketCreation, validateRequest, async (req, res, next) => {
+  try {
+    const ticketData = {
+      title: req.body.title,
+      description: req.body.description,
+      reporter_desk: req.body.reporter_desk,
+      reporter_phone: req.body.reporter_phone,
+      priority: req.body.priority,
+      status: req.body.status
+    };
+
+    const ticket = await adminTicketService.createInternalTicket(
+      req.session.user.id,
+      ticketData,
+      req.ip
+    );
+
+    logger.info('Admin created internal ticket', {
+      ticketId: ticket.id,
+      adminId: req.session.user.id,
+      adminUsername: req.session.user.username
+    });
+
+    successRedirect(req, res, TICKET_MESSAGES.INTERNAL_CREATED, `/admin/tickets/${ticket.id}`);
+  } catch (error) {
+    logger.error('Admin internal ticket creation error', {
+      adminId: req.session.user.id,
+      error: error.message,
+      stack: error.stack
+    });
     next(error);
   }
 });

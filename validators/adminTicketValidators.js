@@ -1,0 +1,44 @@
+const { body } = require('express-validator');
+const { TICKET_PRIORITY, TICKET_STATUS, REPORTER_DESK } = require('../constants/enums');
+const { VALIDATION_MESSAGES, MAX_LENGTHS } = require('../constants/validation');
+
+/**
+ * Validator for admin internal ticket creation
+ * Admins create tickets as 'Internal' department
+ * Unlike client tickets, admins can set priority and status at creation
+ */
+const validateAdminTicketCreation = [
+  body('title')
+    .trim()
+    .notEmpty().withMessage(VALIDATION_MESSAGES.TITLE_REQUIRED)
+    .isLength({ max: MAX_LENGTHS.TICKET_TITLE }).withMessage(VALIDATION_MESSAGES.TITLE_TOO_LONG),
+
+  body('description')
+    .trim()
+    .notEmpty().withMessage(VALIDATION_MESSAGES.DESCRIPTION_REQUIRED)
+    .isLength({ max: MAX_LENGTHS.TICKET_DESCRIPTION }).withMessage(VALIDATION_MESSAGES.DESCRIPTION_TOO_LONG),
+
+  body('reporter_desk')
+    .trim()
+    .notEmpty().withMessage(VALIDATION_MESSAGES.DESK_REQUIRED)
+    .isIn(Object.values(REPORTER_DESK)).withMessage(VALIDATION_MESSAGES.DESK_INVALID),
+
+  body('reporter_phone')
+    .optional({ checkFalsy: true })
+    .trim()
+    .isLength({ max: MAX_LENGTHS.PHONE_NUMBER }).withMessage(VALIDATION_MESSAGES.PHONE_TOO_LONG),
+
+  // Admins can optionally set priority (defaults to 'unset' if not provided)
+  body('priority')
+    .optional()
+    .isIn(Object.values(TICKET_PRIORITY)).withMessage(VALIDATION_MESSAGES.PRIORITY_INVALID),
+
+  // Status always defaults to 'open' for new tickets
+  body('status')
+    .optional()
+    .isIn(Object.values(TICKET_STATUS)).withMessage(VALIDATION_MESSAGES.STATUS_INVALID)
+];
+
+module.exports = {
+  validateAdminTicketCreation
+};

@@ -17,7 +17,8 @@ const TICKET_MESSAGES = {
   UPDATED: 'Ticket updated successfully',
   NOT_FOUND: 'Ticket not found',
   UNAUTHORIZED_ACCESS: 'You do not have permission to access this ticket',
-  STATUS_CHANGED: 'Ticket status updated successfully'
+  STATUS_CHANGED: 'Ticket status updated successfully',
+  INTERNAL_CREATED: 'Internal ticket created successfully'
 };
 
 const COMMENT_MESSAGES = {

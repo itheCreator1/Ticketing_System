@@ -23,7 +23,12 @@
       </ol>
     </nav>
 
-    <h2 class="mb-4">Ticket #<%= ticket.id %>: <%= ticket.title %></h2>
+    <h2 class="mb-4">
+      Ticket #<%= ticket.id %>: <%= ticket.title %>
+      <% if (ticket.reporter_department === 'Internal') { %>
+        <span class="badge bg-warning text-dark ms-2">Internal - Admin Only</span>
+      <% } %>
+    </h2>
     <%- include('../partials/flash') %>
 
     <div class="row g-4 mb-4">
