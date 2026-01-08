@@ -772,6 +772,49 @@ Need help or have questions?
 
 ## 📋 Changelog
 
+### 🎉 **Version 2.3.0** *(2026-01-08)* - **Dynamic Departments & Database-Driven Configuration**
+
+<details>
+<summary><b>🗄️ Dynamic Department Management - Admin CRUD Interface</b></summary>
+
+- ✅ **Database-driven departments** - Replaced hardcoded REPORTER_DEPARTMENT enum with departments table
+- ✅ **Super admin CRUD UI** - Complete department management interface at `/admin/departments`
+- ✅ **Foreign key constraints** - ON UPDATE CASCADE for name changes, ON DELETE RESTRICT for safety
+- ✅ **System department protection** - 'Internal' department marked with is_system flag, cannot be edited/deleted
+- ✅ **Soft deletion** - Active flag for deactivating departments while preserving historical data
+- ✅ **Safety checks** - Prevents deactivation of departments with assigned users
+- ✅ **Audit logging** - All department operations tracked in audit_logs table
+- ✅ **Database migration 016** - Creates departments table with initial 6 departments seeded
+- ✅ **Dynamic dropdowns** - User and ticket forms now fetch departments from database
+- ✅ **Backward compatible** - REPORTER_DEPARTMENT constant deprecated but retained temporarily
+
+</details>
+
+<details>
+<summary><b>🧹 Reporter Desk Field Removal - Schema Simplification</b></summary>
+
+- ✅ **Removed reporter_desk field** - No longer needed in ticket workflow
+- ✅ **Database migration 017** - Drops reporter_desk column from tickets table
+- ✅ **Updated all forms** - Removed desk dropdown from public, admin, and client ticket creation
+- ✅ **Updated validators** - Removed REPORTER_DESK validation from all ticket validators
+- ✅ **Updated constants** - Removed REPORTER_DESK enum from constants/enums.js
+- ✅ **Cleaner UI** - Simplified ticket creation and detail views
+- ✅ **Test updates** - All 345+ tests updated and passing with desk field removed
+
+</details>
+
+<details>
+<summary><b>🏗️ Architecture Improvements</b></summary>
+
+- ✅ **Department Model** - New model with complete CRUD operations, soft deletion, and usage counters
+- ✅ **Department Service** - Business logic for department operations with audit logging
+- ✅ **Department Validators** - Async database validation replacing hardcoded enum checks
+- ✅ **Department Routes** - RESTful routes for department management (super admin only)
+- ✅ **Cascading updates** - Renaming departments automatically updates all user and ticket references
+- ✅ **Navigation updates** - Department management link in header for super admins
+
+</details>
+
 ### 🎉 **Version 2.2.0** *(2026-01-08)* - **Department Accounts & Dual-Portal Architecture**
 
 <details>
@@ -814,16 +857,15 @@ Need help or have questions?
 
 </details>
 
-### 🚀 **Version 2.1.0** *(2026-01-02)* - **Department/Desk Tracking Update**
+### 🚀 **Version 2.1.0** *(2026-01-02)* - **Department Tracking Update**
 
 <details>
-<summary><b>🏢 Department & Desk Tracking - Enhanced Ticket Classification</b></summary>
+<summary><b>🏢 Department Tracking - Enhanced Ticket Classification</b></summary>
 
-- ✅ **Replaced email with department/desk fields** in public ticket submission
+- ✅ **Replaced email with department field** in public ticket submission
 - ✅ **5 department options**: IT Support, General Support, Human Resources, Finance, Facilities
-- ✅ **6 desk options**: Director, Manager, Nursing Station, Doctors office, Secretary, Not Specified
-- ✅ **Database migration 008** - Replaced `reporter_email` with `reporter_department` and `reporter_desk`
-- ✅ **Enhanced admin view** - Shows department/desk instead of email for better ticket categorization
+- ✅ **Database migration 008** - Replaced `reporter_email` with `reporter_department`
+- ✅ **Enhanced admin view** - Shows department instead of email for better ticket categorization
 - ✅ **Validation constraints** - Dropdown selection with backend validation via enums
 
 </details>
@@ -844,8 +886,8 @@ Need help or have questions?
 
 - 📘 **Updated CLAUDE.md** - Reflects new database schema and enums
 - 📗 **Updated README.md** - Migration list, features, and schema documentation
-- 📕 **Added new constants** - REPORTER_DEPARTMENT and REPORTER_DESK enums
-- 📙 **Updated validators** - Department and desk validation documentation
+- 📕 **Added new constants** - REPORTER_DEPARTMENT enum (REPORTER_DESK removed in v2.3.0)
+- 📙 **Updated validators** - Department validation documentation
 
 </details>
 

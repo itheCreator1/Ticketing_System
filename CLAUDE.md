@@ -204,16 +204,20 @@ When department users create tickets:
 ## Database Schema
 
 ```sql
-users (id, username, email, password_hash, role, department, status, login_attempts, last_login_at, password_changed_at, deleted_at, created_at, updated_at)
+departments (id, name, description, is_system, active, created_at, updated_at)
+  - name: VARCHAR(100) UNIQUE - Department name (e.g., 'IT Support', 'Finance')
+  - is_system: BOOLEAN - True for 'Internal' (admin-only), cannot be edited/deleted
+  - active: BOOLEAN - Soft deletion flag (false = deactivated)
+
+users (id, username, email, password_hash, role, department → departments.name, status, login_attempts, last_login_at, password_changed_at, deleted_at, created_at, updated_at)
   - role: 'admin' | 'super_admin' | 'department'
-  - department: 'IT Support' | 'General Support' | 'Human Resources' | 'Finance' | 'Facilities' (required for department role, null for admin roles)
+  - department: Foreign key to departments.name (required for department role, null for admin roles)
   - status: 'active' | 'inactive' | 'deleted'
 
-tickets (id, title, description, status, priority, reporter_name, reporter_department, reporter_desk, reporter_phone, reporter_id → users.id, assigned_to → users.id, created_at, updated_at)
+tickets (id, title, description, status, priority, reporter_name, reporter_department → departments.name, reporter_phone, reporter_id → users.id, assigned_to → users.id, created_at, updated_at)
   - status: 'open' | 'in_progress' | 'closed' | 'waiting_on_admin' | 'waiting_on_department'
   - priority: 'unset' | 'low' | 'medium' | 'high' | 'critical' (default: 'unset')
-  - reporter_department: 'IT Support' | 'General Support' | 'Human Resources' | 'Finance' | 'Facilities'
-  - reporter_desk: 'Director' | 'Manager' | 'Nursing Station' | 'Doctors office' | 'Secretary' | 'Not Specified'
+  - reporter_department: Foreign key to departments.name
   - reporter_id: Links to department user account (NULL for legacy anonymous tickets)
 
 comments (id, ticket_id → tickets.id, user_id → users.id, content, visibility_type, created_at)
@@ -225,6 +229,8 @@ session (sid, sess JSON, expire)  -- managed by connect-pg-simple
 ```
 
 **Foreign Key Constraints**:
+- `users.department` → `departments.name` (ON UPDATE CASCADE, ON DELETE RESTRICT)
+- `tickets.reporter_department` → `departments.name` (ON UPDATE CASCADE, ON DELETE RESTRICT)
 - `tickets.assigned_to` → `users.id` (SET NULL on delete)
 - `tickets.reporter_id` → `users.id` (SET NULL on delete)
 - `comments.ticket_id` → `tickets.id` (CASCADE on delete)
@@ -338,6 +344,19 @@ const user = await User.findById(id);
 - `clearUserSessions(userId)` - Removes all active sessions for a user (used when deactivated/deleted)
 
 **CRITICAL**: Never return password_hash from public model methods. Only `*WithPassword` methods should include it.
+
+**Department model pattern** (added in v2.3.0):
+- `findAll(includeSystem)` - Returns active departments (includeSystem=true includes 'Internal')
+- `findAllForAdmin()` - Returns all departments including inactive (for management UI)
+- `findById(id)` - Returns department by ID
+- `findByName(name)` - Returns department by name
+- `create({ name, description })` - Creates new department (is_system=false, active=true)
+- `update(id, { name, description, active })` - Updates non-system departments only
+- `deactivate(id)` - Soft deletes non-system departments (sets active=false)
+- `countUsers(name)` - Counts users assigned to department (for safety checks)
+- `countTickets(name)` - Counts tickets in department (for safety checks)
+
+**Protection**: System departments (is_system=true) cannot be updated or deactivated.
 
 ### 5. Services
 Business logic lives here. Services call models, handle validation logic:
@@ -641,22 +660,24 @@ TICKET_PRIORITY.CRITICAL = 'critical'
 ```
 
 ### Reporter Department (constants/enums.js)
+**⚠️ DEPRECATED**: This constant is kept for backward compatibility only. Departments are now database-driven. Use `Department.findAll()` instead.
+
 ```javascript
 REPORTER_DEPARTMENT.IT_SUPPORT = 'IT Support'
 REPORTER_DEPARTMENT.GENERAL_SUPPORT = 'General Support'
 REPORTER_DEPARTMENT.HUMAN_RESOURCES = 'Human Resources'
 REPORTER_DEPARTMENT.FINANCE = 'Finance'
 REPORTER_DEPARTMENT.FACILITIES = 'Facilities'
+REPORTER_DEPARTMENT.INTERNAL = 'Internal'  // System department (admin-only, added in v2.2.0)
 ```
 
-### Reporter Desk
+**New Approach (v2.3.0+)**: Use the Department model to fetch departments dynamically:
 ```javascript
-REPORTER_DESK.DIRECTOR = 'Director'
-REPORTER_DESK.MANAGER = 'Manager'
-REPORTER_DESK.NURSING_STATION = 'Nursing Station'
-REPORTER_DESK.DOCTORS_OFFICE = 'Doctors office'
-REPORTER_DESK.SECRETARY = 'Secretary'
-REPORTER_DESK.NOT_SPECIFIED = 'Not Specified'
+// Get all active non-system departments (for user dropdowns)
+const departments = await Department.findAll(false);
+
+// Get all departments including system (for admin ticket forms)
+const allDepartments = await Department.findAll(true);
 ```
 
 ### Validation Messages (constants/validation.js)
