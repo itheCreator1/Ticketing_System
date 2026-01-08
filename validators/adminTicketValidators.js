@@ -1,5 +1,5 @@
 const { body } = require('express-validator');
-const { TICKET_PRIORITY, TICKET_STATUS, REPORTER_DESK } = require('../constants/enums');
+const { TICKET_PRIORITY, TICKET_STATUS } = require('../constants/enums');
 const { VALIDATION_MESSAGES, MAX_LENGTHS } = require('../constants/validation');
 const Department = require('../models/Department');
 
@@ -33,11 +33,6 @@ const validateAdminTicketCreation = [
       }
       return true;
     }),
-
-  body('reporter_desk')
-    .trim()
-    .notEmpty().withMessage(VALIDATION_MESSAGES.DESK_REQUIRED)
-    .isIn(Object.values(REPORTER_DESK)).withMessage(VALIDATION_MESSAGES.DESK_INVALID),
 
   body('reporter_phone')
     .optional({ checkFalsy: true })

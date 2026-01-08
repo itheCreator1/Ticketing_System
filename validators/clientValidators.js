@@ -1,11 +1,11 @@
 const { body } = require('express-validator');
-const { TICKET_PRIORITY, TICKET_STATUS, REPORTER_DEPARTMENT, REPORTER_DESK } = require('../constants/enums');
+const { TICKET_PRIORITY, TICKET_STATUS, REPORTER_DEPARTMENT } = require('../constants/enums');
 const { VALIDATION_MESSAGES, MAX_LENGTHS } = require('../constants/validation');
 
 /**
  * Validator for department user ticket creation in client portal
  * Department and priority are auto-populated from user account/system
- * Department users only provide: title, description, desk, and optional phone
+ * Department users only provide: title, description, and optional phone
  */
 const validateClientTicketCreation = [
   body('title')
@@ -16,10 +16,6 @@ const validateClientTicketCreation = [
     .trim()
     .notEmpty().withMessage(VALIDATION_MESSAGES.DESCRIPTION_REQUIRED)
     .isLength({ max: MAX_LENGTHS.TICKET_DESCRIPTION }).withMessage(VALIDATION_MESSAGES.DESCRIPTION_TOO_LONG),
-  body('reporter_desk')
-    .trim()
-    .notEmpty().withMessage(VALIDATION_MESSAGES.DESK_REQUIRED)
-    .isIn(Object.values(REPORTER_DESK)).withMessage(VALIDATION_MESSAGES.DESK_INVALID),
   body('reporter_phone')
     .optional()
     .trim()

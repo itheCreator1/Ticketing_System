@@ -39,15 +39,6 @@ const REPORTER_DEPARTMENT = {
   INTERNAL: 'Internal'
 };
 
-const REPORTER_DESK = {
-  DIRECTOR: 'Director',
-  MANAGER: 'Manager',
-  NURSING_STATION: 'Nursing Station',
-  DOCTORS_OFFICE: 'Doctors office',
-  SECRETARY: 'Secretary',
-  NOT_SPECIFIED: 'Not Specified'
-};
-
 const COMMENT_VISIBILITY = {
   PUBLIC: 'public',
   INTERNAL: 'internal'
@@ -59,6 +50,5 @@ module.exports = {
   USER_ROLE,
   USER_STATUS,
   REPORTER_DEPARTMENT,
-  REPORTER_DESK,
   COMMENT_VISIBILITY
 };

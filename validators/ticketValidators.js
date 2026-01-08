@@ -1,5 +1,5 @@
 const { body, param } = require('express-validator');
-const { TICKET_PRIORITY, TICKET_STATUS, REPORTER_DEPARTMENT, REPORTER_DESK } = require('../constants/enums');
+const { TICKET_PRIORITY, TICKET_STATUS, REPORTER_DEPARTMENT } = require('../constants/enums');
 const { VALIDATION_MESSAGES, MAX_LENGTHS } = require('../constants/validation');
 
 const validateTicketCreation = [
@@ -19,10 +19,6 @@ const validateTicketCreation = [
     .trim()
     .notEmpty().withMessage(VALIDATION_MESSAGES.DEPARTMENT_REQUIRED)
     .isIn(Object.values(REPORTER_DEPARTMENT)).withMessage(VALIDATION_MESSAGES.DEPARTMENT_INVALID),
-  body('reporter_desk')
-    .trim()
-    .notEmpty().withMessage(VALIDATION_MESSAGES.DESK_REQUIRED)
-    .isIn(Object.values(REPORTER_DESK)).withMessage(VALIDATION_MESSAGES.DESK_INVALID),
   body('reporter_phone')
     .optional()
     .trim()
