@@ -42,7 +42,7 @@
         </div>
 
         <!-- Troubleshooting Panel -->
-        <%- include('../partials/troubleshooting') %>
+        <%- include('../partials/troubleshooting', { correlationId: correlationId, status: status, isDevelopment: isDevelopment, stackTrace: stackTrace, errorCategory: errorCategory }) %>
       </div>
     </div>
   </div>
