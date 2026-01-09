@@ -10,7 +10,7 @@ KNII Ticketing System - A professional support ticket management application wit
 **Code Quality**: 98% compliance with professional Node.js development standards
 **Security**: Zero SQL injection vulnerabilities, multi-layer defense with ownership verification
 **Testing**: 345+ test cases passing - 17 unit test files, 6 integration tests, 3 E2E tests
-**Version**: v2.3.1 (Dynamic Departments & Code Cleanup)
+**Version**: v2.4.0 (Admin Department Ticket Creation & UI Enhancements)
 
 ---
 
@@ -29,8 +29,6 @@ This file provides a quick reference for AI assistants. For comprehensive docume
   - Command reference for Docker, PostgreSQL, PM2
 - **[Git Workflow Rules](docs/git_rules.md)** - Branch strategy and commit standards
 - **[Testing Guidelines](docs/testing_rules.md)** - Testing patterns and practices
-- **[Testing Implementation Summary](docs/testing_implementation_summary.md)** - Complete test coverage details
-- **[Unit Testing Guide](docs/unit_testing_guide.md)** - Unit testing best practices
 
 ---
 
@@ -138,11 +136,14 @@ Directory Structure:
 - Auto-populated department and reporter information
 
 **Admin Portal** (`/admin/*` routes):
-- View and manage all tickets (department + legacy)
+- View and manage all tickets (department + legacy + internal)
+- **Create department tickets** on behalf of departments (visible to dept users)
+- **Create internal tickets** for admin-only work (hidden from dept users)
 - Add public or internal comments (visibility control)
 - Assign tickets to support staff
 - Full status workflow management
 - User management (super_admin only)
+- Department management (super_admin only)
 
 ### Department User Management
 
@@ -191,13 +192,49 @@ Login → Role Check → Redirect
   - admin/super_admin → /admin/dashboard
 ```
 
-### Auto-Population Logic
+### Ticket Creation Types
 
-When department users create tickets:
-- `reporter_id` = current user ID (for ownership)
-- `reporter_department` = user's department field
+The system supports three types of ticket creation:
+
+**1. Department User Tickets** (via `/client/tickets/new`):
+- Created by department users through client portal
+- `reporter_id` = current user ID (linked to user account)
+- `reporter_department` = user's department field (auto-populated)
+- `reporter_name` = auto-populated from session
+- `is_admin_created` = false (visible to department)
 - `priority` = forced to 'unset' (admins set priority)
 - `status` = 'open' (initial state)
+
+**2. Admin Department Tickets** (via `/admin/tickets/department/new`):
+- Created by admins **on behalf of** a department (e.g., phone/email requests)
+- `reporter_id` = NULL (anonymous, no user account link)
+- `reporter_department` = selected from dropdown (excludes 'Internal')
+- `reporter_name` = manually entered (department contact name)
+- `is_admin_created` = false (visible to department users)
+- `priority` = admin selectable (default 'unset')
+- `status` = 'open' (fixed, cannot be changed at creation)
+- **Use case**: Submitting tickets for departments via phone calls or emails
+
+**3. Admin Internal Tickets** (via `/admin/tickets/new`):
+- Created by admins for internal/admin-only work
+- `reporter_id` = admin user ID (linked to admin)
+- `reporter_department` = admin selectable (including 'Internal')
+- `reporter_name` = admin username (auto-populated)
+- `is_admin_created` = true (hidden from all department users)
+- `priority` = admin selectable (default 'unset')
+- `status` = admin selectable (default 'open')
+- **Use case**: Internal IT tasks, infrastructure work, admin-only issues
+
+| Feature | Dept User Ticket | Admin Dept Ticket | Admin Internal Ticket |
+|---------|-----------------|-------------------|---------------------|
+| Created by | Department user | Admin | Admin |
+| Visible to dept | ✅ Yes | ✅ Yes | ❌ No |
+| reporter_id | User ID | NULL | Admin ID |
+| reporter_name | Auto (user) | Manual entry | Auto (admin) |
+| Dept selector | Auto | Regular only | All + Internal |
+| is_admin_created | false | false | true |
+| Priority | 'unset' fixed | Admin sets | Admin sets |
+| Status | 'open' fixed | 'open' fixed | Admin sets |
 
 ---
 
