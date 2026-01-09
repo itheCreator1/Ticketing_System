@@ -67,7 +67,6 @@ router.post('/tickets', validateClientTicketCreation, validateRequest, async (re
     const ticketData = {
       title: req.body.title,
       description: req.body.description,
-      reporter_desk: req.body.reporter_desk,
       reporter_phone: req.body.reporter_phone
     };
 

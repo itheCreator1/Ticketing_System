@@ -96,7 +96,6 @@ router.post('/tickets', requireAdmin, validateAdminTicketCreation, validateReque
       title: req.body.title,
       description: req.body.description,
       reporter_department: req.body.reporter_department,
-      reporter_desk: req.body.reporter_desk,
       reporter_phone: req.body.reporter_phone,
       priority: req.body.priority,
       status: req.body.status
