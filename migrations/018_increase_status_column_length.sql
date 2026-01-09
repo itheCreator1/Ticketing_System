@@ -1,5 +1,5 @@
--- Migration 012: Increase status column length to accommodate workflow statuses
--- Date: 2026-01-08
+-- Migration 018: Increase status column length to accommodate workflow statuses
+-- Date: 2026-01-08 (Renumbered from 012 on 2026-01-09)
 -- Description: Increases the status column from VARCHAR(20) to VARCHAR(30) to accommodate
 --              the 'waiting_on_department' status which is 23 characters long.
 --              This migration fixes the "value too long for type character varying(20)" error.

@@ -1,5 +1,5 @@
--- Migration 013: Add visibility_type to comments table
--- Date: 2026-01-07
+-- Migration 019: Add visibility_type to comments table
+-- Date: 2026-01-07 (Renumbered from 013 on 2026-01-09)
 -- Description: Adds visibility_type column to support internal (admin-only) and public
 --              (visible to all) comments. This enables admins to add internal notes that
 --              department users cannot see, while public comments are visible to everyone.
