@@ -73,18 +73,42 @@ router.post('/tickets/:id/update', requireAdmin, validateTicketId, validateTicke
 
 router.post('/tickets/:id/comments', validateTicketId, validateCommentCreation, validateRequest, async (req, res, next) => {
   try {
-    // Admin can choose visibility: checkbox 'is_internal' determines visibility_type
+    const ticketId = req.params.id;
     const visibility_type = req.body.is_internal === 'on' ? 'internal' : 'public';
 
+    // Get current ticket to check status
+    const ticket = await ticketService.getTicketById(ticketId);
+    if (!ticket) {
+      return errorRedirect(req, res, TICKET_MESSAGES.NOT_FOUND, '/admin/dashboard');
+    }
+
+    // Create comment
     await Comment.create({
-      ticket_id: req.params.id,
+      ticket_id: ticketId,
       user_id: req.session.user.id,
       content: req.body.content,
       visibility_type
     });
 
-    successRedirect(req, res, COMMENT_MESSAGES.ADDED, `/admin/tickets/${req.params.id}`);
+    // AUTO-STATUS UPDATE: Admin adding PUBLIC comment → "waiting_on_department"
+    // ONLY if: public comment AND ticket not closed AND has reporter_id (dept ticket)
+    if (visibility_type === 'public' && ticket.status !== 'closed' && ticket.reporter_id !== null) {
+      await ticketService.updateTicket(ticketId, { status: 'waiting_on_department' });
+      logger.info('Admin comment triggered status update', {
+        ticketId,
+        oldStatus: ticket.status,
+        newStatus: 'waiting_on_department',
+        adminId: req.session.user.id
+      });
+    }
+
+    successRedirect(req, res, COMMENT_MESSAGES.ADDED, `/admin/tickets/${ticketId}`);
   } catch (error) {
+    logger.error('Admin comment creation error', {
+      ticketId: req.params.id,
+      error: error.message,
+      stack: error.stack
+    });
     next(error);
   }
 });

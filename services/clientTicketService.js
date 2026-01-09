@@ -151,6 +151,12 @@ class ClientTicketService {
     try {
       logger.info('clientTicketService.addComment: Adding comment', { ticketId, userId, contentLength: content?.length });
 
+      // Get current ticket to check status
+      const ticket = await Ticket.findById(ticketId);
+      if (!ticket) {
+        throw new Error('Ticket not found');
+      }
+
       // Force visibility_type to 'public' for department users
       const comment = await Comment.create({
         ticket_id: ticketId,
@@ -159,12 +165,25 @@ class ClientTicketService {
         visibility_type: 'public'
       });
 
+      // AUTO-STATUS UPDATE: Department user adding public comment → "waiting_on_admin"
+      // EXCEPTION: Do NOT reopen closed tickets
+      if (ticket.status !== 'closed') {
+        await Ticket.update(ticketId, { status: 'waiting_on_admin' });
+        logger.info('clientTicketService.addComment: Auto-updated status to waiting_on_admin', {
+          ticketId,
+          oldStatus: ticket.status
+        });
+      } else {
+        logger.debug('clientTicketService.addComment: Skipped status update (ticket closed)', { ticketId });
+      }
+
       const duration = Date.now() - startTime;
 
       logger.info('clientTicketService.addComment: Comment added successfully', {
         commentId: comment.id,
         ticketId,
         userId,
+        statusUpdated: ticket.status !== 'closed',
         duration
       });
 
