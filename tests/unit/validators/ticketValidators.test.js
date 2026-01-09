@@ -14,6 +14,10 @@ const {
 } = require('../../../validators/ticketValidators');
 const { createMockRequest } = require('../../helpers/mocks');
 
+// Mock Department model
+jest.mock('../../../models/Department');
+const Department = require('../../../models/Department');
+
 /**
  * Helper function to run validators and collect errors
  */
@@ -25,6 +29,17 @@ async function runValidators(validators, req) {
 }
 
 describe('Ticket Validators', () => {
+  beforeEach(() => {
+    // Mock Department.findAll to return valid departments
+    Department.findAll.mockResolvedValue([
+      { id: 1, name: 'IT Support' },
+      { id: 2, name: 'General Support' },
+      { id: 3, name: 'Human Resources' },
+      { id: 4, name: 'Finance' },
+      { id: 5, name: 'Facilities' }
+    ]);
+  });
+
   describe('validateTicketCreation', () => {
     it('should pass validation for valid ticket data', async () => {
       // Arrange
@@ -34,7 +49,6 @@ describe('Ticket Validators', () => {
           description: 'This is a valid ticket description with sufficient detail.',
           reporter_name: 'John Doe',
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           reporter_phone: '555-1234',
           priority: 'medium'
         }
@@ -54,7 +68,6 @@ describe('Ticket Validators', () => {
           title: 'Ticket',
           description: 'Description',
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           priority: 'low'
         }
       });
@@ -72,7 +85,6 @@ describe('Ticket Validators', () => {
         body: {
           description: 'Description',
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           priority: 'medium'
         }
       });
@@ -93,7 +105,6 @@ describe('Ticket Validators', () => {
           title: '   ',
           description: 'Description',
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           priority: 'medium'
         }
@@ -116,7 +127,6 @@ describe('Ticket Validators', () => {
           title: longTitle,
           description: 'Description',
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           priority: 'medium'
         }
@@ -137,7 +147,6 @@ describe('Ticket Validators', () => {
         body: {
           title: 'Title',
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           priority: 'medium'
         }
@@ -160,7 +169,6 @@ describe('Ticket Validators', () => {
           title: 'Title',
           description: longDescription,
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           priority: 'medium'
         }
@@ -182,7 +190,6 @@ describe('Ticket Validators', () => {
           title: 'Title',
           description: 'Description',
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           priority: 'medium'
         }
       });
@@ -202,7 +209,6 @@ describe('Ticket Validators', () => {
           title: 'Title',
           description: 'Description',
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           reporter_name: longName,
           priority: 'medium'
         }
@@ -225,7 +231,6 @@ describe('Ticket Validators', () => {
           title: 'Title',
           description: 'Description',
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           reporter_phone: longPhone,
           priority: 'medium'
@@ -248,7 +253,6 @@ describe('Ticket Validators', () => {
           title: 'Title',
           description: 'Description',
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           reporter_name: 'Tester',
           priority: 'invalid_priority'
         }
@@ -272,8 +276,7 @@ describe('Ticket Validators', () => {
             title: 'Title',
             description: 'Description',
             reporter_department: 'IT Support',
-            reporter_desk: 'Manager',
-            reporter_name: 'Tester',
+              reporter_name: 'Tester',
             priority
           }
         });
@@ -290,7 +293,6 @@ describe('Ticket Validators', () => {
           title: '  Ticket Title  ',
           description: '  Description  ',
           reporter_department: 'IT Support',
-          reporter_desk: 'Manager',
           reporter_name: '  John Doe  ',
           reporter_phone: '  555-1234  ',
           priority: 'medium'

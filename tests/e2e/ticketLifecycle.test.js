@@ -55,7 +55,6 @@ describe('Ticket Lifecycle E2E Tests', () => {
         description: 'Getting connection timeout errors when trying to connect to production database',
         reporter_name: 'IT Support Department',
         reporter_department: 'IT Support',
-        reporter_desk: 'Manager',
         reporter_phone: '+1234567890',
         reporter_id: departmentUser.id,
         priority: 'high',

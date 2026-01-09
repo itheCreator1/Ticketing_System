@@ -233,7 +233,6 @@ describe('Auth Middleware Integration Tests', () => {
         description: 'Test Description',
         reporter_name: 'John Doe',
         reporter_department: 'IT Support',
-        reporter_desk: 'Manager',
         status: 'open'
       };
 
@@ -271,7 +270,6 @@ describe('Auth Middleware Integration Tests', () => {
         description: 'Test Description',
         reporter_name: 'John Doe',
         reporter_department: 'IT Support',
-        reporter_desk: 'Manager',
         status: 'open'
       };
 
@@ -296,7 +294,6 @@ describe('Auth Middleware Integration Tests', () => {
         description: 'Test Description',
         reporter_name: 'John Doe',
         reporter_department: 'IT Support',
-        reporter_desk: 'Manager',
         status: 'open'
       });
 
