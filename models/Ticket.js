@@ -69,7 +69,16 @@ class Ticket {
     try {
       logger.debug('Ticket.findAll: Starting query', { filters });
       let query = `
-        SELECT t.*, u.username as assigned_to_username
+        SELECT
+          t.*,
+          u.username as assigned_to_username,
+          (
+            SELECT content
+            FROM comments
+            WHERE ticket_id = t.id AND visibility_type = 'public'
+            ORDER BY created_at DESC
+            LIMIT 1
+          ) as last_comment
         FROM tickets t
         LEFT JOIN users u ON t.assigned_to = u.id
         WHERE 1=1
@@ -122,7 +131,16 @@ class Ticket {
     try {
       logger.debug('Ticket.findByDepartment: Starting query', { userId, filters });
       let query = `
-        SELECT t.*, u.username as assigned_to_username
+        SELECT
+          t.*,
+          u.username as assigned_to_username,
+          (
+            SELECT content
+            FROM comments
+            WHERE ticket_id = t.id AND visibility_type = 'public'
+            ORDER BY created_at DESC
+            LIMIT 1
+          ) as last_comment
         FROM tickets t
         LEFT JOIN users u ON t.assigned_to = u.id
         WHERE t.reporter_id = $1
