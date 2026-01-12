@@ -4,100 +4,98 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-        crossorigin="anonymous">
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="/css/custom.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="/css/output.css">
 </head>
-<body class="bg-light">
+<body class="bg-gray-50">
   <%- include('../partials/header') %>
 
-  <main class="container-fluid px-4 py-4">
+  <main class="container-fluid px-4 py-6">
     <nav aria-label="breadcrumb" class="mb-3">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Ticket #<%= ticket.id %></li>
-      </ol>
+      <div class="flex items-center gap-2 text-sm text-gray-600">
+        <a href="/admin/dashboard" class="hover:text-blue-600">Dashboard</a>
+        <span>/</span>
+        <span class="text-gray-900">Ticket #<%= ticket.id %></span>
+      </div>
     </nav>
 
-    <h2 class="mb-4">
+    <h2 class="text-2xl font-bold mb-4">
       Ticket #<%= ticket.id %>: <%= ticket.title %>
       <% if (ticket.reporter_department === 'Internal') { %>
-        <span class="badge bg-warning text-dark ms-2">Internal - Admin Only</span>
+        <span class="badge badge-warning ml-2">Internal - Admin Only</span>
       <% } %>
     </h2>
     <%- include('../partials/flash') %>
 
-    <div class="row g-4 mb-4">
-      <div class="col-md-6">
-        <div class="card shadow-sm h-100">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+        <div class="card h-full">
           <div class="card-body">
-            <h3 class="h5 card-title mb-3">Ticket Information</h3>
+            <h3 class="text-lg font-semibold mb-3">Ticket Information</h3>
             <div class="mb-2">
-              <span class="fw-semibold">Status:</span>
+              <span class="font-medium">Status:</span>
               <% if (ticket.status === 'open') { %>
-                <span class="badge bg-info text-dark ms-2"><%= ticket.status.replace('_', ' ') %></span>
+                <span class="badge badge-info ml-2"><%= ticket.status.replace('_', ' ') %></span>
               <% } else if (ticket.status === 'in_progress') { %>
-                <span class="badge bg-warning text-dark ms-2"><%= ticket.status.replace('_', ' ') %></span>
+                <span class="badge badge-warning ml-2"><%= ticket.status.replace('_', ' ') %></span>
               <% } else { %>
-                <span class="badge bg-success ms-2"><%= ticket.status.replace('_', ' ') %></span>
+                <span class="badge badge-success ml-2"><%= ticket.status.replace('_', ' ') %></span>
               <% } %>
             </div>
             <div class="mb-2">
-              <span class="fw-semibold">Priority:</span>
+              <span class="font-medium">Priority:</span>
               <% if (ticket.priority === 'unset') { %>
-                <span class="badge bg-light text-dark border ms-2"><%= ticket.priority %></span>
+                <span class="badge badge-light ml-2"><%= ticket.priority %></span>
               <% } else if (ticket.priority === 'low') { %>
-                <span class="badge bg-secondary ms-2"><%= ticket.priority %></span>
+                <span class="badge badge-secondary ml-2"><%= ticket.priority %></span>
               <% } else if (ticket.priority === 'medium') { %>
-                <span class="badge bg-info ms-2"><%= ticket.priority %></span>
+                <span class="badge badge-info ml-2"><%= ticket.priority %></span>
               <% } else if (ticket.priority === 'high') { %>
-                <span class="badge bg-warning text-dark ms-2"><%= ticket.priority %></span>
+                <span class="badge badge-warning ml-2"><%= ticket.priority %></span>
               <% } else if (ticket.priority === 'critical') { %>
-                <span class="badge bg-danger ms-2"><%= ticket.priority %></span>
+                <span class="badge badge-danger ml-2"><%= ticket.priority %></span>
               <% } %>
             </div>
             <% if (ticket.reporter_name) { %>
               <div class="mb-2">
-                <span class="fw-semibold">Reporter:</span>
-                <span class="ms-2"><%= ticket.reporter_name %></span>
+                <span class="font-medium">Reporter:</span>
+                <span class="ml-2"><%= ticket.reporter_name %></span>
               </div>
             <% } %>
             <div class="mb-2">
-              <span class="fw-semibold">Department:</span>
-              <span class="ms-2"><%= ticket.reporter_department %></span>
+              <span class="font-medium">Department:</span>
+              <span class="ml-2"><%= ticket.reporter_department %></span>
             </div>
             <% if (ticket.reporter_phone) { %>
               <div class="mb-2">
-                <span class="fw-semibold">Phone:</span>
-                <span class="ms-2"><a href="tel:<%= ticket.reporter_phone %>"><%= ticket.reporter_phone %></a></span>
+                <span class="font-medium">Phone:</span>
+                <span class="ml-2"><a href="tel:<%= ticket.reporter_phone %>"><%= ticket.reporter_phone %></a></span>
               </div>
             <% } %>
             <div class="mb-2">
-              <span class="fw-semibold">Created:</span>
-              <span class="ms-2 text-muted"><%= new Date(ticket.created_at).toLocaleString() %></span>
+              <span class="font-medium">Created:</span>
+              <span class="ml-2 text-gray-500"><%= new Date(ticket.created_at).toLocaleString() %></span>
             </div>
             <div class="mb-0">
-              <span class="fw-semibold">Last Updated:</span>
-              <span class="ms-2 text-muted"><%= new Date(ticket.updated_at).toLocaleString() %></span>
+              <span class="font-medium">Last Updated:</span>
+              <span class="ml-2 text-gray-500"><%= new Date(ticket.updated_at).toLocaleString() %></span>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6">
-        <div class="card shadow-sm h-100">
+      <div>
+        <div class="card h-full">
           <div class="card-body">
             <!-- Status Update Section -->
-            <h3 class="h5 card-title mb-3">Update Status</h3>
-            <div class="d-grid gap-2 mb-4">
+            <h3 class="text-lg font-semibold mb-3">Update Status</h3>
+            <div class="space-y-3 mb-4">
               <form action="/admin/tickets/<%= ticket.id %>/status" method="POST" class="status-form">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="open">
-                <button type="submit" class="btn w-100 <%= ticket.status === 'open' ? 'btn-primary' : 'btn-outline-primary' %>">
+                <button type="submit" class="btn w-full <%= ticket.status === 'open' ? 'btn-primary' : 'btn-outline-primary' %>">
                   Open
                 </button>
               </form>
@@ -105,7 +103,7 @@
               <form action="/admin/tickets/<%= ticket.id %>/status" method="POST" class="status-form" data-confirm="in_progress">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="in_progress">
-                <button type="submit" class="btn w-100 <%= ticket.status === 'in_progress' ? 'btn-info' : 'btn-outline-info' %>">
+                <button type="submit" class="btn w-full <%= ticket.status === 'in_progress' ? 'btn-info' : 'btn-outline-info' %>">
                   In Progress
                 </button>
               </form>
@@ -113,7 +111,7 @@
               <form action="/admin/tickets/<%= ticket.id %>/status" method="POST" class="status-form">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="waiting_on_admin">
-                <button type="submit" class="btn w-100 <%= ticket.status === 'waiting_on_admin' ? 'btn-warning' : 'btn-outline-warning' %>">
+                <button type="submit" class="btn w-full <%= ticket.status === 'waiting_on_admin' ? 'btn-warning' : 'btn-outline-warning' %>">
                   Waiting on Admin
                 </button>
               </form>
@@ -121,7 +119,7 @@
               <form action="/admin/tickets/<%= ticket.id %>/status" method="POST" class="status-form">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="waiting_on_department">
-                <button type="submit" class="btn w-100 <%= ticket.status === 'waiting_on_department' ? 'btn-secondary' : 'btn-outline-secondary' %>">
+                <button type="submit" class="btn w-full <%= ticket.status === 'waiting_on_department' ? 'btn-secondary' : 'btn-outline-secondary' %>">
                   Waiting on Department
                 </button>
               </form>
@@ -129,14 +127,14 @@
               <form action="/admin/tickets/<%= ticket.id %>/status" method="POST" class="status-form" data-confirm="closed">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="closed">
-                <button type="submit" class="btn w-100 <%= ticket.status === 'closed' ? 'btn-success' : 'btn-outline-success' %>">
+                <button type="submit" class="btn w-full <%= ticket.status === 'closed' ? 'btn-success' : 'btn-outline-success' %>">
                   Closed
                 </button>
               </form>
             </div>
 
             <!-- Priority Update Section -->
-            <h3 class="h5 card-title mb-3">Update Priority</h3>
+            <h3 class="text-lg font-semibold mb-3">Update Priority</h3>
             <form action="/admin/tickets/<%= ticket.id %>/priority" method="POST">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <div class="mb-3">
@@ -148,7 +146,7 @@
                   <option value="critical" <%= ticket.priority === 'critical' ? 'selected' : '' %>>Critical</option>
                 </select>
               </div>
-              <button type="submit" class="btn btn-primary w-100">Update Priority</button>
+              <button type="submit" class="btn btn-primary w-full">Update Priority</button>
             </form>
 
             <!-- JavaScript for Confirmations -->
@@ -178,16 +176,16 @@
       </div>
     </div>
 
-    <div class="card shadow-sm mb-4">
+    <div class="card mb-4">
       <div class="card-body">
-        <h3 class="h5 card-title mb-3">Description</h3>
+        <h3 class="text-lg font-semibold mb-3">Description</h3>
         <p class="ticket-description mb-0"><%= ticket.description %></p>
       </div>
     </div>
 
-    <div class="card shadow-sm">
+    <div class="card">
       <div class="card-body">
-        <h3 class="h5 card-title mb-3">Comments (<%= comments.length %>)</h3>
+        <h3 class="text-lg font-semibold mb-3">Comments (<%= comments.length %>)</h3>
 
         <% if (comments.length > 0) { %>
           <div class="mb-4">
@@ -196,9 +194,9 @@
                 <div class="comment-header">
                   <strong><%= comment.username %></strong>
                   <% if (comment.visibility_type === 'internal') { %>
-                    <span class="badge bg-warning text-dark ms-2">Internal</span>
+                    <span class="badge badge-warning ml-2">Internal</span>
                   <% } %>
-                  <span class="comment-meta ms-2"><%= new Date(comment.created_at).toLocaleString() %></span>
+                  <span class="comment-meta ml-2"><%= new Date(comment.created_at).toLocaleString() %></span>
                 </div>
                 <div class="comment-content mt-2">
                   <%= comment.content %>
@@ -207,21 +205,21 @@
             <% }); %>
           </div>
         <% } else { %>
-          <p class="text-muted mb-4">No comments yet. Be the first to add one!</p>
+          <p class="text-gray-600 mb-4">No comments yet. Be the first to add one!</p>
         <% } %>
 
-        <h4 class="h6 mb-3">Add Comment</h4>
+        <h4 class="text-base font-medium mb-3">Add Comment</h4>
         <form action="/admin/tickets/<%= ticket.id %>/comments" method="POST">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
           <div class="mb-3">
-            <textarea name="content" id="content" rows="4" class="form-control" placeholder="Write your comment here..." required></textarea>
+            <textarea name="content" id="content" rows="4" class="form-textarea" placeholder="Write your comment here..." required></textarea>
           </div>
 
-          <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="is_internal" name="is_internal">
-            <label class="form-check-label" for="is_internal">
-              Internal Comment <small class="text-muted">(visible only to admins)</small>
+          <div class="mb-3 flex items-center gap-2">
+            <input type="checkbox" id="is_internal" name="is_internal" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+            <label for="is_internal" class="text-sm text-gray-700">
+              Internal Comment <span class="text-gray-500">(visible only to admins)</span>
             </label>
           </div>
 
@@ -232,10 +230,5 @@
   </main>
 
   <%- include('../partials/footer') %>
-
-  <!-- Bootstrap 5 JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-          integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-          crossorigin="anonymous"></script>
 </body>
 </html>

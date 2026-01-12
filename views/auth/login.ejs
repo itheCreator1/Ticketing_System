@@ -4,47 +4,39 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-        crossorigin="anonymous">
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="/css/custom.css">
+  <!-- Tailwind CSS -->
+  <link rel="stylesheet" href="/css/output.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
-<body class="bg-light">
-  <div class="d-flex justify-content-center align-items-center min-vh-100">
-    <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
-      <div class="card-body p-4">
-        <h1 class="h3 mb-1 text-center">Admin Login</h1>
-        <p class="text-muted text-center mb-4">KNII Ticketing System</p>
+<body class="bg-gray-50">
+  <div class="flex justify-center items-center min-h-screen px-4">
+    <div class="card w-full max-w-md">
+      <div class="card-body">
+        <h1 class="text-2xl font-bold mb-1 text-center">Admin Login</h1>
+        <p class="text-neutral-500 text-center mb-6">KNII Ticketing System</p>
 
         <%- include('../partials/flash') %>
 
         <form action="/auth/login" method="POST">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
-          <div class="mb-3">
+          <div class="mb-4">
             <label for="username" class="form-label">Username</label>
-            <input type="text" id="username" name="username" class="form-control" required autofocus>
+            <input type="text" id="username" name="username" class="form-input" required autofocus>
           </div>
 
-          <div class="mb-3">
+          <div class="mb-6">
             <label for="password" class="form-label">Password</label>
-            <input type="password" id="password" name="password" class="form-control" required>
+            <input type="password" id="password" name="password" class="form-input" required>
           </div>
 
-          <div class="d-grid">
-            <button type="submit" class="btn btn-primary">Login</button>
+          <div>
+            <button type="submit" class="btn btn-primary w-full">Login</button>
           </div>
         </form>
       </div>
     </div>
   </div>
-
-  <!-- Bootstrap 5 JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-          integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-          crossorigin="anonymous"></script>
 </body>
 </html>

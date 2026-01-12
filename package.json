@@ -13,6 +13,8 @@
     "prod:monitor": "pm2 monit",
     "init-db": "node scripts/init-db.js",
     "seed-admin": "node scripts/seed-admin.js",
+    "build:css": "tailwindcss -i ./public/css/input.css -o ./public/css/output.css --minify",
+    "watch:css": "tailwindcss -i ./public/css/input.css -o ./public/css/output.css --watch",
     "test": "jest",
     "test:unit": "jest --testPathPattern=tests/unit",
     "test:watch": "jest --watch",
@@ -46,9 +48,12 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "autoprefixer": "^10.4.17",
     "jest": "^30.2.0",
     "node-mocks-http": "^1.17.2",
     "nodemon": "^3.0.2",
-    "supertest": "^7.1.4"
+    "postcss": "^8.4.35",
+    "supertest": "^7.1.4",
+    "tailwindcss": "^3.4.1"
   }
 }

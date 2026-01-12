@@ -4,32 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
-  <!-- Bootstrap 5 CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-        crossorigin="anonymous">
-  <!-- Custom CSS -->
-  <link rel="stylesheet" href="/css/custom.css">
+  <link rel="stylesheet" href="/css/output.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
-<body class="bg-light">
+<body class="bg-gray-50">
   <%- include('../partials/header') %>
 
-  <main class="container-fluid px-4 py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="mb-0">Ticket Dashboard</h2>
-      <div class="d-flex gap-2">
+  <main class="container-fluid px-4 py-6">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold">Ticket Dashboard</h2>
+      <div class="flex gap-2">
         <a href="/admin/tickets/department/new" class="btn btn-primary">+ Create Department Ticket</a>
         <a href="/admin/tickets/new" class="btn btn-outline-secondary">+ Create Internal Ticket</a>
       </div>
     </div>
     <%- include('../partials/flash') %>
 
-    <div class="card shadow-sm mb-4">
+    <div class="card mb-6">
       <div class="card-body">
         <form action="/admin/dashboard" method="GET">
-          <div class="row g-3 align-items-end">
-            <div class="col-md-3">
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div>
               <label for="status" class="form-label">Status</label>
               <select name="status" id="status" class="form-select">
                 <option value="">All Statuses</option>
@@ -41,7 +36,7 @@
               </select>
             </div>
 
-            <div class="col-md-3">
+            <div>
               <label for="priority" class="form-label">Priority</label>
               <select name="priority" id="priority" class="form-select">
                 <option value="">All Priorities</option>
@@ -53,14 +48,14 @@
               </select>
             </div>
 
-            <div class="col-md-4">
+            <div class="md:col-span-2">
               <label for="search" class="form-label">Search</label>
-              <input type="text" name="search" id="search" class="form-control" placeholder="Search tickets..." value="<%= filters.search || '' %>">
+              <input type="text" name="search" id="search" class="form-input" placeholder="Search tickets..." value="<%= filters.search || '' %>">
             </div>
 
-            <div class="col-md-2">
-              <div class="d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Filter</button>
+            <div class="flex items-end">
+              <div class="flex gap-2 w-full">
+                <button type="submit" class="btn btn-primary flex-1">Filter</button>
                 <% if (filters.status || filters.priority || filters.search) { %>
                   <a href="/admin/dashboard" class="btn btn-secondary">Clear</a>
                 <% } %>
@@ -76,10 +71,10 @@
         <p class="mb-0">No tickets found. <%= filters.status || filters.priority || filters.search ? 'Try adjusting your filters.' : 'Tickets will appear here when users submit them.' %></p>
       </div>
     <% } else { %>
-      <div class="card shadow-sm mb-3">
-        <div class="table-responsive">
-          <table class="table table-hover table-striped mb-0">
-            <thead class="table-light">
+      <div class="card mb-4">
+        <div class="overflow-x-auto">
+          <table class="table">
+            <thead>
               <tr>
                 <th>ID</th>
                 <th>Title</th>
@@ -95,40 +90,40 @@
               <% tickets.forEach(ticket => { %>
                 <tr>
                   <td>#<%= ticket.id %></td>
-                  <td class="ticket-title">
+                  <td>
                     <%= ticket.title %>
                     <% if (ticket.reporter_department === 'Internal') { %>
-                      <span class="badge bg-warning text-dark ms-2">Internal</span>
+                      <span class="badge badge-warning ml-2">Internal</span>
                     <% } %>
                   </td>
                   <td>
                     <% if (ticket.status === 'open') { %>
-                      <span class="badge bg-info text-dark"><%= ticket.status.replace('_', ' ') %></span>
+                      <span class="badge badge-info"><%= ticket.status.replace('_', ' ') %></span>
                     <% } else if (ticket.status === 'in_progress') { %>
-                      <span class="badge bg-warning text-dark"><%= ticket.status.replace('_', ' ') %></span>
+                      <span class="badge badge-warning"><%= ticket.status.replace('_', ' ') %></span>
                     <% } else { %>
-                      <span class="badge bg-success"><%= ticket.status.replace('_', ' ') %></span>
+                      <span class="badge badge-success"><%= ticket.status.replace('_', ' ') %></span>
                     <% } %>
                   </td>
                   <td>
                     <% if (ticket.priority === 'unset') { %>
-                      <span class="badge bg-light text-dark border"><%= ticket.priority %></span>
+                      <span class="badge badge-light"><%= ticket.priority %></span>
                     <% } else if (ticket.priority === 'low') { %>
-                      <span class="badge bg-secondary"><%= ticket.priority %></span>
+                      <span class="badge badge-secondary"><%= ticket.priority %></span>
                     <% } else if (ticket.priority === 'medium') { %>
-                      <span class="badge bg-info"><%= ticket.priority %></span>
+                      <span class="badge badge-info"><%= ticket.priority %></span>
                     <% } else if (ticket.priority === 'high') { %>
-                      <span class="badge bg-warning text-dark"><%= ticket.priority %></span>
+                      <span class="badge badge-warning"><%= ticket.priority %></span>
                     <% } else if (ticket.priority === 'critical') { %>
-                      <span class="badge bg-danger"><%= ticket.priority %></span>
+                      <span class="badge badge-danger"><%= ticket.priority %></span>
                     <% } %>
                   </td>
                   <td><%= ticket.reporter_name || 'Anonymous' %></td>
-                  <td class="comment-snippet">
+                  <td class="text-sm text-gray-600 max-w-xs truncate">
                     <% if (ticket.last_comment) { %>
                       <%= ticket.last_comment.length > 100 ? ticket.last_comment.substring(0, 100) + '...' : ticket.last_comment %>
                     <% } else { %>
-                      <span class="text-muted">No comments</span>
+                      <span class="text-gray-400">No comments</span>
                     <% } %>
                   </td>
                   <td><%= new Date(ticket.created_at).toLocaleDateString() %></td>
@@ -142,17 +137,12 @@
         </div>
       </div>
 
-      <div class="ticket-stats">
+      <div class="text-gray-600">
         Showing <%= tickets.length %> ticket<%= tickets.length !== 1 ? 's' : '' %>
       </div>
     <% } %>
   </main>
 
   <%- include('../partials/footer') %>
-
-  <!-- Bootstrap 5 JS Bundle -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-          integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-          crossorigin="anonymous"></script>
 </body>
 </html>

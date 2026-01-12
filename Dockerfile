@@ -26,6 +26,9 @@ RUN npm install --legacy-peer-deps
 # Bundle app source
 COPY . .
 
+# Build Tailwind CSS
+RUN npm run build:css
+
 # Copy and set permissions for entrypoint script
 COPY scripts/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh

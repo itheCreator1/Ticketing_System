@@ -40,7 +40,7 @@ class ClientTicketService {
         reporter_phone: ticketData.reporter_phone,
         reporter_id: userId,  // Ownership enforcement
         priority: 'unset',  // FORCED - department users cannot set priority
-        status: 'open'  // Department-created tickets always start as 'open'
+        status: 'waiting_on_admin'  // Department-created tickets start as 'waiting_on_admin'
       });
 
       const duration = Date.now() - startTime;

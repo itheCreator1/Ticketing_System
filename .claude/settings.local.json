@@ -20,7 +20,8 @@
       "Bash(docker-compose restart:*)",
       "Bash(docker-compose exec:*)",
       "Bash(docker-compose logs:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(dos2unix:*)"
     ]
   }
 }
