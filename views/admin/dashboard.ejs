@@ -101,7 +101,11 @@
                       <span class="badge badge-info"><%= ticket.status.replace('_', ' ') %></span>
                     <% } else if (ticket.status === 'in_progress') { %>
                       <span class="badge badge-warning"><%= ticket.status.replace('_', ' ') %></span>
-                    <% } else { %>
+                    <% } else if (ticket.status === 'waiting_on_admin') { %>
+                      <span class="badge badge-warning"><%= ticket.status.replace(/_/g, ' ') %></span>
+                    <% } else if (ticket.status === 'waiting_on_department') { %>
+                      <span class="badge badge-danger"><%= ticket.status.replace(/_/g, ' ') %></span>
+                    <% } else if (ticket.status === 'closed') { %>
                       <span class="badge badge-success"><%= ticket.status.replace('_', ' ') %></span>
                     <% } %>
                   </td>

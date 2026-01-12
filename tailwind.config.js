@@ -11,7 +11,7 @@ module.exports = {
         'status-open': '#0d6efd',
         'status-progress': '#0dcaf0',
         'status-waiting-admin': '#ffc107',
-        'status-waiting-dept': '#6c757d',
+        'status-waiting-dept': '#dc3545',
         'status-closed': '#198754',
 
         // Priority colors
@@ -48,8 +48,8 @@ module.exports = {
           '50%': { transform: 'scale(1.05)', opacity: '0.9' }
         },
         'pulse-subtle': {
-          '0%, 100%': { boxShadow: '0 0 0 0 rgba(108, 117, 125, 0.4)' },
-          '50%': { boxShadow: '0 0 0 6px rgba(108, 117, 125, 0)' }
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(220, 53, 69, 0.4)' },
+          '50%': { boxShadow: '0 0 0 6px rgba(220, 53, 69, 0)' }
         }
       },
       animation: {
