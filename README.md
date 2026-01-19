@@ -264,6 +264,7 @@ npm run test:watch
 - 🐘 **PostgreSQL 16** - Robust relational database
 - 💾 **Native pg driver** - No ORM overhead
 - 🎨 **EJS Templates** - Server-side rendering
+- 🎨 **Tailwind CSS** - Utility-first CSS framework
 
 </td>
 <td width="50%">
@@ -431,6 +432,9 @@ KNII_Ticketing/
 │   ├── testing_*.md       # Testing documentation
 │   ├── howToDeploy.md     # Deployment guide
 │   └── git_rules.md       # Git workflow
+├── 📁 scripts/             # Development utilities
+│   ├── reset-passwords.js # Reset all user passwords (testing)
+│   └── seed-sample-data.js # Populate sample tickets/comments
 └── 📄 index.js             # Application entry point
 ```
 
@@ -776,6 +780,56 @@ Need help or have questions?
 ---
 
 ## 📋 Changelog
+
+### 🎉 **Version 2.4.1** *(2026-01-19)* - **UI Enhancements & Development Tools**
+
+<details>
+<summary><b>🎨 UI/UX Improvements - Tailwind CSS Integration</b></summary>
+
+- ✅ **Tailwind CSS integration** - Added Tailwind CSS for modern utility-first styling
+- ✅ **Mobile navigation** - Implemented responsive mobile menu toggle functionality
+- ✅ **Badge styling consistency** - Simplified status and priority badges across client views
+- ✅ **Color scheme updates** - Improved visual consistency in admin dashboard badges
+- ✅ **Responsive design** - Enhanced mobile-first responsive layout
+- ✅ **Output CSS file** - Generated optimized Tailwind CSS output
+
+**Visual Changes:**
+- Client portal badges now use simple Bootstrap classes for consistency
+- Status badges: info (open), warning (in_progress/waiting_on_admin), danger (waiting_on_you), success (closed)
+- Priority badges: danger (critical), warning (high), info (medium), secondary (low), light (unset)
+- Removed decorative icons from badges for cleaner appearance
+
+</details>
+
+<details>
+<summary><b>🛠️ Development Utilities - Testing & Demo Scripts</b></summary>
+
+- ✅ **Password reset script** - `scripts/reset-passwords.js` resets all user passwords to `password123`
+- ✅ **Sample data seeder** - `scripts/seed-sample-data.js` populates database with test data
+- ✅ **15 sample tickets** - Covers all departments, statuses, and priorities
+- ✅ **Sample comments** - Both public and internal comments for testing
+- ✅ **Quick testing setup** - Rapidly prepare development environment with realistic data
+
+**Usage:**
+```bash
+# Reset all passwords for testing
+docker-compose exec web node scripts/reset-passwords.js
+
+# Seed sample data
+docker-compose exec web node scripts/seed-sample-data.js
+```
+
+⚠️ **Development/Testing Only** - Never run these scripts in production
+
+</details>
+
+**Commits:**
+- `60d9b79` - chore: add development utility scripts for password reset and sample data
+- `cec2eb0` - fix: revert status and priority badges to simple design in client views
+- `485dd88` - Update status colors and badges in admin dashboard
+- `758fe9d` - Add Tailwind CSS configuration, mobile navigation toggle, and output CSS file
+
+---
 
 ### 🎉 **Version 2.3.2** *(2026-01-09)* - **Migration Sequencing Fix**
 

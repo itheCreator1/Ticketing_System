@@ -4,13 +4,13 @@
 
 KNII Ticketing System - A professional support ticket management application with department-based submission and dual-portal architecture (client portal for departments, admin portal for support staff).
 
-**Stack**: Node.js 20, Express 5.x, PostgreSQL 16, EJS templates, Docker
+**Stack**: Node.js 20, Express 5.x, PostgreSQL 16, EJS templates, Docker, Tailwind CSS
 **Production**: PM2 cluster mode
 **No ORM**: Raw SQL with pg driver
 **Code Quality**: 98% compliance with professional Node.js development standards
 **Security**: Zero SQL injection vulnerabilities, multi-layer defense with ownership verification
 **Testing**: 345+ test cases passing - 17 unit test files, 6 integration tests, 3 E2E tests
-**Version**: v2.4.0 (Admin Department Ticket Creation & UI Enhancements)
+**Version**: v2.4.1 (UI Enhancements & Development Tools)
 
 ---
 
@@ -629,6 +629,46 @@ docker-compose exec db psql -U ticketing_user -d ticketing_db -c "\dt"
 ```
 
 **Default admin credentials**: admin / admin123
+
+---
+
+## Development Utilities
+
+The `scripts/` directory contains helpful utilities for development and testing:
+
+### reset-passwords.js
+Resets all user passwords to `password123` for testing purposes.
+
+```bash
+# Reset all passwords (useful for testing after database reset)
+docker-compose exec web node scripts/reset-passwords.js
+```
+
+**Use cases**:
+- Testing authentication flows
+- Resetting locked accounts quickly
+- Standardizing test environment passwords
+
+### seed-sample-data.js
+Seeds the database with sample tickets and comments for testing.
+
+```bash
+# Populate database with sample data
+docker-compose exec web node scripts/seed-sample-data.js
+```
+
+**Creates**:
+- 15 sample tickets across all departments
+- Various status states (open, in_progress, waiting_on_admin, closed)
+- Different priority levels
+- Sample comments (both public and internal)
+
+**Use cases**:
+- Testing UI with realistic data
+- Demonstrating features to stakeholders
+- Development environment setup
+
+⚠️ **Warning**: These scripts are for **development/testing only**. Never run in production.
 
 ---
 
