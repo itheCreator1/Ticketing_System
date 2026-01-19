@@ -1,0 +1,72 @@
+{
+  "app": {
+    "name": "KNII Ticketing",
+    "title": "Ticket Management System"
+  },
+  "note": "Note",
+  "actions": {
+    "submit": "Submit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "update": "Update",
+    "back": "Back",
+    "create": "Create"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "userManagement": "User Management",
+    "departments": "Departments",
+    "logout": "Logout",
+    "welcome": "Welcome, {{username}}"
+  },
+  "roles": {
+    "super_admin": "Super Admin",
+    "admin": "Admin",
+    "department": "Department"
+  },
+  "buttons": {
+    "submit": "Submit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "filter": "Filter",
+    "clear": "Clear",
+    "clearFilters": "Clear Filters",
+    "search": "Search",
+    "create": "Create",
+    "update": "Update",
+    "close": "Close",
+    "back": "Back",
+    "goHome": "Go Home",
+    "login": "Login"
+  },
+  "labels": {
+    "status": "Status",
+    "priority": "Priority",
+    "createdAt": "Created",
+    "updatedAt": "Updated",
+    "actions": "Actions",
+    "id": "ID",
+    "title": "Title",
+    "description": "Description",
+    "reporter": "Reporter",
+    "department": "Department",
+    "assignedTo": "Assigned To",
+    "lastComment": "Last Comment",
+    "noComments": "No comments",
+    "never": "Never",
+    "na": "N/A"
+  },
+  "messages": {
+    "noResults": "No results found",
+    "loading": "Loading...",
+    "confirmDelete": "Are you sure you want to delete this item?",
+    "showing": "Showing {{count}} record",
+    "showing_plural": "Showing {{count}} records"
+  }
+}

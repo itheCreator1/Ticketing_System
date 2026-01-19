@@ -1,0 +1,69 @@
+{
+  "management": {
+    "title": "Διαχείριση Τμημάτων",
+    "createDepartment": "Δημιουργία Τμήματος",
+    "editDepartment": "Επεξεργασία Τμήματος",
+    "newDepartment": "Νέο Τμήμα",
+    "noDepartmentsFound": "Δεν βρέθηκαν τμήματα.",
+    "assignedUsers": "Χρήστες που Ανήκουν",
+    "assignUserToDepartment": "Ανάθεση Χρήστη σε Τμήμα",
+    "noUsersAssigned": "Δεν υπάρχουν χρήστες σε αυτό το τμήμα.",
+    "noAvailableUsers": "Δεν υπάρχουν διαθέσιμοι χρήστες για ανάθεση.",
+    "selectUser": "Επιλέξτε Χρήστη",
+    "chooseUser": "Επιλέξτε χρήστη...",
+    "currentlyIn": "Τρέχον τμήμα",
+    "activeTickets": "Ενεργά Αιτήματα",
+    "systemDepartment": "Τμήμα συστήματος",
+    "custom": "Προσαρμοσμένο",
+    "type": "Τύπος"
+  },
+  "fields": {
+    "id": "ID",
+    "name": "Όνομα",
+    "description": "Περιγραφή",
+    "active": "Ενεργό",
+    "isSystem": "Τμήμα Συστήματος",
+    "usersCount": "Χρήστες",
+    "ticketsCount": "Αιτήματα",
+    "created": "Δημιουργήθηκε",
+    "noDescription": "Χωρίς περιγραφή"
+  },
+  "status": {
+    "active": "Ενεργό",
+    "inactive": "Ανενεργό",
+    "system": "Σύστημα"
+  },
+  "form": {
+    "namePlaceholder": "Εισάγετε όνομα τμήματος",
+    "nameHelp": "Μοναδικό όνομα για το τμήμα (π.χ. «Μάρκετινγκ», «Νομικά»)",
+    "descriptionPlaceholder": "Εισάγετε περιγραφή τμήματος",
+    "descriptionHelp": "Προαιρετική περιγραφή του ρόλου του τμήματος"
+  },
+  "actions": {
+    "deactivate": "Απενεργοποίηση",
+    "reactivate": "Επανενεργοποίηση",
+    "activate": "Ενεργοποίηση",
+    "confirmDeactivate": "Απενεργοποίηση αυτού του τμήματος;",
+    "remove": "Αφαίρεση",
+    "assignUser": "Ανάθεση Χρήστη",
+    "removeUserConfirm": "Αφαίρεση {{username}} από αυτό το τμήμα;",
+    "removeUserWarning": "Προσοχή: Αυτός ο χρήστης έχει {{count}} ενεργά αιτήματα."
+  },
+  "messages": {
+    "created": "Το τμήμα δημιουργήθηκε επιτυχώς",
+    "updated": "Το τμήμα ενημερώθηκε επιτυχώς",
+    "deactivated": "Το τμήμα απενεργοποιήθηκε επιτυχώς",
+    "notFound": "Το τμήμα δεν βρέθηκε",
+    "createFailed": "Αποτυχία δημιουργίας τμήματος",
+    "updateFailed": "Αποτυχία ενημέρωσης τμήματος",
+    "cannotEditSystem": "Δεν είναι δυνατή η επεξεργασία τμήματος συστήματος"
+  },
+  "list": {
+    "itSupport": "Τεχνική Υποστήριξη",
+    "generalSupport": "Γενική Υποστήριξη",
+    "humanResources": "Ανθρώπινο Δυναμικό",
+    "finance": "Οικονομικά",
+    "facilities": "Κτιριακές Εγκαταστάσεις",
+    "internal": "Εσωτερικό"
+  }
+}

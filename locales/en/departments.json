@@ -1,0 +1,69 @@
+{
+  "management": {
+    "title": "Department Management",
+    "createDepartment": "Create Department",
+    "editDepartment": "Edit Department",
+    "newDepartment": "New Department",
+    "noDepartmentsFound": "No departments found.",
+    "assignedUsers": "Assigned Users",
+    "assignUserToDepartment": "Assign User to Department",
+    "noUsersAssigned": "No users assigned to this department.",
+    "noAvailableUsers": "No available users to assign.",
+    "selectUser": "Select User",
+    "chooseUser": "Choose a user...",
+    "currentlyIn": "Currently in",
+    "activeTickets": "Active Tickets",
+    "systemDepartment": "System department",
+    "custom": "Custom",
+    "type": "Type"
+  },
+  "fields": {
+    "id": "ID",
+    "name": "Name",
+    "description": "Description",
+    "active": "Active",
+    "isSystem": "System Department",
+    "usersCount": "Users",
+    "ticketsCount": "Tickets",
+    "created": "Created",
+    "noDescription": "No description"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "system": "System"
+  },
+  "form": {
+    "namePlaceholder": "Enter department name",
+    "nameHelp": "Unique name for the department (e.g., \"Marketing\", \"Legal\")",
+    "descriptionPlaceholder": "Enter department description",
+    "descriptionHelp": "Optional description of the department's role"
+  },
+  "actions": {
+    "deactivate": "Deactivate",
+    "reactivate": "Reactivate",
+    "activate": "Activate",
+    "confirmDeactivate": "Deactivate this department?",
+    "remove": "Remove",
+    "assignUser": "Assign User",
+    "removeUserConfirm": "Remove {{username}} from this department?",
+    "removeUserWarning": "Warning: This user has {{count}} active ticket(s)."
+  },
+  "messages": {
+    "created": "Department created successfully",
+    "updated": "Department updated successfully",
+    "deactivated": "Department deactivated successfully",
+    "notFound": "Department not found",
+    "createFailed": "Failed to create department",
+    "updateFailed": "Failed to update department",
+    "cannotEditSystem": "Cannot edit system department"
+  },
+  "list": {
+    "itSupport": "IT Support",
+    "generalSupport": "General Support",
+    "humanResources": "Human Resources",
+    "finance": "Finance",
+    "facilities": "Facilities",
+    "internal": "Internal"
+  }
+}

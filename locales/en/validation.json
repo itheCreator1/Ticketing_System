@@ -1,0 +1,49 @@
+{
+  "title": {
+    "required": "Title is required",
+    "tooLong": "Title cannot exceed {{max}} characters"
+  },
+  "description": {
+    "required": "Description is required",
+    "tooLong": "Description cannot exceed {{max}} characters"
+  },
+  "email": {
+    "invalid": "Valid email is required",
+    "required": "Email is required",
+    "inUse": "Email is already in use"
+  },
+  "name": {
+    "required": "Name is required",
+    "tooLong": "Name cannot exceed {{max}} characters"
+  },
+  "phone": {
+    "tooLong": "Phone number cannot exceed {{max}} characters"
+  },
+  "department": {
+    "required": "Department is required",
+    "invalid": "Invalid department selected"
+  },
+  "priority": {
+    "invalid": "Invalid priority"
+  },
+  "status": {
+    "invalid": "Invalid status"
+  },
+  "username": {
+    "required": "Username is required",
+    "invalid": "Username must be 3-50 characters and contain only letters, numbers, and underscores",
+    "inUse": "Username is already in use"
+  },
+  "password": {
+    "required": "Password is required",
+    "tooShort": "Password must be at least 8 characters",
+    "complexity": "Password must contain uppercase, lowercase, number, and special character"
+  },
+  "role": {
+    "invalid": "Invalid role selected"
+  },
+  "comment": {
+    "required": "Comment cannot be empty",
+    "tooLong": "Comment cannot exceed {{max}} characters"
+  }
+}

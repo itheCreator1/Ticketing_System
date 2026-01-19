@@ -1,0 +1,40 @@
+{
+  "404": {
+    "title": "404 - Page Not Found",
+    "heading": "Oops! Page Not Found",
+    "message": "The page you're looking for seems to have gone missing. It may have been moved, deleted, or you may have mistyped the URL."
+  },
+  "403": {
+    "title": "403 - Forbidden",
+    "heading": "Access Forbidden",
+    "message": "You don't have permission to access this resource. This area is restricted to authorized personnel only."
+  },
+  "500": {
+    "title": "500 - Server Error",
+    "heading": "Something went wrong on our end",
+    "message": "We're experiencing technical difficulties. Our team has been notified and is working to fix this issue."
+  },
+  "generic": {
+    "title": "Error",
+    "heading": "An Error Occurred",
+    "message": "An unexpected error has occurred."
+  },
+  "buttons": {
+    "goHome": "Home",
+    "goBack": "Go Back",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "tryAgain": "Try Again"
+  },
+  "search": {
+    "placeholder": "Search tickets or help...",
+    "button": "Search"
+  },
+  "troubleshooting": {
+    "title": "Troubleshooting Information",
+    "errorId": "Error ID",
+    "errorCategory": "Error Category",
+    "timestamp": "Timestamp",
+    "stackTrace": "Stack Trace"
+  }
+}

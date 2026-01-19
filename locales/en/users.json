@@ -1,0 +1,65 @@
+{
+  "management": {
+    "title": "User Management",
+    "createUser": "Create User",
+    "editUser": "Edit User",
+    "newUser": "New User",
+    "noUsersFound": "No users found. Create your first user to get started.",
+    "userDetails": "User Details",
+    "resetPasswordSection": "Reset Password",
+    "resetPasswordWarning": "Resetting the password will log the user out of all active sessions.",
+    "departmentUserHelp": "Department users can submit and manage their own tickets",
+    "departmentRequired": "Required for department role users"
+  },
+  "fields": {
+    "id": "ID",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "role": "Role",
+    "department": "Department",
+    "status": "Status",
+    "lastLogin": "Last Login",
+    "created": "Created"
+  },
+  "roles": {
+    "admin": "Admin",
+    "super_admin": "Super Admin",
+    "department": "Department User"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "deleted": "Deleted"
+  },
+  "form": {
+    "selectRole": "Select Role",
+    "selectDepartment": "Select Department",
+    "selectStatus": "Select Status",
+    "usernameHelp": "3-50 characters, letters, numbers, and underscores only",
+    "passwordHelp": "At least 8 characters with uppercase, lowercase, number, and special character",
+    "leaveBlankPassword": "Leave blank to keep current password"
+  },
+  "actions": {
+    "resetPassword": "Reset Password",
+    "deleteUser": "Delete User",
+    "confirmDelete": "Are you sure you want to delete this user?",
+    "confirmResetPassword": "Reset password for this user?"
+  },
+  "messages": {
+    "created": "User created successfully",
+    "updated": "User updated successfully",
+    "deleted": "User deleted successfully",
+    "passwordReset": "Password reset successfully",
+    "statusUpdated": "User status updated",
+    "notFound": "User not found",
+    "loadFailed": "Failed to load user",
+    "createFailed": "Failed to create user",
+    "updateFailed": "Failed to update user",
+    "deleteFailed": "Failed to delete user",
+    "passwordResetFailed": "Failed to reset password",
+    "statusUpdateFailed": "Failed to update status"
+  }
+}

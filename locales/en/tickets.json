@@ -1,0 +1,135 @@
+{
+  "dashboard": {
+    "title": "Ticket Dashboard",
+    "myTickets": "My Tickets",
+    "createDepartmentTicket": "+ Create Department Ticket",
+    "createInternalTicket": "+ Create Internal Ticket",
+    "createNewTicket": "Create New Ticket",
+    "createFirstTicket": "Create Your First Ticket"
+  },
+  "detail": {
+    "title": "Ticket Details",
+    "ticketInfo": "Ticket Information",
+    "reporterInfo": "Reporter Information",
+    "updateTicket": "Update Ticket",
+    "backToDashboard": "Back to Dashboard",
+    "updateStatus": "Update Status",
+    "updatePriority": "Update Priority",
+    "description": "Description",
+    "reporter": "Reporter",
+    "phone": "Phone",
+    "created": "Created",
+    "lastUpdated": "Last Updated",
+    "internalAdminOnly": "Internal - Admin Only",
+    "closeTicket": "Close Ticket",
+    "waitingOnAdminHelp": "Use \"Waiting on Admin\" if you need further assistance. Use \"Close Ticket\" if your issue is resolved.",
+    "ticketClosed": "This ticket has been closed. If you need to reopen it, please contact an administrator or create a new ticket.",
+    "commentsDisabled": "Comments are disabled for closed tickets."
+  },
+  "form": {
+    "newTicket": "New Ticket",
+    "newInternalTicket": "New Internal Ticket",
+    "newDepartmentTicket": "New Department Ticket",
+    "title": "Title",
+    "titlePlaceholder": "Briefly describe the issue",
+    "titlePlaceholderInternal": "Brief description of the internal issue",
+    "description": "Description",
+    "descriptionPlaceholder": "Provide detailed information about your request...",
+    "descriptionPlaceholderInternal": "Detailed description of the internal issue",
+    "reporterName": "Reporter Name",
+    "reporterNameHelp": "Name of the department contact reporting this issue",
+    "reporterPhone": "Phone",
+    "reporterPhoneOptional": "Phone Number (optional)",
+    "department": "Department",
+    "selectDepartment": "Select Department",
+    "departmentHelp": "For categorization. Ticket will be hidden from all department users.",
+    "departmentHelpVisible": "The department this ticket belongs to. It will appear in their dashboard.",
+    "priority": "Priority",
+    "status": "Status",
+    "assignedTo": "Assigned To",
+    "unassigned": "Unassigned",
+    "submitTicket": "Submit Ticket",
+    "createAdminTicket": "Create Admin Ticket",
+    "createDepartmentTicket": "Create Department Ticket",
+    "internalTicketNote": "This ticket will only be visible to administrators. Select department for organizational purposes.",
+    "departmentTicketNote": "This ticket will be visible to department users in the selected department. Use this to create tickets on behalf of departments (e.g., phone requests, email submissions). The ticket will appear in their dashboard as if they submitted it.",
+    "departmentTicketStatusNote": "This ticket will automatically start with status \"Open\" and will be visible to the selected department's users."
+  },
+  "status": {
+    "all": "All Statuses",
+    "open": "Open",
+    "in_progress": "In Progress",
+    "waiting_on_admin": "Waiting on Admin",
+    "waiting_on_department": "Waiting on Department",
+    "waiting_on_you": "Waiting on You",
+    "closed": "Closed"
+  },
+  "priority": {
+    "all": "All Priorities",
+    "unset": "Unset",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "critical": "Critical"
+  },
+  "badges": {
+    "internal": "Internal"
+  },
+  "messages": {
+    "created": "Your ticket has been submitted successfully!",
+    "updated": "Ticket updated successfully",
+    "notFound": "Ticket not found",
+    "unauthorizedAccess": "You do not have permission to access this ticket",
+    "statusChanged": "Ticket status updated successfully",
+    "internalCreated": "Internal ticket created successfully",
+    "adminCreated": "Admin ticket created successfully"
+  },
+  "emptyState": {
+    "noTicketsFound": "No Tickets Found",
+    "noTicketsYet": "No Tickets Yet",
+    "adjustFilters": "Try adjusting your filters to find what you're looking for.",
+    "firstTicketHelp": "Create your first ticket to get started. Our support team is here to help!",
+    "ticketsWillAppear": "Tickets will appear here when submitted."
+  },
+  "stats": {
+    "open": "Open",
+    "inProgress": "In Progress",
+    "waitingOnYou": "Waiting on You",
+    "showing": "Showing {{count}} ticket",
+    "showing_plural": "Showing {{count}} tickets"
+  },
+  "comments": {
+    "title": "Comments",
+    "add": "Add Comment",
+    "addComment": "Add Comment",
+    "placeholder": "Write your comment...",
+    "visibility": "Visibility",
+    "public": "Public",
+    "internal": "Internal",
+    "internalComment": "Internal Comment",
+    "internalCommentHelp": "visible only to admins",
+    "added": "Comment added successfully",
+    "noComments": "No comments yet",
+    "noCommentsYet": "No comments yet. Be the first to add one!",
+    "beFirst": "No comments yet."
+  },
+  "confirmations": {
+    "closeTicket": "Are you sure you want to close this ticket? This action marks the ticket as resolved.",
+    "closeTicketDepartment": "Are you sure you want to close this ticket? You can contact an administrator to reopen it if needed.",
+    "inProgress": "Mark this ticket as In Progress? This indicates you are actively working on it."
+  },
+  "table": {
+    "id": "ID",
+    "title": "Title",
+    "status": "Status",
+    "priority": "Priority",
+    "reporter": "Reporter",
+    "lastComment": "Last Comment",
+    "created": "Created",
+    "actions": "Actions",
+    "anonymous": "Anonymous"
+  },
+  "search": {
+    "placeholder": "Search tickets..."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "app": {
+    "name": "KNII Ticketing",
+    "title": "Σύστημα Διαχείρισης Αιτημάτων"
+  },
+  "note": "Σημείωση",
+  "actions": {
+    "submit": "Υποβολή",
+    "save": "Αποθήκευση",
+    "cancel": "Ακύρωση",
+    "delete": "Διαγραφή",
+    "edit": "Επεξεργασία",
+    "view": "Προβολή",
+    "update": "Ενημέρωση",
+    "back": "Πίσω",
+    "create": "Δημιουργία"
+  },
+  "nav": {
+    "dashboard": "Πίνακας Ελέγχου",
+    "userManagement": "Διαχείριση Χρηστών",
+    "departments": "Τμήματα",
+    "logout": "Αποσύνδεση",
+    "welcome": "Καλωσήρθες, {{username}}"
+  },
+  "roles": {
+    "super_admin": "Υπερδιαχειριστής",
+    "admin": "Διαχειριστής",
+    "department": "Τμήμα"
+  },
+  "buttons": {
+    "submit": "Υποβολή",
+    "save": "Αποθήκευση",
+    "cancel": "Ακύρωση",
+    "delete": "Διαγραφή",
+    "edit": "Επεξεργασία",
+    "view": "Προβολή",
+    "filter": "Φίλτρο",
+    "clear": "Καθαρισμός",
+    "clearFilters": "Καθαρισμός Φίλτρων",
+    "search": "Αναζήτηση",
+    "create": "Δημιουργία",
+    "update": "Ενημέρωση",
+    "close": "Κλείσιμο",
+    "back": "Πίσω",
+    "goHome": "Αρχική Σελίδα",
+    "login": "Σύνδεση"
+  },
+  "labels": {
+    "status": "Κατάσταση",
+    "priority": "Προτεραιότητα",
+    "createdAt": "Δημιουργήθηκε",
+    "updatedAt": "Ενημερώθηκε",
+    "actions": "Ενέργειες",
+    "id": "ID",
+    "title": "Τίτλος",
+    "description": "Περιγραφή",
+    "reporter": "Αναφέρων",
+    "department": "Τμήμα",
+    "assignedTo": "Ανατέθηκε σε",
+    "lastComment": "Τελευταίο Σχόλιο",
+    "noComments": "Χωρίς σχόλια",
+    "never": "Ποτέ",
+    "na": "Δ/Υ"
+  },
+  "messages": {
+    "noResults": "Δεν βρέθηκαν αποτελέσματα",
+    "loading": "Φόρτωση...",
+    "confirmDelete": "Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το στοιχείο;",
+    "showing": "Εμφάνιση {{count}} εγγραφής",
+    "showing_plural": "Εμφάνιση {{count}} εγγραφών"
+  }
+}
