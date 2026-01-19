@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= language %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
+  <title><%= t('tickets:dashboard.myTickets') %> - <%= t('common:app.name') %></title>
   <link rel="stylesheet" href="/css/output.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
@@ -13,7 +13,7 @@
   <main class="container-fluid px-4 py-6">
     <div class="flex justify-between items-center mb-6">
       <div>
-        <h2 class="text-2xl font-bold mb-3">My Tickets</h2>
+        <h2 class="text-2xl font-bold mb-3"><%= t('tickets:dashboard.myTickets') %></h2>
         <%
         const openCount = tickets.filter(t => t.status === 'open').length;
         const inProgressCount = tickets.filter(t => t.status === 'in_progress').length;
@@ -22,22 +22,22 @@
         <div class="flex gap-3">
           <span class="stat-badge stat-open">
             <i class="bi bi-inbox-fill"></i>
-            <span><%= openCount %> Open</span>
+            <span><%= openCount %> <%= t('tickets:stats.open') %></span>
           </span>
           <span class="stat-badge stat-progress">
             <i class="bi bi-gear-fill"></i>
-            <span><%= inProgressCount %> In Progress</span>
+            <span><%= inProgressCount %> <%= t('tickets:stats.inProgress') %></span>
           </span>
           <% if (waitingOnYouCount > 0) { %>
             <span class="stat-badge stat-waiting">
               <i class="bi bi-exclamation-circle-fill"></i>
-              <span><%= waitingOnYouCount %> Waiting on You</span>
+              <span><%= waitingOnYouCount %> <%= t('tickets:stats.waitingOnYou') %></span>
             </span>
           <% } %>
         </div>
       </div>
       <a href="/client/tickets/new" class="btn btn-success">
-        <i class="bi bi-plus-circle"></i> Create New Ticket
+        <i class="bi bi-plus-circle"></i> <%= t('tickets:dashboard.createNewTicket') %>
       </a>
     </div>
 
@@ -48,39 +48,39 @@
         <form action="/client/dashboard" method="GET">
           <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
             <div>
-              <label for="status" class="form-label">Status</label>
+              <label for="status" class="form-label"><%= t('common:labels.status') %></label>
               <select name="status" id="status" class="form-select">
-                <option value="">All Statuses</option>
-                <option value="open" <%= filters.status === 'open' ? 'selected' : '' %>>Open</option>
-                <option value="in_progress" <%= filters.status === 'in_progress' ? 'selected' : '' %>>In Progress</option>
-                <option value="waiting_on_admin" <%= filters.status === 'waiting_on_admin' ? 'selected' : '' %>>Waiting on Admin</option>
-                <option value="waiting_on_department" <%= filters.status === 'waiting_on_department' ? 'selected' : '' %>>Waiting on You</option>
-                <option value="closed" <%= filters.status === 'closed' ? 'selected' : '' %>>Closed</option>
+                <option value=""><%= t('tickets:status.all') %></option>
+                <option value="open" <%= filters.status === 'open' ? 'selected' : '' %>><%= t('tickets:status.open') %></option>
+                <option value="in_progress" <%= filters.status === 'in_progress' ? 'selected' : '' %>><%= t('tickets:status.in_progress') %></option>
+                <option value="waiting_on_admin" <%= filters.status === 'waiting_on_admin' ? 'selected' : '' %>><%= t('tickets:status.waiting_on_admin') %></option>
+                <option value="waiting_on_department" <%= filters.status === 'waiting_on_department' ? 'selected' : '' %>><%= t('tickets:status.waiting_on_you') %></option>
+                <option value="closed" <%= filters.status === 'closed' ? 'selected' : '' %>><%= t('tickets:status.closed') %></option>
               </select>
             </div>
 
             <div>
-              <label for="priority" class="form-label">Priority</label>
+              <label for="priority" class="form-label"><%= t('common:labels.priority') %></label>
               <select name="priority" id="priority" class="form-select">
-                <option value="">All Priorities</option>
-                <option value="unset" <%= filters.priority === 'unset' ? 'selected' : '' %>>Unset</option>
-                <option value="low" <%= filters.priority === 'low' ? 'selected' : '' %>>Low</option>
-                <option value="medium" <%= filters.priority === 'medium' ? 'selected' : '' %>>Medium</option>
-                <option value="high" <%= filters.priority === 'high' ? 'selected' : '' %>>High</option>
-                <option value="critical" <%= filters.priority === 'critical' ? 'selected' : '' %>>Critical</option>
+                <option value=""><%= t('tickets:priority.all') %></option>
+                <option value="unset" <%= filters.priority === 'unset' ? 'selected' : '' %>><%= t('tickets:priority.unset') %></option>
+                <option value="low" <%= filters.priority === 'low' ? 'selected' : '' %>><%= t('tickets:priority.low') %></option>
+                <option value="medium" <%= filters.priority === 'medium' ? 'selected' : '' %>><%= t('tickets:priority.medium') %></option>
+                <option value="high" <%= filters.priority === 'high' ? 'selected' : '' %>><%= t('tickets:priority.high') %></option>
+                <option value="critical" <%= filters.priority === 'critical' ? 'selected' : '' %>><%= t('tickets:priority.critical') %></option>
               </select>
             </div>
 
             <div class="md:col-span-2">
-              <label for="search" class="form-label">Search</label>
-              <input type="text" name="search" id="search" class="form-input" placeholder="Search tickets..." value="<%= filters.search || '' %>">
+              <label for="search" class="form-label"><%= t('common:buttons.search') %></label>
+              <input type="text" name="search" id="search" class="form-input" placeholder="<%= t('tickets:search.placeholder') %>" value="<%= filters.search || '' %>">
             </div>
 
             <div class="flex items-end">
               <div class="flex gap-2 w-full">
-                <button type="submit" class="btn btn-primary flex-1">Filter</button>
+                <button type="submit" class="btn btn-primary flex-1"><%= t('common:buttons.filter') %></button>
                 <% if (filters.status || filters.priority || filters.search) { %>
-                  <a href="/client/dashboard" class="btn btn-secondary">Clear</a>
+                  <a href="/client/dashboard" class="btn btn-secondary"><%= t('common:buttons.clear') %></a>
                 <% } %>
               </div>
             </div>
@@ -94,25 +94,25 @@
         <i class="bi bi-inbox empty-state-icon"></i>
         <h4 class="text-xl font-semibold mt-4 mb-2">
           <% if (filters.status || filters.priority || filters.search) { %>
-            No Tickets Found
+            <%= t('tickets:emptyState.noTicketsFound') %>
           <% } else { %>
-            No Tickets Yet
+            <%= t('tickets:emptyState.noTicketsYet') %>
           <% } %>
         </h4>
         <p class="text-gray-600 mb-6">
           <% if (filters.status || filters.priority || filters.search) { %>
-            Try adjusting your filters to find what you're looking for.
+            <%= t('tickets:emptyState.adjustFilters') %>
           <% } else { %>
-            Create your first ticket to get started. Our support team is here to help!
+            <%= t('tickets:emptyState.firstTicketHelp') %>
           <% } %>
         </p>
         <% if (!filters.status && !filters.priority && !filters.search) { %>
           <a href="/client/tickets/new" class="btn btn-primary btn-lg">
-            <i class="bi bi-plus-circle"></i> Create Your First Ticket
+            <i class="bi bi-plus-circle"></i> <%= t('tickets:dashboard.createFirstTicket') %>
           </a>
         <% } else { %>
           <a href="/client/dashboard" class="btn btn-secondary">
-            <i class="bi bi-x-circle"></i> Clear Filters
+            <i class="bi bi-x-circle"></i> <%= t('common:buttons.clearFilters') %>
           </a>
         <% } %>
       </div>
@@ -122,13 +122,13 @@
           <table class="table">
             <thead>
               <tr>
-                <th class="w-20">ID</th>
-                <th>Title</th>
-                <th class="w-44">Status</th>
-                <th class="w-36">Priority</th>
-                <th class="w-64">Last Comment</th>
-                <th class="w-32">Created</th>
-                <th class="w-28">Actions</th>
+                <th class="w-20"><%= t('tickets:table.id') %></th>
+                <th><%= t('tickets:table.title') %></th>
+                <th class="w-44"><%= t('tickets:table.status') %></th>
+                <th class="w-36"><%= t('tickets:table.priority') %></th>
+                <th class="w-64"><%= t('tickets:table.lastComment') %></th>
+                <th class="w-32"><%= t('tickets:table.created') %></th>
+                <th class="w-28"><%= t('tickets:table.actions') %></th>
               </tr>
             </thead>
             <tbody>
@@ -144,27 +144,27 @@
                     <% if (ticket.status === 'open') { %>
                       <span class="badge-status badge-status-open">
                         <i class="bi bi-inbox-fill"></i>
-                        <span>Open</span>
+                        <span><%= t('tickets:status.open') %></span>
                       </span>
                     <% } else if (ticket.status === 'in_progress') { %>
                       <span class="badge-status badge-status-progress">
                         <i class="bi bi-gear-fill"></i>
-                        <span>In Progress</span>
+                        <span><%= t('tickets:status.in_progress') %></span>
                       </span>
                     <% } else if (ticket.status === 'waiting_on_admin') { %>
                       <span class="badge-status badge-status-waiting-admin">
                         <i class="bi bi-hourglass-split"></i>
-                        <span>Waiting on Admin</span>
+                        <span><%= t('tickets:status.waiting_on_admin') %></span>
                       </span>
                     <% } else if (ticket.status === 'waiting_on_department') { %>
                       <span class="badge-status badge-status-waiting-dept">
                         <i class="bi bi-exclamation-circle-fill"></i>
-                        <span>Waiting on You</span>
+                        <span><%= t('tickets:status.waiting_on_you') %></span>
                       </span>
                     <% } else if (ticket.status === 'closed') { %>
                       <span class="badge-status badge-status-closed">
                         <i class="bi bi-check-circle-fill"></i>
-                        <span>Closed</span>
+                        <span><%= t('tickets:status.closed') %></span>
                       </span>
                     <% } %>
                   </td>
@@ -172,27 +172,27 @@
                     <% if (ticket.priority === 'critical') { %>
                       <span class="badge-priority badge-priority-critical">
                         <i class="bi bi-exclamation-triangle-fill"></i>
-                        <span>Critical</span>
+                        <span><%= t('tickets:priority.critical') %></span>
                       </span>
                     <% } else if (ticket.priority === 'high') { %>
                       <span class="badge-priority badge-priority-high">
                         <i class="bi bi-arrow-up-circle-fill"></i>
-                        <span>High</span>
+                        <span><%= t('tickets:priority.high') %></span>
                       </span>
                     <% } else if (ticket.priority === 'medium') { %>
                       <span class="badge-priority badge-priority-medium">
                         <i class="bi bi-dash-circle-fill"></i>
-                        <span>Medium</span>
+                        <span><%= t('tickets:priority.medium') %></span>
                       </span>
                     <% } else if (ticket.priority === 'low') { %>
                       <span class="badge-priority badge-priority-low">
                         <i class="bi bi-arrow-down-circle-fill"></i>
-                        <span>Low</span>
+                        <span><%= t('tickets:priority.low') %></span>
                       </span>
                     <% } else { %>
                       <span class="badge-priority badge-priority-unset">
                         <i class="bi bi-circle"></i>
-                        <span>Unset</span>
+                        <span><%= t('tickets:priority.unset') %></span>
                       </span>
                     <% } %>
                   </td>
@@ -200,13 +200,13 @@
                     <% if (ticket.last_comment) { %>
                       <%= ticket.last_comment.length > 100 ? ticket.last_comment.substring(0, 100) + '...' : ticket.last_comment %>
                     <% } else { %>
-                      <span class="text-gray-400">No comments</span>
+                      <span class="text-gray-400"><%= t('common:labels.noComments') %></span>
                     <% } %>
                   </td>
-                  <td class="text-gray-500"><%= new Date(ticket.created_at).toLocaleDateString() %></td>
+                  <td class="text-gray-500"><%= new Date(ticket.created_at).toLocaleDateString(language === 'el' ? 'el-GR' : 'en-US') %></td>
                   <td>
                     <a href="/client/tickets/<%= ticket.id %>" class="btn btn-sm btn-primary">
-                      <i class="bi bi-eye"></i> View
+                      <i class="bi bi-eye"></i> <%= t('common:buttons.view') %>
                     </a>
                   </td>
                 </tr>
@@ -218,7 +218,7 @@
 
       <div class="flex items-center gap-2 text-gray-600">
         <i class="bi bi-list-check"></i>
-        <span>Showing <%= tickets.length %> ticket<%= tickets.length !== 1 ? 's' : '' %></span>
+        <span><%= t('tickets:stats.showing', { count: tickets.length }) %></span>
       </div>
     <% } %>
   </main>

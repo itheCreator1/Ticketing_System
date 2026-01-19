@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= language %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
+  <title><%= t('tickets:form.newTicket') %> - <%= t('common:app.name') %></title>
   <link rel="stylesheet" href="/css/output.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
@@ -12,8 +12,8 @@
 
   <main class="container py-8">
     <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold">Create New Ticket</h2>
-      <a href="/client/dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
+      <h2 class="text-2xl font-bold"><%= t('tickets:dashboard.createNewTicket') %></h2>
+      <a href="/client/dashboard" class="btn btn-outline-secondary"><%= t('tickets:detail.backToDashboard') %></a>
     </div>
 
     <%- include('../partials/flash') %>
@@ -24,23 +24,23 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
           <div class="mb-4">
-            <label for="title" class="form-label">Issue Title *</label>
-            <input type="text" id="title" name="title" class="form-input" required placeholder="Brief description of the issue">
+            <label for="title" class="form-label"><%= t('tickets:form.title') %> *</label>
+            <input type="text" id="title" name="title" class="form-input" required placeholder="<%= t('tickets:form.titlePlaceholder') %>">
           </div>
 
           <div class="mb-4">
-            <label for="description" class="form-label">Description *</label>
-            <textarea id="description" name="description" rows="6" class="form-textarea" required placeholder="Please provide as much detail as possible about the issue"></textarea>
+            <label for="description" class="form-label"><%= t('tickets:form.description') %> *</label>
+            <textarea id="description" name="description" rows="6" class="form-textarea" required placeholder="<%= t('tickets:form.descriptionPlaceholder') %>"></textarea>
           </div>
 
           <div class="mb-6">
-            <label for="reporter_phone" class="form-label">Phone Number (optional)</label>
-            <input type="tel" id="reporter_phone" name="reporter_phone" class="form-input" placeholder="+1 (555) 123-4567">
+            <label for="reporter_phone" class="form-label"><%= t('tickets:form.reporterPhone') %></label>
+            <input type="tel" id="reporter_phone" name="reporter_phone" class="form-input" placeholder="+30 210 1234567">
           </div>
 
           <div class="space-y-3">
-            <button type="submit" class="btn btn-primary btn-lg w-full">Create Ticket</button>
-            <a href="/client/dashboard" class="btn btn-outline-secondary w-full block text-center">Cancel</a>
+            <button type="submit" class="btn btn-primary btn-lg w-full"><%= t('tickets:form.submitTicket') %></button>
+            <a href="/client/dashboard" class="btn btn-outline-secondary w-full block text-center"><%= t('common:buttons.cancel') %></a>
           </div>
         </form>
       </div>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= language %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
+  <title><%= t('tickets:form.newDepartmentTicket') %> - <%= t('common:app.name') %></title>
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <!-- Tailwind CSS -->
@@ -15,16 +15,16 @@
   <main class="container py-6">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-bold">
-        <span class="badge badge-success mr-2">Department</span>
-        Create Department Ticket
+        <span class="badge badge-success mr-2"><%= t('tickets:form.department') %></span>
+        <%= t('tickets:form.newDepartmentTicket') %>
       </h2>
-      <a href="/admin/dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
+      <a href="/admin/dashboard" class="btn btn-outline-secondary"><%= t('tickets:detail.backToDashboard') %></a>
     </div>
 
     <%- include('../partials/flash') %>
 
     <div class="alert alert-info">
-      <strong>Department Ticket:</strong> This ticket will be visible to department users in the selected department. Use this to create tickets on behalf of departments (e.g., phone requests, email submissions). The ticket will appear in their dashboard as if they submitted it.
+      <strong><%= t('tickets:form.department') %>:</strong> <%= t('tickets:form.departmentTicketNote') %>
     </div>
 
     <div class="card">
@@ -33,65 +33,65 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
           <div class="mb-3">
-            <label for="title" class="form-label">Issue Title *</label>
+            <label for="title" class="form-label"><%= t('tickets:form.title') %> *</label>
             <input type="text" id="title" name="title" class="form-input" required
-                   placeholder="Brief description of the issue">
+                   placeholder="<%= t('tickets:form.titlePlaceholder') %>">
           </div>
 
           <div class="mb-3">
-            <label for="description" class="form-label">Description *</label>
+            <label for="description" class="form-label"><%= t('tickets:form.description') %> *</label>
             <textarea id="description" name="description" rows="6" class="form-textarea" required
-                      placeholder="Detailed description of the issue"></textarea>
+                      placeholder="<%= t('tickets:form.descriptionPlaceholder') %>"></textarea>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="mb-3">
-              <label for="reporter_name" class="form-label">Reporter Name *</label>
+              <label for="reporter_name" class="form-label"><%= t('tickets:form.reporterName') %> *</label>
               <input type="text" id="reporter_name" name="reporter_name" class="form-input" required
-                     placeholder="Department contact name">
-              <div class="text-sm text-gray-600 mt-1">Name of the department contact reporting this issue</div>
+                     placeholder="<%= t('tickets:form.reporterName') %>">
+              <div class="text-sm text-gray-600 mt-1"><%= t('tickets:form.reporterNameHelp') %></div>
             </div>
 
             <div class="mb-3">
-              <label for="reporter_department" class="form-label">Department *</label>
+              <label for="reporter_department" class="form-label"><%= t('tickets:form.department') %> *</label>
               <select id="reporter_department" name="reporter_department" class="form-select" required>
-                <option value="">Select Department</option>
+                <option value=""><%= t('tickets:form.selectDepartment') %></option>
                 <% departments.forEach(dept => { %>
                   <option value="<%= dept.name %>"><%= dept.name %></option>
                 <% }) %>
               </select>
               <div class="text-sm text-gray-600 mt-1">
-                The department this ticket belongs to. It will appear in their dashboard.
+                <%= t('tickets:form.departmentHelpVisible') %>
               </div>
             </div>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="mb-3">
-              <label for="reporter_phone" class="form-label">Phone Number (optional)</label>
+              <label for="reporter_phone" class="form-label"><%= t('tickets:form.reporterPhoneOptional') %></label>
               <input type="tel" id="reporter_phone" name="reporter_phone" class="form-input"
                      placeholder="+1 (555) 123-4567">
             </div>
 
             <div class="mb-3">
-              <label for="priority" class="form-label">Priority</label>
+              <label for="priority" class="form-label"><%= t('tickets:form.priority') %></label>
               <select id="priority" name="priority" class="form-select">
-                <option value="unset">Unset</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="critical">Critical</option>
+                <option value="unset"><%= t('tickets:priority.unset') %></option>
+                <option value="low"><%= t('tickets:priority.low') %></option>
+                <option value="medium"><%= t('tickets:priority.medium') %></option>
+                <option value="high"><%= t('tickets:priority.high') %></option>
+                <option value="critical"><%= t('tickets:priority.critical') %></option>
               </select>
             </div>
           </div>
 
           <div class="alert alert-secondary mb-4">
-            <strong>Note:</strong> This ticket will automatically start with status "Open" and will be visible to the selected department's users.
+            <strong><%= t('common:note') %>:</strong> <%= t('tickets:form.departmentTicketStatusNote') %>
           </div>
 
           <div class="space-y-3">
-            <button type="submit" class="btn btn-success btn-lg w-full">Create Department Ticket</button>
-            <a href="/admin/dashboard" class="btn btn-outline-secondary w-full text-center block">Cancel</a>
+            <button type="submit" class="btn btn-success btn-lg w-full"><%= t('tickets:form.createDepartmentTicket') %></button>
+            <a href="/admin/dashboard" class="btn btn-outline-secondary w-full text-center block"><%= t('common:actions.cancel') %></a>
           </div>
         </form>
       </div>

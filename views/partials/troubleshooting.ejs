@@ -3,65 +3,65 @@
     <div class="bg-blue-500 text-white px-4 py-3 rounded-t-lg">
       <h6 class="font-medium mb-0">
         <i class="bi bi-tools mr-2"></i>
-        Troubleshooting & Support
+        Αντιμετώπιση Προβλημάτων & Υποστήριξη
       </h6>
     </div>
     <div class="card-body">
       <!-- Error Reference -->
       <div class="alert alert-light border mb-4">
-        <strong>Error Reference:</strong> <code class="text-sm"><%= correlationId %></code>
+        <strong>Αναφορά Σφάλματος:</strong> <code class="text-sm"><%= correlationId %></code>
         <button class="btn btn-sm btn-outline-secondary ml-2" onclick="copyToClipboard('<%= correlationId %>')">
-          <i class="bi bi-clipboard"></i> Copy
+          <i class="bi bi-clipboard"></i> Αντιγραφή
         </button>
-        <small class="block text-gray-600 mt-1">Use this ID when reporting this error</small>
+        <small class="block text-gray-600 mt-1">Χρησιμοποιήστε αυτό το ID όταν αναφέρετε αυτό το σφάλμα</small>
       </div>
 
       <!-- Contextual Help Based on Error Type -->
       <% if (status === 404) { %>
         <div class="mb-4">
-          <h6 class="font-medium mb-3"><i class="bi bi-search mr-2"></i>Common causes for 404 errors:</h6>
+          <h6 class="font-medium mb-3"><i class="bi bi-search mr-2"></i>Συνηθισμένες αιτίες για σφάλματα 404:</h6>
           <ul class="list-none space-y-2">
-            <li><i class="bi bi-dot text-blue-600 mr-2"></i>The page URL might be incorrect or outdated</li>
-            <li><i class="bi bi-dot text-blue-600 mr-2"></i>The page may have been moved or deleted</li>
-            <li><i class="bi bi-dot text-blue-600 mr-2"></i>You might need different permissions to access this page</li>
+            <li><i class="bi bi-dot text-blue-600 mr-2"></i>Η διεύθυνση URL της σελίδας μπορεί να είναι λάθος ή παλιά</li>
+            <li><i class="bi bi-dot text-blue-600 mr-2"></i>Η σελίδα μπορεί να μετακινήθηκε ή να διαγράφηκε</li>
+            <li><i class="bi bi-dot text-blue-600 mr-2"></i>Μπορεί να χρειάζεστε διαφορετικά δικαιώματα για πρόσβαση σε αυτή τη σελίδα</li>
           </ul>
           <div class="mt-4">
-            <strong class="block mb-2">What you can try:</strong>
+            <strong class="block mb-2">Τι μπορείτε να δοκιμάσετε:</strong>
             <ul class="list-disc ml-6 space-y-1">
-              <li>Check the URL for typos</li>
-              <li>Use the navigation menu to find what you're looking for</li>
-              <li>Go back to the previous page and try again</li>
+              <li>Ελέγξτε τη διεύθυνση URL για τυπογραφικά λάθη</li>
+              <li>Χρησιμοποιήστε το μενού πλοήγησης για να βρείτε αυτό που ψάχνετε</li>
+              <li>Επιστρέψτε στην προηγούμενη σελίδα και δοκιμάστε ξανά</li>
             </ul>
           </div>
         </div>
       <% } else if (status === 403) { %>
         <div class="mb-4">
-          <h6 class="font-medium mb-3"><i class="bi bi-shield-lock mr-2"></i>Access denied - possible reasons:</h6>
+          <h6 class="font-medium mb-3"><i class="bi bi-shield-lock mr-2"></i>Πρόσβαση αρνήθηκε - πιθανοί λόγοι:</h6>
           <ul class="list-none space-y-2">
-            <li><i class="bi bi-dot text-yellow-600 mr-2"></i>You need to log in to access this page</li>
-            <li><i class="bi bi-dot text-yellow-600 mr-2"></i>Your account doesn't have permission for this action</li>
-            <li><i class="bi bi-dot text-yellow-600 mr-2"></i>The page requires special access rights</li>
+            <li><i class="bi bi-dot text-yellow-600 mr-2"></i>Πρέπει να συνδεθείτε για να αποκτήσετε πρόσβαση σε αυτή τη σελίδα</li>
+            <li><i class="bi bi-dot text-yellow-600 mr-2"></i>Ο λογαριασμός σας δεν έχει δικαίωμα για αυτή την ενέργεια</li>
+            <li><i class="bi bi-dot text-yellow-600 mr-2"></i>Η σελίδα απαιτεί ειδικά δικαιώματα πρόσβασης</li>
           </ul>
           <div class="mt-4">
-            <strong class="block mb-2">What you can try:</strong>
+            <strong class="block mb-2">Τι μπορείτε να δοκιμάσετε:</strong>
             <ul class="list-disc ml-6 space-y-1">
-              <li>Log in with appropriate credentials</li>
-              <li>Contact your administrator for access</li>
-              <li>Check if you have the right role/permissions</li>
+              <li>Συνδεθείτε με τα κατάλληλα διαπιστευτήρια</li>
+              <li>Επικοινωνήστε με τον διαχειριστή σας για πρόσβαση</li>
+              <li>Ελέγξτε αν έχετε τον σωστό ρόλο/δικαιώματα</li>
             </ul>
           </div>
         </div>
       <% } else if (status === 500) { %>
         <div class="mb-4">
-          <h6 class="font-medium mb-3"><i class="bi bi-exclamation-triangle mr-2"></i>Server error - what this means:</h6>
-          <p class="text-gray-600">Something went wrong on our end. This is usually temporary.</p>
+          <h6 class="font-medium mb-3"><i class="bi bi-exclamation-triangle mr-2"></i>Σφάλμα διακομιστή - τι σημαίνει αυτό:</h6>
+          <p class="text-gray-600">Κάτι πήγε στραβά από τη μεριά μας. Αυτό είναι συνήθως προσωρινό.</p>
           <div class="mt-4">
-            <strong class="block mb-2">What you can try:</strong>
+            <strong class="block mb-2">Τι μπορείτε να δοκιμάσετε:</strong>
             <ul class="list-disc ml-6 space-y-1">
-              <li>Wait a few minutes and try again</li>
-              <li>Refresh the page</li>
-              <li>Clear your browser cache</li>
-              <li>Report this error if it persists</li>
+              <li>Περιμένετε μερικά λεπτά και δοκιμάστε ξανά</li>
+              <li>Ανανεώστε τη σελίδα</li>
+              <li>Καθαρίστε την προσωρινή μνήμη του προγράμματος περιήγησης</li>
+              <li>Αναφέρετε αυτό το σφάλμα αν συνεχιστεί</li>
             </ul>
           </div>
         </div>
@@ -71,11 +71,11 @@
       <% if (isDevelopment && stackTrace) { %>
         <div class="mt-6">
           <button class="btn btn-outline-danger btn-sm" type="button" onclick="toggleDebugInfo()">
-            <i class="bi bi-bug mr-1"></i>Show Debug Info (Development Only)
+            <i class="bi bi-bug mr-1"></i>Εμφάνιση Πληροφοριών Εντοπισμού Σφαλμάτων (Μόνο Ανάπτυξη)
           </button>
           <div class="hidden mt-3" id="debugInfo">
             <div class="alert alert-danger">
-              <h6 class="font-medium mb-2">Stack Trace:</h6>
+              <h6 class="font-medium mb-2">Ίχνος Στοίβας:</h6>
               <pre class="text-xs mb-0 overflow-x-auto"><%= stackTrace %></pre>
             </div>
           </div>
@@ -84,10 +84,10 @@
 
       <!-- Error Reporting -->
       <div class="mt-6 pt-4 border-t border-gray-200">
-        <h6 class="font-medium mb-2"><i class="bi bi-flag mr-2"></i>Report This Error</h6>
-        <p class="text-gray-600 text-sm mb-3">Help us improve by reporting this error. Include the error reference ID above.</p>
+        <h6 class="font-medium mb-2"><i class="bi bi-flag mr-2"></i>Αναφορά Αυτού του Σφάλματος</h6>
+        <p class="text-gray-600 text-sm mb-3">Βοηθήστε μας να βελτιωθούμε αναφέροντας αυτό το σφάλμα. Συμπεριλάβετε το ID αναφοράς σφάλματος παραπάνω.</p>
         <button class="btn btn-outline-primary btn-sm" onclick="reportError('<%= correlationId %>', '<%= errorCategory %>')">
-          <i class="bi bi-envelope mr-1"></i>Report Error
+          <i class="bi bi-envelope mr-1"></i>Αναφορά Σφάλματος
         </button>
       </div>
 
@@ -95,13 +95,13 @@
       <div class="mt-4 pt-4 border-t border-gray-200">
         <div class="flex flex-wrap gap-2">
           <button class="btn btn-outline-secondary btn-sm" onclick="window.history.back()">
-            <i class="bi bi-arrow-left mr-1"></i>Go Back
+            <i class="bi bi-arrow-left mr-1"></i>Πίσω
           </button>
           <button class="btn btn-outline-secondary btn-sm" onclick="window.location.reload()">
-            <i class="bi bi-arrow-clockwise mr-1"></i>Refresh Page
+            <i class="bi bi-arrow-clockwise mr-1"></i>Ανανέωση Σελίδας
           </button>
           <a href="/" class="btn btn-outline-primary btn-sm">
-            <i class="bi bi-house mr-1"></i>Home
+            <i class="bi bi-house mr-1"></i>Αρχική
           </a>
         </div>
       </div>
@@ -121,7 +121,7 @@ function copyToClipboard(text) {
   navigator.clipboard.writeText(text).then(function() {
     const btn = event.target.closest('button');
     const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="bi bi-check"></i> Copied!';
+    btn.innerHTML = '<i class="bi bi-check"></i> Αντιγράφηκε!';
     btn.classList.remove('btn-outline-secondary');
     btn.classList.add('btn-success');
     setTimeout(() => {
@@ -130,14 +130,14 @@ function copyToClipboard(text) {
       btn.classList.add('btn-outline-secondary');
     }, 2000);
   }).catch(function(err) {
-    console.error('Failed to copy: ', err);
+    console.error('Αποτυχία αντιγραφής: ', err);
   });
 }
 
 // Report error functionality
 function reportError(correlationId, category) {
   const userDescription = prompt(
-    'Please describe what you were doing when this error occurred (optional):',
+    'Περιγράψτε τι κάνατε όταν συνέβη αυτό το σφάλμα (προαιρετικό):',
     ''
   );
 
@@ -169,32 +169,32 @@ function reportError(correlationId, category) {
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      alert('Thank you! Your error report has been submitted. Reference ID: ' + correlationId);
+      alert('Ευχαριστούμε! Η αναφορά σφάλματος υποβλήθηκε. ID Αναφοράς: ' + correlationId);
     } else {
-      alert('Failed to submit error report. You can still email support with the reference ID: ' + correlationId);
+      alert('Η υποβολή της αναφοράς σφάλματος απέτυχε. Μπορείτε να στείλετε email στην υποστήριξη με το ID αναφοράς: ' + correlationId);
       fallbackEmailReport(correlationId, category, userDescription);
     }
   })
   .catch(error => {
-    console.error('Error submitting report:', error);
-    alert('Failed to submit error report. You can still email support with the reference ID: ' + correlationId);
+    console.error('Σφάλμα υποβολής αναφοράς:', error);
+    alert('Η υποβολή της αναφοράς σφάλματος απέτυχε. Μπορείτε να στείλετε email στην υποστήριξη με το ID αναφοράς: ' + correlationId);
     fallbackEmailReport(correlationId, category, userDescription);
   });
 }
 
 function fallbackEmailReport(correlationId, category, userDescription) {
-  const subject = `Error Report: ${category} (${correlationId})`;
-  const body = `Error Reference: ${correlationId}
-Error Category: ${category}
+  const subject = `Αναφορά Σφάλματος: ${category} (${correlationId})`;
+  const body = `Αναφορά Σφάλματος: ${correlationId}
+Κατηγορία Σφάλματος: ${category}
 URL: ${window.location.href}
-Browser: ${navigator.userAgent}
-Timestamp: ${new Date().toISOString()}
+Πρόγραμμα Περιήγησης: ${navigator.userAgent}
+Χρονική Σήμανση: ${new Date().toISOString()}
 
-User Description:
-${userDescription || 'No description provided'}
+Περιγραφή Χρήστη:
+${userDescription || 'Δεν δόθηκε περιγραφή'}
 
 ---
-This error report was submitted from the error page.`;
+Αυτή η αναφορά σφάλματος υποβλήθηκε από τη σελίδα σφάλματος.`;
 
   const mailtoLink = `mailto:support@yourcompany.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   window.location.href = mailtoLink;

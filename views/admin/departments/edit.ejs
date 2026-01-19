@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= language %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
+  <title><%= t('departments:management.editDepartment') %> - <%= t('common:app.name') %></title>
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <!-- Tailwind CSS -->
@@ -13,7 +13,7 @@
   <%- include('../../partials/header') %>
 
   <main class="container-fluid px-4 py-6">
-    <h2 class="text-2xl font-bold mb-4">Edit Department: <%= department.name %></h2>
+    <h2 class="text-2xl font-bold mb-4"><%= t('departments:management.editDepartment') %>: <%= department.name %></h2>
     <%- include('../../partials/flash') %>
 
     <div class="card" style="max-width: 600px;">
@@ -22,20 +22,20 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
           <div class="mb-3">
-            <label for="name" class="form-label">Department Name *</label>
+            <label for="name" class="form-label"><%= t('departments:fields.name') %> *</label>
             <input type="text" id="name" name="name" class="form-input"
                    value="<%= department.name %>" required maxlength="100">
           </div>
 
           <div class="mb-4">
-            <label for="description" class="form-label">Description</label>
+            <label for="description" class="form-label"><%= t('departments:fields.description') %></label>
             <textarea id="description" name="description" class="form-textarea"
                       rows="3" maxlength="500"><%= department.description || '' %></textarea>
           </div>
 
           <div class="flex gap-2">
-            <button type="submit" class="btn btn-primary">Update Department</button>
-            <a href="/admin/departments" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary"><%= t('common:actions.update') %></button>
+            <a href="/admin/departments" class="btn btn-secondary"><%= t('common:actions.cancel') %></a>
           </div>
         </form>
       </div>
@@ -44,18 +44,18 @@
     <!-- User Management Section -->
     <div class="card mt-4" style="max-width: 900px;">
       <div class="card-body p-4">
-        <h3 class="text-lg font-semibold mb-3">Assigned Users</h3>
+        <h3 class="text-lg font-semibold mb-3"><%= t('departments:management.assignedUsers') %></h3>
 
         <% if (users.length > 0) { %>
           <div class="overflow-x-auto mb-4">
             <table class="table table-sm">
               <thead>
                 <tr>
-                  <th>Username</th>
-                  <th>Email</th>
-                  <th>Status</th>
-                  <th>Active Tickets</th>
-                  <th>Action</th>
+                  <th><%= t('users:fields.username') %></th>
+                  <th><%= t('users:fields.email') %></th>
+                  <th><%= t('common:labels.status') %></th>
+                  <th><%= t('departments:management.activeTickets') %></th>
+                  <th><%= t('common:labels.actions') %></th>
                 </tr>
               </thead>
               <tbody>
@@ -65,7 +65,7 @@
                     <td><%= user.email %></td>
                     <td>
                       <% if (user.status === 'active') { %>
-                        <span class="badge badge-success">Active</span>
+                        <span class="badge badge-success"><%= t('users:status.active') %></span>
                       <% } else { %>
                         <span class="badge badge-secondary"><%= user.status %></span>
                       <% } %>
@@ -78,7 +78,7 @@
                             data-username="<%= user.username %>"
                             data-tickets="<%= user.active_tickets || 0 %>">
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                        <button type="submit" class="btn btn-sm btn-outline-danger"><%= t('departments:actions.remove') %></button>
                       </form>
                     </td>
                   </tr>
@@ -87,34 +87,34 @@
             </table>
           </div>
         <% } else { %>
-          <p class="text-gray-600">No users assigned to this department.</p>
+          <p class="text-gray-600"><%= t('departments:management.noUsersAssigned') %></p>
         <% } %>
 
         <!-- Add User Form -->
-        <h4 class="text-base font-medium mb-3 mt-4">Assign User to Department</h4>
+        <h4 class="text-base font-medium mb-3 mt-4"><%= t('departments:management.assignUserToDepartment') %></h4>
         <% if (availableUsers.length > 0) { %>
           <form action="/admin/departments/<%= department.id %>/users/add" method="POST">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
               <div class="md:col-span-3">
-                <label for="user_id" class="form-label">Select User</label>
+                <label for="user_id" class="form-label"><%= t('departments:management.selectUser') %></label>
                 <select id="user_id" name="user_id" class="form-select" required>
-                  <option value="">Choose a user...</option>
+                  <option value=""><%= t('departments:management.chooseUser') %></option>
                   <% availableUsers.forEach(user => { %>
                     <option value="<%= user.id %>">
                       <%= user.username %> (<%= user.email %>)
-                      <% if (user.department) { %> - Currently in: <%= user.department %><% } %>
+                      <% if (user.department) { %> - <%= t('departments:management.currentlyIn') %>: <%= user.department %><% } %>
                     </option>
                   <% }); %>
                 </select>
               </div>
               <div>
-                <button type="submit" class="btn btn-primary w-full">Assign User</button>
+                <button type="submit" class="btn btn-primary w-full"><%= t('departments:actions.assignUser') %></button>
               </div>
             </div>
           </form>
         <% } else { %>
-          <p class="text-gray-600">No available users to assign.</p>
+          <p class="text-gray-600"><%= t('departments:management.noAvailableUsers') %></p>
         <% } %>
       </div>
     </div>
@@ -127,9 +127,9 @@
         const username = this.dataset.username;
         const tickets = parseInt(this.dataset.tickets);
 
-        let message = `Remove ${username} from this department?`;
+        let message = '<%= t("departments:actions.removeUserConfirm", { username: "${username}" }) %>'.replace('${username}', username);
         if (tickets > 0) {
-          message += `\n\nWarning: This user has ${tickets} active ticket(s).`;
+          message += '\n\n<%= t("departments:actions.removeUserWarning", { count: "${tickets}" }) %>'.replace('${tickets}', tickets);
         }
 
         if (!confirm(message)) {

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= language %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
+  <title><%= t('tickets:detail.title') %> #<%= ticket.id %> - <%= t('common:app.name') %></title>
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <!-- Tailwind CSS -->
@@ -15,16 +15,16 @@
   <main class="container-fluid px-4 py-6">
     <nav aria-label="breadcrumb" class="mb-3">
       <div class="flex items-center gap-2 text-sm text-gray-600">
-        <a href="/admin/dashboard" class="hover:text-blue-600">Dashboard</a>
+        <a href="/admin/dashboard" class="hover:text-blue-600"><%= t('common:nav.dashboard') %></a>
         <span>/</span>
-        <span class="text-gray-900">Ticket #<%= ticket.id %></span>
+        <span class="text-gray-900"><%= t('tickets:table.id') %> #<%= ticket.id %></span>
       </div>
     </nav>
 
     <h2 class="text-2xl font-bold mb-4">
-      Ticket #<%= ticket.id %>: <%= ticket.title %>
+      <%= t('tickets:table.id') %> #<%= ticket.id %>: <%= ticket.title %>
       <% if (ticket.reporter_department === 'Internal') { %>
-        <span class="badge badge-warning ml-2">Internal - Admin Only</span>
+        <span class="badge badge-warning ml-2"><%= t('tickets:detail.internalAdminOnly') %></span>
       <% } %>
     </h2>
     <%- include('../partials/flash') %>
@@ -33,53 +33,57 @@
       <div>
         <div class="card h-full">
           <div class="card-body">
-            <h3 class="text-lg font-semibold mb-3">Ticket Information</h3>
+            <h3 class="text-lg font-semibold mb-3"><%= t('tickets:detail.ticketInfo') %></h3>
             <div class="mb-2">
-              <span class="font-medium">Status:</span>
+              <span class="font-medium"><%= t('common:labels.status') %>:</span>
               <% if (ticket.status === 'open') { %>
-                <span class="badge badge-info ml-2"><%= ticket.status.replace('_', ' ') %></span>
+                <span class="badge badge-info ml-2"><%= t('tickets:status.open') %></span>
               <% } else if (ticket.status === 'in_progress') { %>
-                <span class="badge badge-warning ml-2"><%= ticket.status.replace('_', ' ') %></span>
+                <span class="badge badge-warning ml-2"><%= t('tickets:status.in_progress') %></span>
+              <% } else if (ticket.status === 'waiting_on_admin') { %>
+                <span class="badge badge-warning ml-2"><%= t('tickets:status.waiting_on_admin') %></span>
+              <% } else if (ticket.status === 'waiting_on_department') { %>
+                <span class="badge badge-secondary ml-2"><%= t('tickets:status.waiting_on_department') %></span>
               <% } else { %>
-                <span class="badge badge-success ml-2"><%= ticket.status.replace('_', ' ') %></span>
+                <span class="badge badge-success ml-2"><%= t('tickets:status.closed') %></span>
               <% } %>
             </div>
             <div class="mb-2">
-              <span class="font-medium">Priority:</span>
+              <span class="font-medium"><%= t('common:labels.priority') %>:</span>
               <% if (ticket.priority === 'unset') { %>
-                <span class="badge badge-light ml-2"><%= ticket.priority %></span>
+                <span class="badge badge-light ml-2"><%= t('tickets:priority.unset') %></span>
               <% } else if (ticket.priority === 'low') { %>
-                <span class="badge badge-secondary ml-2"><%= ticket.priority %></span>
+                <span class="badge badge-secondary ml-2"><%= t('tickets:priority.low') %></span>
               <% } else if (ticket.priority === 'medium') { %>
-                <span class="badge badge-info ml-2"><%= ticket.priority %></span>
+                <span class="badge badge-info ml-2"><%= t('tickets:priority.medium') %></span>
               <% } else if (ticket.priority === 'high') { %>
-                <span class="badge badge-warning ml-2"><%= ticket.priority %></span>
+                <span class="badge badge-warning ml-2"><%= t('tickets:priority.high') %></span>
               <% } else if (ticket.priority === 'critical') { %>
-                <span class="badge badge-danger ml-2"><%= ticket.priority %></span>
+                <span class="badge badge-danger ml-2"><%= t('tickets:priority.critical') %></span>
               <% } %>
             </div>
             <% if (ticket.reporter_name) { %>
               <div class="mb-2">
-                <span class="font-medium">Reporter:</span>
+                <span class="font-medium"><%= t('tickets:detail.reporter') %>:</span>
                 <span class="ml-2"><%= ticket.reporter_name %></span>
               </div>
             <% } %>
             <div class="mb-2">
-              <span class="font-medium">Department:</span>
+              <span class="font-medium"><%= t('common:labels.department') %>:</span>
               <span class="ml-2"><%= ticket.reporter_department %></span>
             </div>
             <% if (ticket.reporter_phone) { %>
               <div class="mb-2">
-                <span class="font-medium">Phone:</span>
+                <span class="font-medium"><%= t('tickets:detail.phone') %>:</span>
                 <span class="ml-2"><a href="tel:<%= ticket.reporter_phone %>"><%= ticket.reporter_phone %></a></span>
               </div>
             <% } %>
             <div class="mb-2">
-              <span class="font-medium">Created:</span>
+              <span class="font-medium"><%= t('tickets:detail.created') %>:</span>
               <span class="ml-2 text-gray-500"><%= new Date(ticket.created_at).toLocaleString() %></span>
             </div>
             <div class="mb-0">
-              <span class="font-medium">Last Updated:</span>
+              <span class="font-medium"><%= t('tickets:detail.lastUpdated') %>:</span>
               <span class="ml-2 text-gray-500"><%= new Date(ticket.updated_at).toLocaleString() %></span>
             </div>
           </div>
@@ -90,13 +94,13 @@
         <div class="card h-full">
           <div class="card-body">
             <!-- Status Update Section -->
-            <h3 class="text-lg font-semibold mb-3">Update Status</h3>
+            <h3 class="text-lg font-semibold mb-3"><%= t('tickets:detail.updateStatus') %></h3>
             <div class="space-y-3 mb-4">
               <form action="/admin/tickets/<%= ticket.id %>/status" method="POST" class="status-form">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="open">
                 <button type="submit" class="btn w-full <%= ticket.status === 'open' ? 'btn-primary' : 'btn-outline-primary' %>">
-                  Open
+                  <%= t('tickets:status.open') %>
                 </button>
               </form>
 
@@ -104,7 +108,7 @@
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="in_progress">
                 <button type="submit" class="btn w-full <%= ticket.status === 'in_progress' ? 'btn-info' : 'btn-outline-info' %>">
-                  In Progress
+                  <%= t('tickets:status.in_progress') %>
                 </button>
               </form>
 
@@ -112,7 +116,7 @@
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="waiting_on_admin">
                 <button type="submit" class="btn w-full <%= ticket.status === 'waiting_on_admin' ? 'btn-warning' : 'btn-outline-warning' %>">
-                  Waiting on Admin
+                  <%= t('tickets:status.waiting_on_admin') %>
                 </button>
               </form>
 
@@ -120,7 +124,7 @@
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="waiting_on_department">
                 <button type="submit" class="btn w-full <%= ticket.status === 'waiting_on_department' ? 'btn-secondary' : 'btn-outline-secondary' %>">
-                  Waiting on Department
+                  <%= t('tickets:status.waiting_on_department') %>
                 </button>
               </form>
 
@@ -128,25 +132,25 @@
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="closed">
                 <button type="submit" class="btn w-full <%= ticket.status === 'closed' ? 'btn-success' : 'btn-outline-success' %>">
-                  Closed
+                  <%= t('tickets:status.closed') %>
                 </button>
               </form>
             </div>
 
             <!-- Priority Update Section -->
-            <h3 class="text-lg font-semibold mb-3">Update Priority</h3>
+            <h3 class="text-lg font-semibold mb-3"><%= t('tickets:detail.updatePriority') %></h3>
             <form action="/admin/tickets/<%= ticket.id %>/priority" method="POST">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <div class="mb-3">
                 <select name="priority" class="form-select" required>
-                  <option value="unset" <%= ticket.priority === 'unset' ? 'selected' : '' %>>Unset</option>
-                  <option value="low" <%= ticket.priority === 'low' ? 'selected' : '' %>>Low</option>
-                  <option value="medium" <%= ticket.priority === 'medium' ? 'selected' : '' %>>Medium</option>
-                  <option value="high" <%= ticket.priority === 'high' ? 'selected' : '' %>>High</option>
-                  <option value="critical" <%= ticket.priority === 'critical' ? 'selected' : '' %>>Critical</option>
+                  <option value="unset" <%= ticket.priority === 'unset' ? 'selected' : '' %>><%= t('tickets:priority.unset') %></option>
+                  <option value="low" <%= ticket.priority === 'low' ? 'selected' : '' %>><%= t('tickets:priority.low') %></option>
+                  <option value="medium" <%= ticket.priority === 'medium' ? 'selected' : '' %>><%= t('tickets:priority.medium') %></option>
+                  <option value="high" <%= ticket.priority === 'high' ? 'selected' : '' %>><%= t('tickets:priority.high') %></option>
+                  <option value="critical" <%= ticket.priority === 'critical' ? 'selected' : '' %>><%= t('tickets:priority.critical') %></option>
                 </select>
               </div>
-              <button type="submit" class="btn btn-primary w-full">Update Priority</button>
+              <button type="submit" class="btn btn-primary w-full"><%= t('tickets:detail.updatePriority') %></button>
             </form>
 
             <!-- JavaScript for Confirmations -->
@@ -158,9 +162,9 @@
                   let message = '';
 
                   if (status === 'closed') {
-                    message = 'Are you sure you want to close this ticket? This action marks the ticket as resolved.';
+                    message = '<%= t("tickets:confirmations.closeTicket") %>';
                   } else if (status === 'in_progress') {
-                    message = 'Mark this ticket as In Progress? This indicates you are actively working on it.';
+                    message = '<%= t("tickets:confirmations.inProgress") %>';
                   }
 
                   if (message && !confirm(message)) {
@@ -178,14 +182,14 @@
 
     <div class="card mb-4">
       <div class="card-body">
-        <h3 class="text-lg font-semibold mb-3">Description</h3>
+        <h3 class="text-lg font-semibold mb-3"><%= t('tickets:detail.description') %></h3>
         <p class="ticket-description mb-0"><%= ticket.description %></p>
       </div>
     </div>
 
     <div class="card">
       <div class="card-body">
-        <h3 class="text-lg font-semibold mb-3">Comments (<%= comments.length %>)</h3>
+        <h3 class="text-lg font-semibold mb-3"><%= t('tickets:comments.title') %> (<%= comments.length %>)</h3>
 
         <% if (comments.length > 0) { %>
           <div class="mb-4">
@@ -194,7 +198,7 @@
                 <div class="comment-header">
                   <strong><%= comment.username %></strong>
                   <% if (comment.visibility_type === 'internal') { %>
-                    <span class="badge badge-warning ml-2">Internal</span>
+                    <span class="badge badge-warning ml-2"><%= t('tickets:badges.internal') %></span>
                   <% } %>
                   <span class="comment-meta ml-2"><%= new Date(comment.created_at).toLocaleString() %></span>
                 </div>
@@ -205,25 +209,25 @@
             <% }); %>
           </div>
         <% } else { %>
-          <p class="text-gray-600 mb-4">No comments yet. Be the first to add one!</p>
+          <p class="text-gray-600 mb-4"><%= t('tickets:comments.noCommentsYet') %></p>
         <% } %>
 
-        <h4 class="text-base font-medium mb-3">Add Comment</h4>
+        <h4 class="text-base font-medium mb-3"><%= t('tickets:comments.addComment') %></h4>
         <form action="/admin/tickets/<%= ticket.id %>/comments" method="POST">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
           <div class="mb-3">
-            <textarea name="content" id="content" rows="4" class="form-textarea" placeholder="Write your comment here..." required></textarea>
+            <textarea name="content" id="content" rows="4" class="form-textarea" placeholder="<%= t('tickets:comments.placeholder') %>" required></textarea>
           </div>
 
           <div class="mb-3 flex items-center gap-2">
             <input type="checkbox" id="is_internal" name="is_internal" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
             <label for="is_internal" class="text-sm text-gray-700">
-              Internal Comment <span class="text-gray-500">(visible only to admins)</span>
+              <%= t('tickets:comments.internalComment') %> <span class="text-gray-500">(<%= t('tickets:comments.internalCommentHelp') %>)</span>
             </label>
           </div>
 
-          <button type="submit" class="btn btn-primary">Add Comment</button>
+          <button type="submit" class="btn btn-primary"><%= t('tickets:comments.addComment') %></button>
         </form>
       </div>
     </div>

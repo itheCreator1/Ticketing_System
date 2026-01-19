@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= language %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
+  <title><%= t('auth:login.title') %> - <%= t('common:app.name') %></title>
   <!-- Tailwind CSS -->
   <link rel="stylesheet" href="/css/output.css">
   <!-- Bootstrap Icons -->
@@ -13,8 +13,21 @@
   <div class="flex justify-center items-center min-h-screen px-4">
     <div class="card w-full max-w-md">
       <div class="card-body">
-        <h1 class="text-2xl font-bold mb-1 text-center">Admin Login</h1>
-        <p class="text-neutral-500 text-center mb-6">KNII Ticketing System</p>
+        <!-- Language Toggle -->
+        <div class="flex justify-end mb-4">
+          <form action="/language/change" method="POST" class="inline-flex">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="lang" value="<%= language === 'el' ? 'en' : 'el' %>">
+            <button type="submit"
+                    class="px-2 py-1 text-xs font-semibold rounded bg-gray-200 hover:bg-gray-300 transition"
+                    title="<%= language === 'el' ? 'Switch to English' : 'Αλλαγή σε Ελληνικά' %>">
+              <%= language === 'el' ? 'EN' : 'EL' %>
+            </button>
+          </form>
+        </div>
+
+        <h1 class="text-2xl font-bold mb-1 text-center"><%= t('auth:login.adminLogin') %></h1>
+        <p class="text-neutral-500 text-center mb-6"><%= t('auth:login.subtitle') %></p>
 
         <%- include('../partials/flash') %>
 
@@ -22,17 +35,17 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
           <div class="mb-4">
-            <label for="username" class="form-label">Username</label>
+            <label for="username" class="form-label"><%= t('auth:login.username') %></label>
             <input type="text" id="username" name="username" class="form-input" required autofocus>
           </div>
 
           <div class="mb-6">
-            <label for="password" class="form-label">Password</label>
+            <label for="password" class="form-label"><%= t('auth:login.password') %></label>
             <input type="password" id="password" name="password" class="form-input" required>
           </div>
 
           <div>
-            <button type="submit" class="btn btn-primary w-full">Login</button>
+            <button type="submit" class="btn btn-primary w-full"><%= t('auth:login.button') %></button>
           </div>
         </form>
       </div>

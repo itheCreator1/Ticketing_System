@@ -3,42 +3,55 @@
     <div class="flex justify-between items-center py-4">
       <% if (user) { %>
         <% if (user.role === 'department') { %>
-          <a class="text-xl font-semibold hover:text-gray-300 transition" href="/client/dashboard">KNII Ticketing</a>
+          <a class="text-xl font-semibold hover:text-gray-300 transition" href="/client/dashboard"><%= t('common:app.name') %></a>
         <% } else { %>
-          <a class="text-xl font-semibold hover:text-gray-300 transition" href="/admin/dashboard">KNII Ticketing</a>
+          <a class="text-xl font-semibold hover:text-gray-300 transition" href="/admin/dashboard"><%= t('common:app.name') %></a>
         <% } %>
       <% } else { %>
-        <a class="text-xl font-semibold hover:text-gray-300 transition" href="/">KNII Ticketing</a>
+        <a class="text-xl font-semibold hover:text-gray-300 transition" href="/"><%= t('common:app.name') %></a>
       <% } %>
 
-      <% if (user) { %>
-        <button class="md:hidden text-2xl" onclick="toggleNav()" aria-label="Toggle navigation">
-          <i class="bi bi-list"></i>
-        </button>
+      <div class="flex items-center gap-4">
+        <!-- Language Toggle -->
+        <form action="/language/change" method="POST" class="inline-flex">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="lang" value="<%= language === 'el' ? 'en' : 'el' %>">
+          <button type="submit"
+                  class="px-2 py-1 text-xs font-semibold rounded bg-gray-700 hover:bg-gray-600 transition"
+                  title="<%= language === 'el' ? 'Switch to English' : 'Αλλαγή σε Ελληνικά' %>">
+            <%= language === 'el' ? 'EN' : 'EL' %>
+          </button>
+        </form>
 
-        <div class="hidden md:flex items-center gap-6" id="navbarNav">
-          <div class="flex items-center gap-6">
-            <% if (user.role === 'super_admin') { %>
-              <a href="/admin/users" class="hover:text-gray-300 transition">User Management</a>
-              <a href="/admin/departments" class="hover:text-gray-300 transition">Departments</a>
-            <% } %>
-            <span class="text-gray-300">
-              Welcome, <%= user.username %>
+        <% if (user) { %>
+          <button class="md:hidden text-2xl" onclick="toggleNav()" aria-label="Toggle navigation">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <div class="hidden md:flex items-center gap-6" id="navbarNav">
+            <div class="flex items-center gap-6">
               <% if (user.role === 'super_admin') { %>
-                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-red-600 text-white">Super Admin</span>
-              <% } else if (user.role === 'admin') { %>
-                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-blue-600 text-white">Admin</span>
-              <% } else if (user.role === 'department') { %>
-                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-cyan-400 text-black">Department</span>
+                <a href="/admin/users" class="hover:text-gray-300 transition"><%= t('common:nav.userManagement') %></a>
+                <a href="/admin/departments" class="hover:text-gray-300 transition"><%= t('common:nav.departments') %></a>
               <% } %>
-            </span>
-            <form action="/auth/logout" method="POST" class="inline">
-              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <button type="submit" class="btn btn-sm btn-secondary">Logout</button>
-            </form>
+              <span class="text-gray-300">
+                <%= t('common:nav.welcome', { username: user.username }) %>
+                <% if (user.role === 'super_admin') { %>
+                  <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-red-600 text-white"><%= t('common:roles.super_admin') %></span>
+                <% } else if (user.role === 'admin') { %>
+                  <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-blue-600 text-white"><%= t('common:roles.admin') %></span>
+                <% } else if (user.role === 'department') { %>
+                  <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-cyan-400 text-black"><%= t('common:roles.department') %></span>
+                <% } %>
+              </span>
+              <form action="/auth/logout" method="POST" class="inline">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn btn-sm btn-secondary"><%= t('common:nav.logout') %></button>
+              </form>
+            </div>
           </div>
-        </div>
-      <% } %>
+        <% } %>
+      </div>
     </div>
 
     <% if (user) { %>
@@ -46,23 +59,23 @@
       <div class="md:hidden hidden pb-4" id="mobileNav">
         <div class="flex flex-col gap-3">
           <% if (user.role === 'super_admin') { %>
-            <a href="/admin/users" class="hover:text-gray-300 transition">User Management</a>
-            <a href="/admin/departments" class="hover:text-gray-300 transition">Departments</a>
+            <a href="/admin/users" class="hover:text-gray-300 transition"><%= t('common:nav.userManagement') %></a>
+            <a href="/admin/departments" class="hover:text-gray-300 transition"><%= t('common:nav.departments') %></a>
           <% } %>
           <div class="pt-3 border-t border-gray-700">
             <span class="text-gray-300 block mb-3">
-              Welcome, <%= user.username %>
+              <%= t('common:nav.welcome', { username: user.username }) %>
               <% if (user.role === 'super_admin') { %>
-                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-red-600 text-white">Super Admin</span>
+                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-red-600 text-white"><%= t('common:roles.super_admin') %></span>
               <% } else if (user.role === 'admin') { %>
-                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-blue-600 text-white">Admin</span>
+                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-blue-600 text-white"><%= t('common:roles.admin') %></span>
               <% } else if (user.role === 'department') { %>
-                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-cyan-400 text-black">Department</span>
+                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-cyan-400 text-black"><%= t('common:roles.department') %></span>
               <% } %>
             </span>
             <form action="/auth/logout" method="POST">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-              <button type="submit" class="btn btn-sm btn-secondary w-full">Logout</button>
+              <button type="submit" class="btn btn-sm btn-secondary w-full"><%= t('common:nav.logout') %></button>
             </form>
           </div>
         </div>

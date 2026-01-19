@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= language %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
+  <title><%= t('users:management.title') %> - <%= t('common:app.name') %></title>
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <!-- Tailwind CSS -->
@@ -14,15 +14,15 @@
 
   <main class="container-fluid px-4 py-6">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-2xl font-bold mb-0">User Management</h2>
-      <a href="/admin/users/new" class="btn btn-primary">Create New User</a>
+      <h2 class="text-2xl font-bold mb-0"><%= t('users:management.title') %></h2>
+      <a href="/admin/users/new" class="btn btn-primary"><%= t('users:management.newUser') %></a>
     </div>
 
     <%- include('../../partials/flash') %>
 
     <% if (users.length === 0) { %>
       <div class="alert alert-secondary text-center">
-        <p class="mb-0">No users found. Create your first user to get started.</p>
+        <p class="mb-0"><%= t('users:management.noUsersFound') %></p>
       </div>
     <% } else { %>
       <div class="card">
@@ -30,15 +30,15 @@
           <table class="table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Department</th>
-                <th>Status</th>
-                <th>Last Login</th>
-                <th>Created</th>
-                <th>Actions</th>
+                <th><%= t('users:fields.id') %></th>
+                <th><%= t('users:fields.username') %></th>
+                <th><%= t('users:fields.email') %></th>
+                <th><%= t('users:fields.role') %></th>
+                <th><%= t('users:fields.department') %></th>
+                <th><%= t('users:fields.status') %></th>
+                <th><%= t('users:fields.lastLogin') %></th>
+                <th><%= t('users:fields.created') %></th>
+                <th><%= t('common:labels.actions') %></th>
               </tr>
             </thead>
             <tbody>
@@ -49,37 +49,39 @@
                   <td><%= u.email %></td>
                   <td>
                     <% if (u.role === 'super_admin') { %>
-                      <span class="badge badge-danger">Super Admin</span>
+                      <span class="badge badge-danger"><%= t('users:roles.super_admin') %></span>
                     <% } else if (u.role === 'admin') { %>
-                      <span class="badge badge-primary">Admin</span>
+                      <span class="badge badge-primary"><%= t('users:roles.admin') %></span>
                     <% } else if (u.role === 'department') { %>
-                      <span class="badge badge-info">Department</span>
+                      <span class="badge badge-info"><%= t('users:roles.department') %></span>
                     <% } %>
                   </td>
                   <td>
                     <% if (u.department) { %>
                       <span class="badge badge-secondary"><%= u.department %></span>
                     <% } else { %>
-                      <span class="text-gray-500">N/A</span>
+                      <span class="text-gray-500"><%= t('common:labels.na') %></span>
                     <% } %>
                   </td>
                   <td>
                     <% if (u.status === 'active') { %>
-                      <span class="badge badge-success"><%= u.status %></span>
+                      <span class="badge badge-success"><%= t('users:status.active') %></span>
+                    <% } else if (u.status === 'inactive') { %>
+                      <span class="badge badge-secondary"><%= t('users:status.inactive') %></span>
                     <% } else { %>
-                      <span class="badge badge-secondary"><%= u.status %></span>
+                      <span class="badge badge-secondary"><%= t('users:status.deleted') %></span>
                     <% } %>
                   </td>
-                  <td><%= u.last_login_at ? new Date(u.last_login_at).toLocaleString() : 'Never' %></td>
-                  <td><%= new Date(u.created_at).toLocaleDateString() %></td>
+                  <td><%= u.last_login_at ? new Date(u.last_login_at).toLocaleString(language === 'el' ? 'el-GR' : 'en-US') : t('common:labels.never') %></td>
+                  <td><%= new Date(u.created_at).toLocaleDateString(language === 'el' ? 'el-GR' : 'en-US') %></td>
                   <td>
                     <div class="flex items-center gap-2">
-                      <a href="/admin/users/<%= u.id %>/edit" class="btn btn-sm btn-outline-primary">Edit</a>
+                      <a href="/admin/users/<%= u.id %>/edit" class="btn btn-sm btn-outline-primary"><%= t('common:buttons.edit') %></a>
                       <% if (u.id !== user.id) { %>
                         <form action="/admin/users/<%= u.id %>/delete" method="POST" class="inline"
-                              onsubmit="return confirm('Are you sure you want to delete this user?');">
+                              onsubmit="return confirm('<%= t('users:actions.confirmDelete') %>');">
                           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                          <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                          <button type="submit" class="btn btn-sm btn-outline-danger"><%= t('common:buttons.delete') %></button>
                         </form>
                       <% } %>
                     </div>

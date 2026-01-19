@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= language %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
+  <title><%= t('tickets:detail.title') %> #<%= ticket.id %> - <%= t('common:app.name') %></title>
   <link rel="stylesheet" href="/css/output.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 </head>
@@ -13,75 +13,75 @@
   <main class="container-fluid px-4 py-6">
     <nav aria-label="breadcrumb" class="mb-6">
       <ol class="flex items-center space-x-2 text-sm text-gray-600">
-        <li><a href="/client/dashboard" class="hover:text-blue-600">My Tickets</a></li>
+        <li><a href="/client/dashboard" class="hover:text-blue-600"><%= t('tickets:dashboard.myTickets') %></a></li>
         <li><span class="mx-2">/</span></li>
-        <li class="text-gray-900">Ticket #<%= ticket.id %></li>
+        <li class="text-gray-900"><%= t('tickets:table.id') %> #<%= ticket.id %></li>
       </ol>
     </nav>
 
-    <h2 class="text-2xl font-bold mb-6">Ticket #<%= ticket.id %>: <%= ticket.title %></h2>
+    <h2 class="text-2xl font-bold mb-6"><%= t('tickets:table.id') %> #<%= ticket.id %>: <%= ticket.title %></h2>
     <%- include('../partials/flash') %>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
       <div class="card">
         <div class="card-body">
-          <h3 class="text-lg font-semibold mb-4">Ticket Information</h3>
+          <h3 class="text-lg font-semibold mb-4"><%= t('tickets:detail.ticketInfo') %></h3>
           <div class="space-y-3">
             <div>
-              <span class="font-medium">Status:</span>
+              <span class="font-medium"><%= t('common:labels.status') %>:</span>
               <% if (ticket.status === 'open') { %>
-                <span class="badge badge-primary ml-2">Open</span>
+                <span class="badge badge-primary ml-2"><%= t('tickets:status.open') %></span>
               <% } else if (ticket.status === 'in_progress') { %>
-                <span class="badge badge-info ml-2">In Progress</span>
+                <span class="badge badge-info ml-2"><%= t('tickets:status.in_progress') %></span>
               <% } else if (ticket.status === 'waiting_on_admin') { %>
-                <span class="badge badge-warning ml-2">Waiting on Admin</span>
+                <span class="badge badge-warning ml-2"><%= t('tickets:status.waiting_on_admin') %></span>
               <% } else if (ticket.status === 'waiting_on_department') { %>
-                <span class="badge badge-secondary ml-2">Waiting on You</span>
+                <span class="badge badge-secondary ml-2"><%= t('tickets:status.waiting_on_you') %></span>
               <% } else if (ticket.status === 'closed') { %>
-                <span class="badge badge-success ml-2">Closed</span>
+                <span class="badge badge-success ml-2"><%= t('tickets:status.closed') %></span>
               <% } %>
             </div>
             <div>
-              <span class="font-medium">Priority:</span>
+              <span class="font-medium"><%= t('common:labels.priority') %>:</span>
               <% if (ticket.priority === 'critical') { %>
-                <span class="badge badge-danger ml-2">Critical</span>
+                <span class="badge badge-danger ml-2"><%= t('tickets:priority.critical') %></span>
               <% } else if (ticket.priority === 'high') { %>
-                <span class="badge badge-warning ml-2">High</span>
+                <span class="badge badge-warning ml-2"><%= t('tickets:priority.high') %></span>
               <% } else if (ticket.priority === 'medium') { %>
-                <span class="badge badge-info ml-2">Medium</span>
+                <span class="badge badge-info ml-2"><%= t('tickets:priority.medium') %></span>
               <% } else if (ticket.priority === 'low') { %>
-                <span class="badge badge-secondary ml-2">Low</span>
+                <span class="badge badge-secondary ml-2"><%= t('tickets:priority.low') %></span>
               <% } else { %>
-                <span class="badge badge-light ml-2">Unset</span>
+                <span class="badge badge-light ml-2"><%= t('tickets:priority.unset') %></span>
               <% } %>
             </div>
             <% if (ticket.reporter_name) { %>
               <div>
-                <span class="font-medium">Reporter:</span>
+                <span class="font-medium"><%= t('tickets:detail.reporter') %>:</span>
                 <span class="ml-2"><%= ticket.reporter_name %></span>
               </div>
             <% } %>
             <div>
-              <span class="font-medium">Department:</span>
+              <span class="font-medium"><%= t('common:labels.department') %>:</span>
               <span class="ml-2"><%= ticket.reporter_department %></span>
             </div>
             <% if (ticket.reporter_phone) { %>
               <div>
-                <span class="font-medium">Phone:</span>
+                <span class="font-medium"><%= t('tickets:detail.phone') %>:</span>
                 <span class="ml-2"><a href="tel:<%= ticket.reporter_phone %>" class="text-blue-600 hover:underline"><%= ticket.reporter_phone %></a></span>
               </div>
             <% } %>
             <div>
-              <span class="font-medium">Created:</span>
+              <span class="font-medium"><%= t('tickets:detail.created') %>:</span>
               <span class="ml-2 text-gray-600"><%= new Date(ticket.created_at).toLocaleString() %></span>
             </div>
             <div>
-              <span class="font-medium">Last Updated:</span>
+              <span class="font-medium"><%= t('tickets:detail.lastUpdated') %>:</span>
               <span class="ml-2 text-gray-600"><%= new Date(ticket.updated_at).toLocaleString() %></span>
             </div>
             <% if (ticket.assigned_to_username) { %>
               <div>
-                <span class="font-medium">Assigned to:</span>
+                <span class="font-medium"><%= t('common:labels.assignedTo') %>:</span>
                 <span class="ml-2 badge badge-dark"><%= ticket.assigned_to_username %></span>
               </div>
             <% } %>
@@ -91,14 +91,14 @@
 
       <div class="card">
         <div class="card-body">
-          <h3 class="text-lg font-semibold mb-4">Update Status</h3>
+          <h3 class="text-lg font-semibold mb-4"><%= t('tickets:detail.updateStatus') %></h3>
           <% if (ticket.status !== 'closed') { %>
             <div class="space-y-3">
               <form action="/client/tickets/<%= ticket.id %>/status" method="POST" class="status-form">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="waiting_on_admin">
                 <button type="submit" class="w-full <%= ticket.status === 'waiting_on_admin' ? 'btn btn-warning' : 'btn btn-outline-warning' %>">
-                  Waiting on Admin
+                  <%= t('tickets:status.waiting_on_admin') %>
                 </button>
               </form>
 
@@ -106,19 +106,19 @@
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <input type="hidden" name="status" value="closed">
                 <button type="submit" class="w-full <%= ticket.status === 'closed' ? 'btn btn-success' : 'btn btn-outline-success' %>">
-                  Close Ticket
+                  <%= t('tickets:detail.closeTicket') %>
                 </button>
               </form>
             </div>
             <div class="text-sm text-gray-600 mt-3">
-              Use "Waiting on Admin" if you need further assistance. Use "Close Ticket" if your issue is resolved.
+              <%= t('tickets:detail.waitingOnAdminHelp') %>
             </div>
 
             <script>
             document.addEventListener('DOMContentLoaded', function() {
               document.querySelectorAll('.status-form[data-confirm]').forEach(form => {
                 form.addEventListener('submit', function(e) {
-                  if (!confirm('Are you sure you want to close this ticket? You can contact an administrator to reopen it if needed.')) {
+                  if (!confirm('<%= t("tickets:confirmations.closeTicketDepartment") %>')) {
                     e.preventDefault();
                     return false;
                   }
@@ -128,7 +128,7 @@
             </script>
           <% } else { %>
             <div class="alert alert-success">
-              <p class="mb-0">This ticket has been closed. If you need to reopen it, please contact an administrator or create a new ticket.</p>
+              <p class="mb-0"><%= t('tickets:detail.ticketClosed') %></p>
             </div>
           <% } %>
         </div>
@@ -137,14 +137,14 @@
 
     <div class="card mb-6">
       <div class="card-body">
-        <h3 class="text-lg font-semibold mb-4">Description</h3>
+        <h3 class="text-lg font-semibold mb-4"><%= t('tickets:detail.description') %></h3>
         <p class="whitespace-pre-wrap"><%= ticket.description %></p>
       </div>
     </div>
 
     <div class="card">
       <div class="card-body">
-        <h3 class="text-lg font-semibold mb-4">Comments (<%= comments.length %>)</h3>
+        <h3 class="text-lg font-semibold mb-4"><%= t('tickets:comments.title') %> (<%= comments.length %>)</h3>
 
         <% if (comments.length > 0) { %>
           <div class="space-y-4 mb-6">
@@ -161,21 +161,21 @@
             <% }); %>
           </div>
         <% } else { %>
-          <p class="text-gray-500 mb-6">No comments yet.</p>
+          <p class="text-gray-500 mb-6"><%= t('tickets:comments.beFirst') %></p>
         <% } %>
 
         <% if (ticket.status !== 'closed') { %>
           <form action="/client/tickets/<%= ticket.id %>/comments" method="POST">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="mb-4">
-              <label for="content" class="form-label">Add a Comment</label>
-              <textarea id="content" name="content" rows="4" class="form-textarea" required placeholder="Write your comment here..."></textarea>
+              <label for="content" class="form-label"><%= t('tickets:comments.addComment') %></label>
+              <textarea id="content" name="content" rows="4" class="form-textarea" required placeholder="<%= t('tickets:comments.placeholder') %>"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Add Comment</button>
+            <button type="submit" class="btn btn-primary"><%= t('tickets:comments.addComment') %></button>
           </form>
         <% } else { %>
           <div class="alert alert-info">
-            <p class="mb-0">Comments are disabled for closed tickets.</p>
+            <p class="mb-0"><%= t('tickets:detail.commentsDisabled') %></p>
           </div>
         <% } %>
       </div>

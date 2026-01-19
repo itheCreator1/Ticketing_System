@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= language %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
+  <title><%= t('departments:management.title') %> - <%= t('common:app.name') %></title>
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <!-- Tailwind CSS -->
@@ -14,8 +14,8 @@
 
   <main class="container-fluid px-4 py-6">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-2xl font-bold">Manage Departments</h2>
-      <a href="/admin/departments/new" class="btn btn-primary">Create Department</a>
+      <h2 class="text-2xl font-bold"><%= t('departments:management.title') %></h2>
+      <a href="/admin/departments/new" class="btn btn-primary"><%= t('departments:management.createDepartment') %></a>
     </div>
 
     <%- include('../../partials/flash') %>
@@ -25,50 +25,50 @@
         <table class="table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Status</th>
-              <th>Type</th>
-              <th class="text-right">Actions</th>
+              <th><%= t('departments:fields.name') %></th>
+              <th><%= t('departments:fields.description') %></th>
+              <th><%= t('common:labels.status') %></th>
+              <th><%= t('departments:management.type') %></th>
+              <th class="text-right"><%= t('common:labels.actions') %></th>
             </tr>
           </thead>
           <tbody>
             <% departments.forEach(dept => { %>
               <tr>
                 <td><strong><%= dept.name %></strong></td>
-                <td><% if (dept.description) { %><%= dept.description %><% } else { %><em class="text-gray-500">No description</em><% } %></td>
+                <td><% if (dept.description) { %><%= dept.description %><% } else { %><em class="text-gray-500"><%= t('departments:fields.noDescription') %></em><% } %></td>
                 <td>
                   <% if (dept.active) { %>
-                    <span class="badge badge-success">Active</span>
+                    <span class="badge badge-success"><%= t('departments:status.active') %></span>
                   <% } else { %>
-                    <span class="badge badge-secondary">Inactive</span>
+                    <span class="badge badge-secondary"><%= t('departments:status.inactive') %></span>
                   <% } %>
                 </td>
                 <td>
                   <% if (dept.is_system) { %>
-                    <span class="badge badge-info">System</span>
+                    <span class="badge badge-info"><%= t('departments:status.system') %></span>
                   <% } else { %>
-                    <span class="badge badge-light">Custom</span>
+                    <span class="badge badge-light"><%= t('departments:management.custom') %></span>
                   <% } %>
                 </td>
                 <td class="text-right">
                   <% if (!dept.is_system) { %>
-                    <a href="/admin/departments/<%= dept.id %>/edit" class="btn btn-sm btn-outline-primary">Edit</a>
+                    <a href="/admin/departments/<%= dept.id %>/edit" class="btn btn-sm btn-outline-primary"><%= t('common:actions.edit') %></a>
 
                     <% if (dept.active) { %>
                       <form action="/admin/departments/<%= dept.id %>/deactivate" method="POST" style="display:inline;"
-                            onsubmit="return confirm('Deactivate this department?');">
+                            onsubmit="return confirm('<%= t('departments:actions.confirmDeactivate') %>');">
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <button type="submit" class="btn btn-sm btn-outline-warning">Deactivate</button>
+                        <button type="submit" class="btn btn-sm btn-outline-warning"><%= t('departments:actions.deactivate') %></button>
                       </form>
                     <% } else { %>
                       <form action="/admin/departments/<%= dept.id %>/reactivate" method="POST" style="display:inline;">
                         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                        <button type="submit" class="btn btn-sm btn-outline-success">Reactivate</button>
+                        <button type="submit" class="btn btn-sm btn-outline-success"><%= t('departments:actions.reactivate') %></button>
                       </form>
                     <% } %>
                   <% } else { %>
-                    <span class="text-gray-500 text-sm">System department</span>
+                    <span class="text-gray-500 text-sm"><%= t('departments:management.systemDepartment') %></span>
                   <% } %>
                 </td>
               </tr>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<%= language %>">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %></title>
+  <title><%= t('tickets:form.newInternalTicket') %> - <%= t('common:app.name') %></title>
   <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <!-- Tailwind CSS -->
@@ -16,15 +16,15 @@
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-bold">
         <span class="badge badge-primary mr-2">Admin</span>
-        Create Admin Ticket
+        <%= t('tickets:form.newInternalTicket') %>
       </h2>
-      <a href="/admin/dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
+      <a href="/admin/dashboard" class="btn btn-outline-secondary"><%= t('tickets:detail.backToDashboard') %></a>
     </div>
 
     <%- include('../partials/flash') %>
 
     <div class="alert alert-info">
-      <strong>Admin Ticket:</strong> This ticket will only be visible to administrators. Select department for organizational purposes.
+      <strong><%= t('tickets:badges.internal') %>:</strong> <%= t('tickets:form.internalTicketNote') %>
     </div>
 
     <div class="card">
@@ -33,22 +33,22 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
           <div class="mb-3">
-            <label for="title" class="form-label">Issue Title *</label>
+            <label for="title" class="form-label"><%= t('tickets:form.title') %> *</label>
             <input type="text" id="title" name="title" class="form-input" required
-                   placeholder="Brief description of the internal issue">
+                   placeholder="<%= t('tickets:form.titlePlaceholderInternal') %>">
           </div>
 
           <div class="mb-3">
-            <label for="description" class="form-label">Description *</label>
+            <label for="description" class="form-label"><%= t('tickets:form.description') %> *</label>
             <textarea id="description" name="description" rows="6" class="form-textarea" required
-                      placeholder="Detailed description of the internal issue"></textarea>
+                      placeholder="<%= t('tickets:form.descriptionPlaceholderInternal') %>"></textarea>
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="mb-3">
-              <label for="reporter_department" class="form-label">Department *</label>
+              <label for="reporter_department" class="form-label"><%= t('tickets:form.department') %> *</label>
               <select id="reporter_department" name="reporter_department" class="form-select" required>
-                <option value="">Select Department</option>
+                <option value=""><%= t('tickets:form.selectDepartment') %></option>
                 <% departments.forEach(dept => { %>
                   <option value="<%= dept.name %>" <%= dept.name === 'Internal' ? 'selected' : '' %>>
                     <%= dept.name %>
@@ -56,12 +56,12 @@
                 <% }) %>
               </select>
               <div class="text-sm text-gray-600 mt-1">
-                For categorization. Ticket will be hidden from all department users.
+                <%= t('tickets:form.departmentHelp') %>
               </div>
             </div>
 
             <div class="mb-3">
-              <label for="reporter_phone" class="form-label">Phone Number (optional)</label>
+              <label for="reporter_phone" class="form-label"><%= t('tickets:form.reporterPhoneOptional') %></label>
               <input type="tel" id="reporter_phone" name="reporter_phone" class="form-input"
                      placeholder="+1 (555) 123-4567">
             </div>
@@ -69,31 +69,31 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="mb-3">
-              <label for="priority" class="form-label">Priority</label>
+              <label for="priority" class="form-label"><%= t('tickets:form.priority') %></label>
               <select id="priority" name="priority" class="form-select">
-                <option value="unset">Unset</option>
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
-                <option value="critical">Critical</option>
+                <option value="unset"><%= t('tickets:priority.unset') %></option>
+                <option value="low"><%= t('tickets:priority.low') %></option>
+                <option value="medium"><%= t('tickets:priority.medium') %></option>
+                <option value="high"><%= t('tickets:priority.high') %></option>
+                <option value="critical"><%= t('tickets:priority.critical') %></option>
               </select>
             </div>
 
             <div class="mb-3">
-              <label for="status" class="form-label">Status</label>
+              <label for="status" class="form-label"><%= t('tickets:form.status') %></label>
               <select id="status" name="status" class="form-select">
-                <option value="open" selected>Open</option>
-                <option value="in_progress">In Progress</option>
-                <option value="waiting_on_admin">Waiting on Admin</option>
-                <option value="waiting_on_department">Waiting on Department</option>
-                <option value="closed">Closed</option>
+                <option value="open" selected><%= t('tickets:status.open') %></option>
+                <option value="in_progress"><%= t('tickets:status.in_progress') %></option>
+                <option value="waiting_on_admin"><%= t('tickets:status.waiting_on_admin') %></option>
+                <option value="waiting_on_department"><%= t('tickets:status.waiting_on_department') %></option>
+                <option value="closed"><%= t('tickets:status.closed') %></option>
               </select>
             </div>
           </div>
 
           <div class="space-y-3">
-            <button type="submit" class="btn btn-primary btn-lg w-full">Create Admin Ticket</button>
-            <a href="/admin/dashboard" class="btn btn-outline-secondary w-full text-center block">Cancel</a>
+            <button type="submit" class="btn btn-primary btn-lg w-full"><%= t('tickets:form.createAdminTicket') %></button>
+            <a href="/admin/dashboard" class="btn btn-outline-secondary w-full text-center block"><%= t('common:actions.cancel') %></a>
           </div>
         </form>
       </div>
