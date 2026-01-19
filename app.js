@@ -12,6 +12,7 @@ const { doubleCsrf } = require('csrf-csrf');
 
 const sessionConfig = require('./config/session');
 const errorHandler = require('./middleware/errorHandler');
+const { i18next, middleware: i18nMiddleware } = require('./config/i18n');
 
 const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
@@ -20,6 +21,7 @@ const userRoutes = require('./routes/users');
 const departmentRoutes = require('./routes/departments');
 const clientRoutes = require('./routes/client');
 const errorReportingRoutes = require('./routes/errorReporting');
+const languageRoutes = require('./routes/language');
 
 const app = express();
 
@@ -66,18 +68,34 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session(sessionConfig));
 
+// Set default language to Greek in session if not present
+// This ensures new users see Greek by default
+app.use((req, res, next) => {
+  if (!req.session.language) {
+    req.session.language = 'el';
+  }
+  next();
+});
+
+// i18n middleware - must be after session for language detection
+app.use(i18nMiddleware.handle(i18next));
+
 app.use(flash());
 
 // Apply CSRF protection to all routes
 app.use(doubleCsrfProtection);
 
-// Make CSRF token and flash messages available to all views
+// Make CSRF token, flash messages, and i18n available to all views
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
   res.locals.user = req.session.user || null;
   // Generate CSRF token for forms (with overwrite: false to preserve existing tokens)
   res.locals.csrfToken = generateCsrfToken(req, res, { overwrite: false });
+
+  // i18n: Make translation function and current language available to views
+  res.locals.t = req.t;
+  res.locals.language = req.language || 'el';
 
   // Add request timing for debugging
   req.startTime = new Date();
@@ -92,6 +110,7 @@ app.use('/admin/users', userRoutes);
 app.use('/admin/departments', departmentRoutes);
 app.use('/client', clientRoutes);
 app.use('/api/errors', errorReportingRoutes);
+app.use('/language', languageRoutes);
 
 app.use((req, res) => {
   // Generate correlation ID for 404 errors
@@ -99,14 +118,16 @@ app.use((req, res) => {
   const correlationId = crypto.randomBytes(8).toString('hex').toUpperCase();
 
   res.status(404).render('errors/404', {
-    title: '404 - Page Not Found',
+    title: req.t('errors:404.title'),
     status: 404,
-    message: 'The page you are looking for could not be found.',
+    message: req.t('errors:404.message'),
     user: res.locals.user || null,
     correlationId,
     errorCategory: 'NOT_FOUND',
     isDevelopment: process.env.NODE_ENV === 'development',
-    stackTrace: null
+    stackTrace: null,
+    t: req.t,
+    language: req.language || 'el'
   });
 });
 
