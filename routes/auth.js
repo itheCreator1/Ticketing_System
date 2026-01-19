@@ -17,7 +17,11 @@ router.get('/login', (req, res) => {
       : '/admin/dashboard';
     return res.redirect(redirectPath);
   }
-  res.render('auth/login', { title: 'Admin Login' });
+  res.render('auth/login', {
+    title: req.t('auth:login.title'),
+    t: req.t,
+    language: req.language || 'el'
+  });
 });
 
 router.post('/login', loginLimiter, validateLogin, validateRequest, async (req, res, next) => {
@@ -26,7 +30,7 @@ router.post('/login', loginLimiter, validateLogin, validateRequest, async (req, 
     const user = await authService.authenticate(username, password);
 
     if (!user) {
-      return errorRedirect(req, res, AUTH_MESSAGES.LOGIN_FAILED, '/auth/login');
+      return errorRedirect(req, res, 'auth:messages.loginFailed', '/auth/login');
     }
 
     req.session.user = authService.createSessionData(user);
@@ -46,7 +50,7 @@ router.post('/login', loginLimiter, validateLogin, validateRequest, async (req, 
       ? '/client/dashboard'
       : '/admin/dashboard';
 
-    successRedirect(req, res, AUTH_MESSAGES.LOGIN_SUCCESS, redirectPath);
+    successRedirect(req, res, 'auth:messages.loginSuccess', redirectPath);
   } catch (error) {
     next(error);
   }
