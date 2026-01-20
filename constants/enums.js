@@ -29,6 +29,13 @@ const USER_STATUS = {
 /**
  * @deprecated Departments are now database-driven. Use Department.findAll() instead.
  * This constant is kept for backward compatibility only.
+ *
+ * Note: As of v2.5.0, the system uses hospital-specific departments seeded via
+ * seed-hospital-data.js script. Default departments include: Emergency Department,
+ * Cardiology, Radiology, Pharmacy, Laboratory, Surgery, Intensive Care Unit,
+ * Patient Registration, Medical Records, and Facilities Management.
+ *
+ * See CLAUDE.md for migration instructions from generic to hospital departments.
  */
 const REPORTER_DEPARTMENT = {
   IT_SUPPORT: 'IT Support',

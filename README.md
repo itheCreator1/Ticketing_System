@@ -362,6 +362,52 @@ Password: admin123
 
 > ⚠️ **IMPORTANT**: Change these credentials immediately in production!
 
+### 🏥 **Seeding Hospital Data** *(Optional)*
+
+After initial setup, populate the system with hospital-specific departments and users:
+
+<table>
+<tr>
+<td width="50%">
+
+**Minimal Setup** *(Departments + Users)*
+```bash
+docker-compose exec web npm run seed:hospital
+```
+
+**Creates**:
+- 10 hospital departments
+- 1 user per department
+- 1 super admin
+
+</td>
+<td width="50%">
+
+**Full Demo Data** *(+ Tickets + Comments)*
+```bash
+docker-compose exec web npm run seed:sample
+```
+
+**Creates**:
+- 20 hospital-themed tickets
+- Sample comments
+- All department users
+
+</td>
+</tr>
+</table>
+
+**Hospital Department Users**:
+```
+Emergency Department:  ed.coordinator / password123
+Cardiology:           cardiology.nurse / password123
+Radiology:            radiology.tech / password123
+Pharmacy:             pharmacy.director / password123
+... (and 6 more departments)
+
+Super Admin:          superadmin / admin123
+```
+
 ---
 
 ## 📂 Project Structure

@@ -636,6 +636,55 @@ docker-compose exec db psql -U ticketing_user -d ticketing_db -c "\dt"
 
 The `scripts/` directory contains helpful utilities for development and testing:
 
+### seed-hospital-data.js
+Seeds the database with hospital-specific departments and users (minimal bootstrap data).
+
+```bash
+# Create hospital departments and users
+docker-compose exec web npm run seed:hospital
+
+# Or with clean flag (removes existing data with confirmation)
+docker-compose exec web npm run seed:hospital -- --clean
+```
+
+**Creates**:
+- 10 hospital departments (Emergency Department, Cardiology, Radiology, etc.)
+- 1 department user per department (realistic hospital staff names)
+- 1 super admin user
+
+**Features**:
+- Idempotent (safe to run multiple times)
+- Clean flag with confirmation prompt
+- No tickets/comments (minimal setup)
+
+**Use cases**:
+- Initial hospital environment setup
+- Production-like configuration
+- Clean department/user bootstrap
+
+### seed-sample-data.js
+Seeds the database with hospital-themed sample tickets and comments for testing.
+
+```bash
+# Populate database with sample hospital data
+docker-compose exec web npm run seed:sample
+
+# Or with clean flag
+docker-compose exec web npm run seed:sample -- --clean
+```
+
+**Creates**:
+- 20 hospital-themed tickets (2 per department with realistic scenarios)
+- Various status states (open, in_progress, waiting_on_admin, closed)
+- Different priority levels
+- Sample comments (both public and internal)
+- Department users and super admin (if not exist)
+
+**Use cases**:
+- Testing UI with realistic hospital data
+- Demonstrating features to stakeholders
+- Development environment setup with full demo data
+
 ### reset-passwords.js
 Resets all user passwords to `password123` for testing purposes.
 
@@ -648,25 +697,6 @@ docker-compose exec web node scripts/reset-passwords.js
 - Testing authentication flows
 - Resetting locked accounts quickly
 - Standardizing test environment passwords
-
-### seed-sample-data.js
-Seeds the database with sample tickets and comments for testing.
-
-```bash
-# Populate database with sample data
-docker-compose exec web node scripts/seed-sample-data.js
-```
-
-**Creates**:
-- 15 sample tickets across all departments
-- Various status states (open, in_progress, waiting_on_admin, closed)
-- Different priority levels
-- Sample comments (both public and internal)
-
-**Use cases**:
-- Testing UI with realistic data
-- Demonstrating features to stakeholders
-- Development environment setup
 
 ⚠️ **Warning**: These scripts are for **development/testing only**. Never run in production.
 
@@ -756,6 +786,44 @@ const departments = await Department.findAll(false);
 // Get all departments including system (for admin ticket forms)
 const allDepartments = await Department.findAll(true);
 ```
+
+### Hospital Departments (v2.5.0)
+
+The system uses hospital-specific departments seeded via the `seed-hospital-data.js` script:
+
+**Default Hospital Departments**:
+- **Emergency Department** - Emergency and urgent care services (ED)
+- **Cardiology** - Cardiovascular and heart care services
+- **Radiology** - Medical imaging and diagnostic radiology
+- **Pharmacy** - Pharmaceutical services and medication management
+- **Laboratory** - Clinical laboratory and pathology services
+- **Surgery** - Operating room and surgical services
+- **Intensive Care Unit** - Critical care and ICU services
+- **Patient Registration** - Patient admissions, registration, and scheduling
+- **Medical Records** - Health information management and medical records
+- **Facilities Management** - Building maintenance, equipment, and operations
+
+**System Departments**:
+- **Internal** - Admin-only tickets (is_system=true, cannot be deleted)
+
+**Seeding Hospital Data**:
+```bash
+# Create hospital departments and users
+npm run seed:hospital
+
+# Or with clean flag (removes existing data)
+npm run seed:hospital -- --clean
+
+# For full demo data with tickets/comments
+npm run seed:sample
+```
+
+**Migration from Generic Departments**:
+If upgrading from older versions with generic departments (IT Support, Finance, etc.):
+1. Admin manually deactivates old departments via Admin UI
+2. Re-assign existing users to new hospital departments
+3. Historical tickets retain original department names (data preservation)
+4. Run `npm run seed:hospital` to add new hospital departments
 
 ### Validation Messages (constants/validation.js)
 ```javascript
