@@ -25,7 +25,7 @@ const greekLastNames = [
   'Παππάς', 'Σταματίου', 'Καραγιάννης', 'Μακρής', 'Αλεξίου', 'Πετρίδης'
 ];
 
-const departments = ['IT Support', 'General Support', 'Human Resources', 'Finance', 'Facilities'];
+const departments = ['Emergency Department', 'Cardiology', 'Radiology', 'Pharmacy', 'Laboratory'];
 
 // Convert Greek name to Latin for username/email
 function greekToLatin(text) {

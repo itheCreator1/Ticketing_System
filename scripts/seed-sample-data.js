@@ -1,10 +1,10 @@
 /**
- * Sample Data Seeder Script
+ * Sample Hospital Data Seeder Script
  *
- * Populates the database with realistic sample data for testing:
+ * Populates the database with realistic hospital sample data for testing:
  * - 1 super admin user
- * - 5 department users (one per department)
- * - 10 tickets (2 per department user)
+ * - 10 department users (one per hospital department)
+ * - 20 tickets (2 per department user with hospital scenarios)
  * - Comments on tickets (mix of public and internal)
  *
  * Usage:
@@ -20,75 +20,145 @@ const Ticket = require('../models/Ticket');
 const Comment = require('../models/Comment');
 const AuditLog = require('../models/AuditLog');
 
-// Realistic ticket data by department
+// Realistic hospital ticket data by department
 const ticketData = {
-  'IT Support': [
+  'Emergency Department': [
     {
-      title: 'Laptop not connecting to network',
-      description: 'My laptop cannot connect to the office WiFi network. I have tried restarting it but the issue persists. This is blocking my work.',
+      title: 'ED Workstation computer freezing',
+      description: 'The main triage workstation in ED keeps freezing during patient check-in. This is causing delays in processing emergency patients and affecting patient care.',
+      priority: 'critical',
+      status: 'open'
+    },
+    {
+      title: 'Ambulance radio system not receiving',
+      description: 'Radio communication with incoming ambulances is intermittent. We are missing critical patient information before arrival, which impacts our emergency preparedness.',
+      priority: 'high',
+      status: 'in_progress'
+    }
+  ],
+  'Cardiology': [
+    {
+      title: 'ECG machine calibration needed',
+      description: 'The ECG machine in room 204 is showing erratic readings. This equipment needs immediate calibration or replacement to ensure accurate patient diagnostics.',
       priority: 'high',
       status: 'open'
     },
     {
-      title: 'Software installation request',
-      description: 'I need Adobe Acrobat Pro installed on my workstation for PDF editing. Please install at your earliest convenience.',
+      title: 'Cardiac monitoring system upgrade',
+      description: 'Request to upgrade the cardiac monitoring software to the latest version for improved arrhythmia detection algorithms and better patient monitoring capabilities.',
       priority: 'medium',
-      status: 'in_progress'
+      status: 'waiting_on_admin'
     }
   ],
-  'General Support': [
+  'Radiology': [
     {
-      title: 'Password reset needed',
-      description: 'I forgot my password and need it reset. My username is the same as my email.',
-      priority: 'medium',
-      status: 'open'
+      title: 'X-ray machine error code 503',
+      description: 'The X-ray machine in Imaging Room 2 is displaying error code 503 and refusing to operate. This is severely limiting our imaging capacity for the day.',
+      priority: 'critical',
+      status: 'in_progress'
     },
     {
-      title: 'Access badge not working',
-      description: 'My office access badge stopped working this morning. I cannot access the building.',
+      title: 'PACS system slow performance',
+      description: 'The Picture Archiving and Communication System (PACS) has been extremely slow when accessing patient images. This is delaying radiologist reviews and reports.',
+      priority: 'high',
+      status: 'open'
+    }
+  ],
+  'Pharmacy': [
+    {
+      title: 'Medication dispensing system offline',
+      description: 'The automated medication dispensing system is offline. We cannot access medications for patient orders without manual override, which is time-consuming and error-prone.',
       priority: 'critical',
       status: 'waiting_on_admin'
+    },
+    {
+      title: 'Prescription printer jam issue',
+      description: 'The prescription label printer keeps jamming. This is slowing down medication preparation and causing delays in patient discharges.',
+      priority: 'medium',
+      status: 'open'
     }
   ],
-  'Human Resources': [
+  'Laboratory': [
     {
-      title: 'Benefits enrollment question',
-      description: 'I have questions about the new benefits enrollment period. When is the deadline and what are my options?',
-      priority: 'low',
+      title: 'Blood analyzer calibration overdue',
+      description: 'The main blood chemistry analyzer is showing a calibration overdue warning. We need this serviced immediately to maintain accurate test results.',
+      priority: 'high',
       status: 'open'
     },
     {
-      title: 'PTO request issue',
-      description: 'I submitted a PTO request two weeks ago but have not received approval. Can you please check the status?',
-      priority: 'medium',
-      status: 'closed'
-    }
-  ],
-  'Finance': [
-    {
-      title: 'Invoice processing delay',
-      description: 'Several invoices submitted last week have not been processed yet. This is affecting our vendor relationships.',
+      title: 'Lab information system integration error',
+      description: 'The lab information system is not properly syncing results with the main EHR. Lab results are not appearing in patient charts automatically.',
       priority: 'high',
       status: 'in_progress'
+    }
+  ],
+  'Surgery': [
+    {
+      title: 'Operating room temperature control malfunction',
+      description: 'OR 3 temperature control system is not maintaining proper temperature. The room is too warm for surgical procedures and needs immediate attention.',
+      priority: 'critical',
+      status: 'open'
     },
     {
-      title: 'Budget report access needed',
-      description: 'I need access to the Q4 budget reports for my department. Please grant access to the shared folder.',
+      title: 'Surgical scheduling system glitch',
+      description: 'The surgical scheduling system is showing double-bookings for OR 5 next week. Need to resolve this scheduling conflict before it affects patient surgeries.',
       priority: 'medium',
       status: 'waiting_on_admin'
     }
   ],
-  'Facilities': [
+  'Intensive Care Unit': [
     {
-      title: 'Office AC not working',
-      description: 'The air conditioning in conference room B is not working. The room is very hot and uncomfortable for meetings.',
+      title: 'Ventilator alarm system issue',
+      description: 'The central alarm system for ventilators in ICU bed 7 is not triggering properly. This is a critical patient safety concern that needs immediate resolution.',
+      priority: 'critical',
+      status: 'in_progress'
+    },
+    {
+      title: 'ICU monitoring station display flickering',
+      description: 'The main monitoring station display in ICU is flickering intermittently. This makes it difficult for nurses to monitor critical patient vitals effectively.',
+      priority: 'high',
+      status: 'open'
+    }
+  ],
+  'Patient Registration': [
+    {
+      title: 'Insurance verification system timeout',
+      description: 'The insurance verification system keeps timing out when trying to verify patient coverage. This is causing long wait times for patient check-in.',
       priority: 'high',
       status: 'open'
     },
     {
-      title: 'Meeting room booking issue',
-      description: 'The online meeting room booking system is showing errors when I try to book room A for next week.',
-      priority: 'low',
+      title: 'Patient portal password reset not working',
+      description: 'Multiple patients reporting that the password reset function on the patient portal is not sending reset emails. This is preventing patient access to their records.',
+      priority: 'medium',
+      status: 'waiting_on_admin'
+    }
+  ],
+  'Medical Records': [
+    {
+      title: 'EHR system slow document loading',
+      description: 'The electronic health record system is taking 2-3 minutes to load patient documents. This is significantly impacting clinical workflow and patient care efficiency.',
+      priority: 'high',
+      status: 'in_progress'
+    },
+    {
+      title: 'Medical records scanning backlog',
+      description: 'The document scanner for old paper records is malfunctioning. We have a backlog of 500+ documents that need to be digitized and imported into the EHR.',
+      priority: 'medium',
+      status: 'open'
+    }
+  ],
+  'Facilities Management': [
+    {
+      title: 'Emergency generator testing failure',
+      description: 'The backup emergency generator failed its monthly test. This is a critical safety issue that must be resolved immediately to ensure patient safety during power outages.',
+      priority: 'critical',
+      status: 'open'
+    },
+    {
+      title: 'Medical gas alarm system fault',
+      description: 'The medical gas alarm panel is showing a fault code for the oxygen supply line on floor 3. Need immediate inspection to ensure patient safety.',
+      priority: 'high',
       status: 'in_progress'
     }
   ]
@@ -322,7 +392,7 @@ async function createAuditLog(superAdmin, stats) {
  * Display login credentials
  */
 function displayCredentials(users) {
-  console.log('\n=== Sample Data Seeding Complete! ===\n');
+  console.log('\n=== Sample Hospital Data Seeding Complete! ===\n');
   console.log('Login credentials:\n');
   console.log('  Super Admin:');
   console.log('    Username: superadmin');
@@ -342,7 +412,7 @@ function displayCredentials(users) {
  * Main seeding function
  */
 async function seedDatabase() {
-  console.log('=== KNII Ticketing System - Sample Data Seeder ===\n');
+  console.log('=== KNII Ticketing System - Sample Hospital Data Seeder ===\n');
 
   try {
     // Check for --clean flag
