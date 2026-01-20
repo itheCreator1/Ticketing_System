@@ -53,9 +53,11 @@ app.use(helmet({
     directives: {
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-      scriptSrc: ["'self'", "https://cdn.jsdelivr.net"]
+      scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+      upgradeInsecureRequests: null
     }
-  }
+  },
+  hsts: process.env.NODE_ENV === 'production'
 }));
 app.use(morgan('combined'));
 app.use(compression());
