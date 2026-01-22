@@ -66,13 +66,13 @@ class ClientTicketService {
   }
 
   /**
-   * Get all tickets for a department user (ownership-based)
-   * Only returns tickets where reporter_id matches userId
+   * Get all tickets for a department (department-based filtering)
+   * Returns all tickets for the department including both user-created and admin-created tickets
    */
-  async getDepartmentTickets(userId, filters = {}) {
+  async getDepartmentTickets(userId, department, filters = {}) {
     const startTime = Date.now();
     try {
-      logger.debug('clientTicketService.getDepartmentTickets: Fetching tickets', { userId, filters });
+      logger.debug('clientTicketService.getDepartmentTickets: Fetching tickets', { userId, department, filters });
 
       const cleanFilters = {
         status: filters.status || undefined,
@@ -80,11 +80,12 @@ class ClientTicketService {
         search: filters.search || undefined
       };
 
-      const tickets = await Ticket.findByDepartment(userId, cleanFilters);
+      const tickets = await Ticket.findByDepartment(department, cleanFilters);
       const duration = Date.now() - startTime;
 
       logger.debug('clientTicketService.getDepartmentTickets: Tickets fetched', {
         userId,
+        department,
         ticketCount: tickets.length,
         duration
       });
@@ -94,6 +95,7 @@ class ClientTicketService {
       const duration = Date.now() - startTime;
       logger.error('clientTicketService.getDepartmentTickets: Failed to fetch tickets', {
         userId,
+        department,
         filters,
         error: error.message,
         stack: error.stack,
