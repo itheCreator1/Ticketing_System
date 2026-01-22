@@ -126,10 +126,10 @@ class Ticket {
     }
   }
 
-  static async findByDepartment(userId, filters = {}) {
+  static async findByDepartment(department, filters = {}) {
     const startTime = Date.now();
     try {
-      logger.debug('Ticket.findByDepartment: Starting query', { userId, filters });
+      logger.debug('Ticket.findByDepartment: Starting query', { department, filters });
       let query = `
         SELECT
           t.*,
@@ -143,10 +143,10 @@ class Ticket {
           ) as last_comment
         FROM tickets t
         LEFT JOIN users u ON t.assigned_to = u.id
-        WHERE t.reporter_id = $1
+        WHERE t.reporter_department = $1
           AND t.is_admin_created = false
       `;
-      const params = [userId];
+      const params = [department];
       let paramIndex = 2;
 
       if (filters.status) {
@@ -173,14 +173,14 @@ class Ticket {
       const duration = Date.now() - startTime;
 
       if (duration > 500) {
-        logger.warn('Ticket.findByDepartment: Slow query detected', { userId, filters, duration, rowCount: result.rows.length });
+        logger.warn('Ticket.findByDepartment: Slow query detected', { department, filters, duration, rowCount: result.rows.length });
       }
 
-      logger.debug('Ticket.findByDepartment: Query completed', { userId, filters, rowCount: result.rows.length, duration });
+      logger.debug('Ticket.findByDepartment: Query completed', { department, filters, rowCount: result.rows.length, duration });
       return result.rows;
     } catch (error) {
       logger.error('Ticket.findByDepartment: Database error', {
-        userId,
+        department,
         filters,
         error: error.message,
         stack: error.stack,
