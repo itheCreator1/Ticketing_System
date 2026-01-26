@@ -51,7 +51,7 @@
                 <option value=""><%= t('tickets:form.selectDepartment') %></option>
                 <% departments.forEach(dept => { %>
                   <option value="<%= dept.name %>" <%= dept.name === 'Internal' ? 'selected' : '' %>>
-                    <%= dept.name %>
+                    <%= dept.name %> (<%= dept.floor %>)
                   </option>
                 <% }) %>
               </select>

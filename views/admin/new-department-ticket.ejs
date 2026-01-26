@@ -57,7 +57,7 @@
               <select id="reporter_department" name="reporter_department" class="form-select" required>
                 <option value=""><%= t('tickets:form.selectDepartment') %></option>
                 <% departments.forEach(dept => { %>
-                  <option value="<%= dept.name %>"><%= dept.name %></option>
+                  <option value="<%= dept.name %>"><%= dept.name %> (<%= dept.floor %>)</option>
                 <% }) %>
               </select>
               <div class="text-sm text-gray-600 mt-1">
