@@ -23,7 +23,8 @@ async function initDatabase() {
     '016_create_departments_table.sql',
     '017_remove_reporter_desk.sql',
     '018_increase_status_column_length.sql',
-    '019_add_comment_visibility.sql'
+    '019_add_comment_visibility.sql',
+    '020_add_department_floor.sql'
   ];
 
   try {
