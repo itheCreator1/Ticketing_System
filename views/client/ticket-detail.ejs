@@ -65,6 +65,10 @@
               <span class="font-medium"><%= t('common:labels.department') %>:</span>
               <span class="ml-2"><%= ticket.reporter_department %></span>
             </div>
+            <div>
+              <span class="font-medium"><%= t('departments:fields.floor') %>:</span>
+              <span class="ml-2 badge badge-light"><%= ticket.department_floor || 'N/A' %></span>
+            </div>
             <% if (ticket.reporter_phone) { %>
               <div>
                 <span class="font-medium"><%= t('tickets:detail.phone') %>:</span>
