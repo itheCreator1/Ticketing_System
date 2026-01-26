@@ -28,7 +28,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should allow access when user session exists and user is active', async () => {
       // Arrange - Create active user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -62,7 +62,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should redirect when user status is inactive in database', async () => {
       // Arrange - Create user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -74,7 +74,7 @@ describe('Auth Middleware Integration Tests', () => {
       const cookies = loginResponse.headers['set-cookie'];
 
       // Change user status to inactive in database
-      await User.update(user.id, { status: 'inactive' });
+      await User.update(user.id, { status: 'inactive' }, getTestClient());
 
       // Act - Try to access protected route
       const response = await request(app)
@@ -89,7 +89,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should redirect when user status is deleted in database', async () => {
       // Arrange - Create user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -101,7 +101,7 @@ describe('Auth Middleware Integration Tests', () => {
       const cookies = loginResponse.headers['set-cookie'];
 
       // Change user status to deleted in database
-      await User.update(user.id, { status: 'deleted' });
+      await User.update(user.id, { status: 'deleted' }, getTestClient());
 
       // Act - Try to access protected route
       const response = await request(app)
@@ -116,7 +116,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should redirect when user no longer exists in database', async () => {
       // Arrange - Create user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -128,7 +128,7 @@ describe('Auth Middleware Integration Tests', () => {
       const cookies = loginResponse.headers['set-cookie'];
 
       // Delete user from database (hard delete for this test)
-      await User.update(user.id, { status: 'deleted', deleted_at: new Date() });
+      await User.update(user.id, { status: 'deleted', deleted_at: new Date() }, getTestClient());
 
       // Act - Try to access protected route
       const response = await request(app)
@@ -155,7 +155,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should verify user status from database not just session', async () => {
       // Arrange - Create user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -167,7 +167,7 @@ describe('Auth Middleware Integration Tests', () => {
       const cookies = loginResponse.headers['set-cookie'];
 
       // Session says active but DB says inactive
-      await User.update(user.id, { status: 'inactive' });
+      await User.update(user.id, { status: 'inactive' }, getTestClient());
 
       // Act
       const response = await request(app)
@@ -182,7 +182,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should destroy session when user is not active', async () => {
       // Arrange - Create user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -194,7 +194,7 @@ describe('Auth Middleware Integration Tests', () => {
       const cookies = loginResponse.headers['set-cookie'];
 
       // Deactivate user
-      await User.update(user.id, { status: 'inactive' });
+      await User.update(user.id, { status: 'inactive' }, getTestClient());
 
       // Act - Access protected route (should destroy session)
       await request(app)
@@ -216,7 +216,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should allow access for role = admin', async () => {
       // Arrange - Create admin user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -238,7 +238,7 @@ describe('Auth Middleware Integration Tests', () => {
 
       // Create a ticket first
       const Ticket = require('../../../models/Ticket');
-      const ticket = await Ticket.create(ticketData);
+      const ticket = await Ticket.create(ticketData, getTestClient());
 
       const response = await request(app)
         .post(`/admin/tickets/${ticket.id}/update`)
@@ -253,7 +253,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should allow access for role = super_admin', async () => {
       // Arrange - Create super_admin user and login
       const userData = createUserData({ role: 'super_admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -274,7 +274,7 @@ describe('Auth Middleware Integration Tests', () => {
       };
 
       const Ticket = require('../../../models/Ticket');
-      const ticket = await Ticket.create(ticketData);
+      const ticket = await Ticket.create(ticketData, getTestClient());
 
       const response = await request(app)
         .post(`/admin/tickets/${ticket.id}/update`)
@@ -334,7 +334,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should allow access for role = super_admin only', async () => {
       // Arrange - Create super_admin and login
       const userData = createUserData({ role: 'super_admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -358,7 +358,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should return 403 for role = admin (not super_admin)', async () => {
       // Arrange - Create regular admin and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -402,7 +402,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should set specific error message for super_admin requirement', async () => {
       // Arrange - Create regular admin
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -426,7 +426,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should reject access for user management operations', async () => {
       // Arrange - Create regular admin
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -487,7 +487,7 @@ describe('Auth Middleware Integration Tests', () => {
 
       // Create a valid session but we'll rely on the error handling
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')

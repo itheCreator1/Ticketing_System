@@ -41,7 +41,7 @@ describe('Data Migration Correctness', () => {
     it('should allow setting reporter_id to valid user ID', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
       const userId = user.id;
 
       // Act
@@ -93,7 +93,7 @@ describe('Data Migration Correctness', () => {
     it('should distinguish between user-created and admin-created tickets by is_admin_created flag', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
       const userId = user.id;
 
       // Create a user-created ticket
@@ -207,7 +207,7 @@ describe('Data Migration Correctness', () => {
     it('should handle duplicate inserts gracefully (reporter_id)', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
       const userId = user.id;
 
       // Act - Insert same ticket twice should fail on second attempt due to constraints
@@ -247,7 +247,7 @@ describe('Data Migration Correctness', () => {
     it('should maintain data consistency across multiple related tables', async () => {
       // Arrange - Create user, department, and ticket
       const userData = createUserData({ role: 'department', department: 'Internal' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
       const userId = user.id;
 
       const ticket = await getTestClient().query(

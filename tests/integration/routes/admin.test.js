@@ -28,7 +28,7 @@ describe('Admin Routes Integration Tests', () => {
 
     // Create admin user and login for authenticated tests
     const adminData = createUserData({ role: 'admin', status: 'active' });
-    adminUser = await User.create(adminData);
+    adminUser = await User.create(adminData, getTestClient());
 
     const loginResponse = await request(app)
       .post('/auth/login')
@@ -57,8 +57,8 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should display tickets list when authenticated', async () => {
       // Arrange - Create some tickets
-      await Ticket.create(createTicketData({ title: 'Test Ticket 1' }));
-      await Ticket.create(createTicketData({ title: 'Test Ticket 2' }));
+      await Ticket.create(createTicketData({ title: 'Test Ticket 1' }, getTestClient()));
+      await Ticket.create(createTicketData({ title: 'Test Ticket 2' }, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -131,8 +131,8 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should support search by keyword', async () => {
       // Arrange
-      await Ticket.create(createTicketData({ title: 'Database Connection Error' }));
-      await Ticket.create(createTicketData({ title: 'Email Configuration Issue' }));
+      await Ticket.create(createTicketData({ title: 'Database Connection Error' }, getTestClient()));
+      await Ticket.create(createTicketData({ title: 'Email Configuration Issue' }, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -158,7 +158,7 @@ describe('Admin Routes Integration Tests', () => {
   describe('GET /admin/tickets/:id', () => {
     it('should require authentication', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -171,7 +171,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should display ticket details when authenticated', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData({ title: 'Test Ticket Detail' }));
+      const ticket = await Ticket.create(createTicketData({ title: 'Test Ticket Detail' }, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -186,7 +186,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should display comments for the ticket', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
       const comment = await Comment.create(createCommentData({
         ticket_id: ticket.id,
         user_id: adminUser.id,
@@ -205,7 +205,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should display audit trail information', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -219,7 +219,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should display assigned user when ticket is assigned', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData({ assigned_to: adminUser.id }));
+      const ticket = await Ticket.create(createTicketData({ assigned_to: adminUser.id }, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -255,7 +255,7 @@ describe('Admin Routes Integration Tests', () => {
   describe('POST /admin/tickets/:id/update', () => {
     it('should require authentication', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -270,9 +270,9 @@ describe('Admin Routes Integration Tests', () => {
     it('should require admin role', async () => {
       // Arrange - Create regular user (not admin)
       const regularUserData = createUserData({ role: 'user', status: 'active' });
-      await User.create(regularUserData);
+      await User.create(regularUserData, getTestClient());
 
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
 
       // Act - Use admin cookies (which has admin role, so this should succeed)
       const response = await request(app)
@@ -287,7 +287,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should update ticket status', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData({ status: 'open' }));
+      const ticket = await Ticket.create(createTicketData({ status: 'open' }, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -304,7 +304,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should update ticket priority', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData({ priority: 'low' }));
+      const ticket = await Ticket.create(createTicketData({ priority: 'low' }, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -321,7 +321,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should assign ticket to user', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData({ assigned_to: null }));
+      const ticket = await Ticket.create(createTicketData({ assigned_to: null }, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -338,7 +338,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should create audit log entry for ticket update', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData({ status: 'open' }));
+      const ticket = await Ticket.create(createTicketData({ status: 'open' }, getTestClient()));
 
       // Act
       await request(app)
@@ -367,7 +367,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should handle validation errors', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
 
       // Act - Invalid status value
       const response = await request(app)
@@ -383,7 +383,7 @@ describe('Admin Routes Integration Tests', () => {
   describe('POST /admin/tickets/:id/comments', () => {
     it('should require authentication', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -397,7 +397,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should create comment', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -418,7 +418,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should validate comment content is required', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -446,7 +446,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should redirect to ticket detail page after adding comment', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
 
       // Act
       const response = await request(app)
@@ -461,7 +461,7 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should enforce maximum length on comment content', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
       const longContent = 'a'.repeat(2001); // MAX_LENGTHS.COMMENT_CONTENT = 2000
 
       // Act

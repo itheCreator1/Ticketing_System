@@ -41,7 +41,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should redirect to dashboard when already authenticated', async () => {
       // Arrange - Create user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -68,7 +68,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should redirect to dashboard on successful login with valid credentials', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Act
       const response = await request(app)
@@ -87,7 +87,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should set session cookie with user data on successful login', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Act
       const response = await request(app)
@@ -106,7 +106,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should reset login_attempts to 0 on successful login', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Simulate failed login attempts
       await User.incrementLoginAttempts(userData.username);
@@ -133,7 +133,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should increment login_attempts on failed login', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Act - Failed login with wrong password
       await request(app)
@@ -151,7 +151,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should lock account after 5 failed login attempts', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Act - Attempt 5 failed logins
       for (let i = 0; i < 5; i++) {
@@ -171,7 +171,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should reject login for locked accounts even with correct password', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Lock the account
       for (let i = 0; i < 5; i++) {
@@ -195,7 +195,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should reject login for inactive users', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin', status: 'inactive' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Act
       const response = await request(app)
@@ -213,7 +213,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should reject login for deleted users', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin', status: 'deleted' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Act
       const response = await request(app)
@@ -231,7 +231,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should create audit log entry on successful login', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Act
       await request(app)
@@ -284,7 +284,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should prevent timing attacks for user enumeration', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin', status: 'active' });
-      await User.create(userData);
+      await User.create(userData, getTestClient());
 
       // Act - Measure time for existing user
       const start1 = Date.now();
@@ -317,7 +317,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should destroy session on logout', async () => {
       // Arrange - Create user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -341,7 +341,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should redirect to login page after logout', async () => {
       // Arrange - Create user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -365,7 +365,7 @@ describe('Auth Routes Integration Tests', () => {
     it('should clear session cookie on logout', async () => {
       // Arrange - Create user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')

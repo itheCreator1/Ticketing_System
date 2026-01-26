@@ -18,7 +18,7 @@ describe('Foreign Key Behavior', () => {
     it('should set ticket reporter_id to NULL when user is deleted', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
       const userId = user.id;
 
       const ticketResult = await getTestClient().query(
@@ -38,7 +38,7 @@ describe('Foreign Key Behavior', () => {
     it('should set ticket assigned_to to NULL when assigned user is deleted', async () => {
       // Arrange
       const adminData = createUserData({ role: 'admin' });
-      const admin = await User.create(adminData);
+      const admin = await User.create(adminData, getTestClient());
       const adminId = admin.id;
 
       const ticketResult = await getTestClient().query(
@@ -66,7 +66,7 @@ describe('Foreign Key Behavior', () => {
       const ticketId = ticketResult.rows[0].id;
 
       const userData = createUserData({ role: 'admin' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
       const userId = user.id;
 
       const commentResult = await getTestClient().query(
@@ -94,7 +94,7 @@ describe('Foreign Key Behavior', () => {
       const ticketId = ticketResult.rows[0].id;
 
       const userData = createUserData({ role: 'admin' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
       const userId = user.id;
 
       const commentResult = await getTestClient().query(
@@ -145,7 +145,7 @@ describe('Foreign Key Behavior', () => {
 
       const deptName = 'Test Dept 2';
       const userData = createUserData({ role: 'department', department: deptName });
-      await User.create(userData);
+      await User.create(userData, getTestClient());
 
       // Act & Assert
       await expect(
@@ -167,7 +167,7 @@ describe('Foreign Key Behavior', () => {
       const deptId = deptResult.rows[0].id;
 
       const userData = createUserData({ role: 'department', department: originalName });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
       const userId = user.id;
 
       // Act
@@ -228,7 +228,7 @@ describe('Foreign Key Behavior', () => {
     it('should enforce ticket_id FK constraint in comments', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
       const userId = user.id;
 
       // Act & Assert - Try to insert comment for non-existent ticket

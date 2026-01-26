@@ -33,7 +33,7 @@ describe('User Management Routes Integration Tests', () => {
 
     // Create super_admin user and login
     const superAdminData = createUserData({ role: 'super_admin', status: 'active' });
-    superAdminUser = await User.create(superAdminData);
+    superAdminUser = await User.create(superAdminData, getTestClient());
 
     const superAdminLogin = await request(app)
       .post('/auth/login')
@@ -46,7 +46,7 @@ describe('User Management Routes Integration Tests', () => {
 
     // Create regular admin user for permission tests
     const adminData = createUserData({ role: 'admin', status: 'active' });
-    adminUser = await User.create(adminData);
+    adminUser = await User.create(adminData, getTestClient());
 
     const adminLogin = await request(app)
       .post('/auth/login')
@@ -197,7 +197,7 @@ describe('User Management Routes Integration Tests', () => {
     it('should validate username uniqueness', async () => {
       // Arrange
       const userData = createUserData({ username: 'duplicateuser' });
-      await User.create(userData);
+      await User.create(userData, getTestClient());
 
       // Act - Try to create another user with same username
       const response = await request(app)
@@ -213,7 +213,7 @@ describe('User Management Routes Integration Tests', () => {
     it('should validate email uniqueness', async () => {
       // Arrange
       const userData = createUserData({ email: 'unique@example.com' });
-      await User.create(userData);
+      await User.create(userData, getTestClient());
 
       // Act - Try to create another user with same email
       const response = await request(app)
@@ -280,7 +280,7 @@ describe('User Management Routes Integration Tests', () => {
   describe('GET /admin/users/:id/edit', () => {
     it('should require super_admin role', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       const response = await request(app)
@@ -294,7 +294,7 @@ describe('User Management Routes Integration Tests', () => {
     it('should render edit user form with current data', async () => {
       // Arrange
       const userData = createUserData({ username: 'editableuser' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Act
       const response = await request(app)
@@ -321,7 +321,7 @@ describe('User Management Routes Integration Tests', () => {
   describe('POST /admin/users/:id', () => {
     it('should require super_admin role', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       const response = await request(app)
@@ -337,7 +337,7 @@ describe('User Management Routes Integration Tests', () => {
     it('should update user fields', async () => {
       // Arrange
       const userData = createUserData({ username: 'original' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Act
       const response = await request(app)
@@ -360,8 +360,8 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should validate uniqueness when changing username', async () => {
       // Arrange
-      const user1 = await User.create(createUserData({ username: 'user1' }));
-      const user2 = await User.create(createUserData({ username: 'user2' }));
+      const user1 = await User.create(createUserData({ username: 'user1' }), getTestClient());
+      const user2 = await User.create(createUserData({ username: 'user2' }), getTestClient());
 
       // Act - Try to change user2's username to user1
       const response = await request(app)
@@ -377,7 +377,7 @@ describe('User Management Routes Integration Tests', () => {
     it('should clear user sessions when status changes to non-active', async () => {
       // Arrange
       const userData = createUserData({ status: 'active' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Act - Change status to inactive
       await request(app)
@@ -393,7 +393,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should create audit log entry for user update', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       await request(app)
@@ -413,7 +413,7 @@ describe('User Management Routes Integration Tests', () => {
   describe('POST /admin/users/:id/password', () => {
     it('should require super_admin role', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       const response = await request(app)
@@ -427,7 +427,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should reset user password', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
       const newPassword = 'NewSecurePass123!';
 
       // Act
@@ -446,7 +446,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should hash new password', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
       const newPassword = 'NewSecurePass123!';
 
       // Act
@@ -463,7 +463,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should validate password complexity on reset', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       const response = await request(app)
@@ -478,7 +478,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should update password_changed_at timestamp', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       await request(app)
@@ -493,7 +493,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should create audit log entry for password reset', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       await request(app)
@@ -513,7 +513,7 @@ describe('User Management Routes Integration Tests', () => {
   describe('POST /admin/users/:id/delete', () => {
     it('should require super_admin role', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       const response = await request(app)
@@ -526,7 +526,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should soft delete user', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       const response = await request(app)
@@ -543,7 +543,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should clear all user sessions on delete', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       await request(app)
@@ -568,7 +568,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should create audit log entry for user deletion', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       await request(app)
@@ -586,7 +586,7 @@ describe('User Management Routes Integration Tests', () => {
     it('should not appear in user list after deletion', async () => {
       // Arrange
       const userData = createUserData({ username: 'tobedeleted' });
-      const user = await User.create(userData);
+      const user = await User.create(userData, getTestClient());
 
       // Act
       await request(app)
@@ -607,7 +607,7 @@ describe('User Management Routes Integration Tests', () => {
   describe('POST /admin/users/:id/toggle-status', () => {
     it('should require super_admin role', async () => {
       // Arrange
-      const user = await User.create(createUserData());
+      const user = await User.create(createUserData(), getTestClient());
 
       // Act
       const response = await request(app)
@@ -621,7 +621,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should toggle user status to inactive', async () => {
       // Arrange
-      const user = await User.create(createUserData({ status: 'active' }));
+      const user = await User.create(createUserData({ status: 'active' }), getTestClient());
 
       // Act
       const response = await request(app)
@@ -638,7 +638,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should toggle user status to active', async () => {
       // Arrange
-      const user = await User.create(createUserData({ status: 'inactive' }));
+      const user = await User.create(createUserData({ status: 'inactive' }), getTestClient());
 
       // Act
       const response = await request(app)

@@ -37,7 +37,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
         username: 'dept_it_support',
         email: 'it.support@knii.local'
       });
-      const departmentUser = await User.create(departmentData);
+      const departmentUser = await User.create(departmentData, getTestClient());
 
       const deptLoginResponse = await request(app)
         .post('/auth/login')
@@ -66,7 +66,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
 
       // Step 2: Admin logs in
       const adminData = createUserData({ role: 'admin', status: 'active' });
-      const admin = await User.create(adminData);
+      const admin = await User.create(adminData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -213,7 +213,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
     it('should track all status transitions in audit log', async () => {
       // Arrange - Create admin and ticket
       const adminData = createUserData({ role: 'admin', status: 'active' });
-      const admin = await User.create(adminData);
+      const admin = await User.create(adminData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -224,7 +224,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
 
       const adminCookies = loginResponse.headers['set-cookie'];
 
-      const ticket = await Ticket.create(createTicketData({ status: 'open' }));
+      const ticket = await Ticket.create(createTicketData({ status: 'open' }, getTestClient()));
 
       // Act - Transition through all statuses
       const statuses = ['in_progress', 'closed', 'open', 'in_progress', 'closed'];
@@ -250,11 +250,11 @@ describe('Ticket Lifecycle E2E Tests', () => {
     it('should complete ticket assignment workflow', async () => {
       // Step 1: Create ticket
       const ticketData = createTicketData({ assigned_to: null });
-      const ticket = await Ticket.create(ticketData);
+      const ticket = await Ticket.create(ticketData, getTestClient());
 
       // Step 2: Create admin and login
       const adminData = createUserData({ role: 'admin', status: 'active' });
-      const admin = await User.create(adminData);
+      const admin = await User.create(adminData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -302,10 +302,10 @@ describe('Ticket Lifecycle E2E Tests', () => {
       const admin1Data = createUserData({ role: 'admin', status: 'active' });
       const admin2Data = createUserData({ role: 'admin', status: 'active' });
 
-      const admin1 = await User.create(admin1Data);
-      const admin2 = await User.create(admin2Data);
+      const admin1 = await User.create(admin1Data, getTestClient());
+      const admin2 = await User.create(admin2Data, getTestClient());
 
-      const ticket = await Ticket.create(createTicketData({ assigned_to: admin1.id }));
+      const ticket = await Ticket.create(createTicketData({ assigned_to: admin1.id }, getTestClient()));
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -331,11 +331,11 @@ describe('Ticket Lifecycle E2E Tests', () => {
   describe('Priority Escalation', () => {
     it('should complete priority escalation workflow', async () => {
       // Step 1: Create low priority ticket
-      const ticket = await Ticket.create(createTicketData({ priority: 'low' }));
+      const ticket = await Ticket.create(createTicketData({ priority: 'low' }, getTestClient()));
 
       // Step 2: Admin login
       const adminData = createUserData({ role: 'admin', status: 'active' });
-      await User.create(adminData);
+      await User.create(adminData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -386,13 +386,13 @@ describe('Ticket Lifecycle E2E Tests', () => {
   describe('Multi-Comment Workflow', () => {
     it('should handle multiple comments from different perspectives', async () => {
       // Arrange
-      const ticket = await Ticket.create(createTicketData());
+      const ticket = await Ticket.create(createTicketData(, getTestClient()));
 
       const admin1Data = createUserData({ role: 'admin', status: 'active' });
       const admin2Data = createUserData({ role: 'admin', status: 'active' });
 
-      const admin1 = await User.create(admin1Data);
-      const admin2 = await User.create(admin2Data);
+      const admin1 = await User.create(admin1Data, getTestClient());
+      const admin2 = await User.create(admin2Data, getTestClient());
 
       const login1 = await request(app)
         .post('/auth/login')
@@ -458,7 +458,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
       await Ticket.create(createTicketData({ status: 'open', title: 'Open Ticket 2' }));
 
       const adminData = createUserData({ role: 'admin', status: 'active' });
-      await User.create(adminData);
+      await User.create(adminData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')

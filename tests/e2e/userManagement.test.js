@@ -31,7 +31,7 @@ describe('User Management E2E Tests', () => {
     it('should complete full user management workflow', async () => {
       // Step 1: Super admin logs in
       const superAdminData = createUserData({ role: 'super_admin', status: 'active' });
-      const superAdmin = await User.create(superAdminData);
+      const superAdmin = await User.create(superAdminData, getTestClient());
 
       const superAdminLogin = await request(app)
         .post('/auth/login')
@@ -246,7 +246,7 @@ describe('User Management E2E Tests', () => {
     it('should enforce super_admin permission throughout workflow', async () => {
       // Step 1: Create regular admin (not super_admin)
       const adminData = createUserData({ role: 'admin', status: 'active' });
-      await User.create(adminData);
+      await User.create(adminData, getTestClient());
 
       const adminLogin = await request(app)
         .post('/auth/login')
@@ -276,7 +276,7 @@ describe('User Management E2E Tests', () => {
 
       // Step 4: Create super_admin for comparison
       const superAdminData = createUserData({ role: 'super_admin', status: 'active' });
-      await User.create(superAdminData);
+      await User.create(superAdminData, getTestClient());
 
       const superAdminLogin = await request(app)
         .post('/auth/login')
@@ -301,7 +301,7 @@ describe('User Management E2E Tests', () => {
     it('should prevent super admin from deleting themselves', async () => {
       // Arrange
       const superAdminData = createUserData({ role: 'super_admin', status: 'active' });
-      const superAdmin = await User.create(superAdminData);
+      const superAdmin = await User.create(superAdminData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -331,7 +331,7 @@ describe('User Management E2E Tests', () => {
     it('should clear sessions when user status changes to inactive', async () => {
       // Step 1: Create super admin
       const superAdminData = createUserData({ role: 'super_admin', status: 'active' });
-      const superAdmin = await User.create(superAdminData);
+      const superAdmin = await User.create(superAdminData, getTestClient());
 
       const superAdminLogin = await request(app)
         .post('/auth/login')
@@ -344,7 +344,7 @@ describe('User Management E2E Tests', () => {
 
       // Step 2: Create target user and login
       const targetUserData = createUserData({ role: 'admin', status: 'active' });
-      const targetUser = await User.create(targetUserData);
+      const targetUser = await User.create(targetUserData, getTestClient());
 
       const targetUserLogin = await request(app)
         .post('/auth/login')
@@ -385,7 +385,7 @@ describe('User Management E2E Tests', () => {
     it('should clear sessions when user is deleted', async () => {
       // Arrange
       const superAdminData = createUserData({ role: 'super_admin', status: 'active' });
-      const superAdmin = await User.create(superAdminData);
+      const superAdmin = await User.create(superAdminData, getTestClient());
 
       const superAdminLogin = await request(app)
         .post('/auth/login')
@@ -397,7 +397,7 @@ describe('User Management E2E Tests', () => {
       const superAdminCookies = superAdminLogin.headers['set-cookie'];
 
       const targetUserData = createUserData({ role: 'admin', status: 'active' });
-      const targetUser = await User.create(targetUserData);
+      const targetUser = await User.create(targetUserData, getTestClient());
 
       const targetUserLogin = await request(app)
         .post('/auth/login')
@@ -427,7 +427,7 @@ describe('User Management E2E Tests', () => {
     it('should enforce password complexity throughout workflow', async () => {
       // Arrange
       const superAdminData = createUserData({ role: 'super_admin', status: 'active' });
-      await User.create(superAdminData);
+      await User.create(superAdminData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -461,7 +461,7 @@ describe('User Management E2E Tests', () => {
     it('should hash passwords using bcrypt', async () => {
       // Arrange
       const superAdminData = createUserData({ role: 'super_admin', status: 'active' });
-      await User.create(superAdminData);
+      await User.create(superAdminData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -499,7 +499,7 @@ describe('User Management E2E Tests', () => {
     it('should enforce username uniqueness throughout workflow', async () => {
       // Arrange
       const superAdminData = createUserData({ role: 'super_admin', status: 'active' });
-      await User.create(superAdminData);
+      await User.create(superAdminData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
@@ -540,7 +540,7 @@ describe('User Management E2E Tests', () => {
     it('should enforce email uniqueness throughout workflow', async () => {
       // Arrange
       const superAdminData = createUserData({ role: 'super_admin', status: 'active' });
-      await User.create(superAdminData);
+      await User.create(superAdminData, getTestClient());
 
       const loginResponse = await request(app)
         .post('/auth/login')
