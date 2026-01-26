@@ -34,13 +34,13 @@ This file provides a quick reference for AI assistants. For comprehensive docume
 
 ## Testing Infrastructure (v2.2.0)
 
-**416 Test Cases Passing** - Professional-grade testing infrastructure
+**496 Test Cases Passing** - Professional-grade testing infrastructure
 
 ### Test Statistics
-- **Total Test Files**: 18 (Unit: 17, Integration: 6, E2E: 3) - Updated v2.2.0
-- **Test Cases**: 416 passing (62 new tests in v2.2.0)
-- **Test Code**: 10,500+ lines (extensive unit, integration, and E2E coverage)
-- **Coverage**: Core functionality fully tested, department accounts workflows validated, department-based access control verified
+- **Total Test Files**: 22 (Unit: 17, Integration: 10, E2E: 3) - Updated v2.2.0
+- **Test Cases**: 496 passing (80 new migration tests in v2.2.0)
+- **Test Code**: 12,500+ lines (extensive unit, integration, E2E, and migration coverage)
+- **Coverage**: Core functionality fully tested, department accounts workflows validated, department-based access control verified, complete schema and migration validation
 - **Test Execution**: Transaction-based isolation, no side effects
 
 ### Test Categories
@@ -52,9 +52,10 @@ This file provides a quick reference for AI assistants. For comprehensive docume
 - Middleware: auth.test.js, validation.test.js, errorHandler.test.js, rateLimiter.test.js
 - Utils: passwordValidator.test.js, responseHelpers.test.js
 
-**Integration Tests** (6 files) - Component interaction testing:
+**Integration Tests** (10 files) - Component interaction testing:
 - Routes: auth.test.js, public.test.js, admin.test.js, users.test.js
 - Middleware: auth.test.js (with real DB), validation.test.js (CSRF protection)
+- **Database Migrations**: schemaIntegrity.test.js, foreignKeyBehavior.test.js, dataMigration.test.js, migrationRunner.test.js
 
 **E2E Tests** (3 files) - Complete workflow validation:
 - authentication.test.js - Account locking, session management, multi-user scenarios
@@ -65,27 +66,35 @@ This file provides a quick reference for AI assistants. For comprehensive docume
 ```
 tests/
 ├── unit/              # 17 files - Isolated component tests
-├── integration/       # 6 files - Component interaction tests
+├── integration/       # 10 files - Component interaction & migration tests
+│   └── database/     # 4 files - Schema, FK, data migration, and runner tests
 ├── e2e/              # 3 files - Complete workflow tests
-├── helpers/          # Test utilities (4 files)
+├── helpers/          # Test utilities (5 files)
 │   ├── database.js   # Transaction management & rollback
 │   ├── factories.js  # Dynamic test data generation
 │   ├── mocks.js      # Mock objects (req, res, pool, logger)
-│   └── assertions.js # Custom matchers (toBeValidUser, toBeValidTicket, etc.)
+│   ├── assertions.js # Custom matchers (toBeValidUser, toBeValidTicket, etc.)
+│   └── schemaHelpers.js # Database schema introspection utilities
 ├── fixtures/         # Static test data (3 files: users, tickets, comments)
 └── setup.js          # Global test configuration
 ```
 
 ### Running Tests
 ```bash
-# Run all tests
+# Run all tests (unit, integration, E2E)
 npm test
 
 # Run unit tests only
 npm run test:unit
 
+# Run integration tests (database, routes, middleware)
+npm run test:integration
+
 # Run with coverage
 npm run test:coverage
+
+# View coverage in HTML browser
+npm run test:coverage:html
 
 # Watch mode for development
 npm run test:watch
@@ -98,6 +107,66 @@ npm run test:watch
 - **Mock Objects**: Complete isolation for unit tests
 - **Supertest**: HTTP integration testing
 - **Custom Matchers**: Domain-specific assertions (toBeValidUser, toBeValidTicket, etc.)
+
+### Migration Tests (80 tests across 4 files)
+
+**Location**: `tests/integration/database/`
+
+**Purpose**: Verify all 20 database migrations execute correctly, schema is correct, and data integrity constraints work properly.
+
+**Test Files**:
+
+1. **schemaIntegrity.test.js** (20 tests) - Schema structure validation
+   - Verify all 6 tables exist (users, tickets, comments, session, audit_logs, departments)
+   - Verify all expected columns with correct types and constraints
+   - Verify all primary key constraints
+   - Verify CHECK constraints (role, status, priority, floor, visibility_type)
+   - Verify UNIQUE constraints (username, email, department name)
+   - Verify all indexes exist and are properly configured
+   - Verify data types (VARCHAR, text, integer, timestamp, boolean)
+
+2. **foreignKeyBehavior.test.js** (20 tests) - Foreign key constraint validation
+   - **CASCADE DELETE**: Deleting user sets reporter_id and assigned_to to NULL, cascades to comments
+   - **RESTRICT**: Cannot delete department with existing tickets or users
+   - **CASCADE UPDATE**: Department name changes cascade to users.department and tickets.reporter_department
+   - **FK Integrity**: All foreign key constraints enforced (reporter_id, assigned_to, ticket_id, user_id, department references)
+   - Test both positive cases (valid FKs) and negative cases (constraint violations)
+
+3. **dataMigration.test.js** (20 tests) - Data migration correctness
+   - **Migration 012**: reporter_id column exists, supports NULL for admin-created tickets, enforces FK
+   - **Migration 015**: is_admin_created column exists, defaults to false, can be set to true
+   - **Migration 020**: floor column exists, NOT NULL, accepts all 8 valid floor values (Basement, Ground Floor, 1st-6th Floor), rejects invalid values
+   - **Idempotency**: Migrations handle duplicate inserts and NULL values safely
+   - **Data Consistency**: Multi-table relationships maintain integrity across inserts/updates
+
+4. **migrationRunner.test.js** (20 tests) - Complete migration execution
+   - Verify each of 20 migrations executed successfully (001-020)
+   - Verify migration 020 is included (regression test for critical bug fix)
+   - Verify complete schema state matches expectations
+   - Verify minimal valid records can be inserted to all tables
+   - Verify primary key and index constraints on all tables
+   - Verify all CHECK constraints and UNIQUE constraints
+
+**Helper**: `schemaHelpers.js` - Database introspection utilities
+- Query information_schema to inspect tables, columns, indexes, constraints
+- Methods: getTableNames(), getTableColumns(), columnExists(), getTableIndexes(), getPrimaryKeyColumns(), getForeignKeys(), getCheckConstraints(), etc.
+
+**Running Migration Tests**:
+```bash
+# Run all integration tests (includes migration tests)
+npm run test:integration
+
+# Run specific migration test file
+npm test -- tests/integration/database/schemaIntegrity.test.js
+```
+
+**Key Validation Points**:
+- All 20 migrations must run in sequence without errors
+- Migration 020 MUST be included (regression test for critical bug)
+- Final schema must match all expected table structures
+- All constraints (PK, FK, CHECK, UNIQUE, NOT NULL) must be enforced
+- Data integrity maintained across related tables
+- Cascading behaviors (DELETE, UPDATE) work correctly
 
 ### Test Coverage
 
