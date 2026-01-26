@@ -24,7 +24,11 @@
     "test:integration": "jest --testPathPattern=tests/integration --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "test:coverage:html": "jest --coverage && open coverage/lcov-report/index.html 2>/dev/null || echo 'Open coverage/lcov-report/index.html in your browser'"
+    "test:coverage:html": "jest --coverage && open coverage/lcov-report/index.html 2>/dev/null || echo 'Open coverage/lcov-report/index.html in your browser'",
+    "bench": "node tests/performance/run-all.js",
+    "bench:auth": "node tests/performance/authentication.bench.js",
+    "bench:tickets": "node tests/performance/ticketOperations.bench.js",
+    "bench:comments": "node tests/performance/commentOperations.bench.js"
   },
   "keywords": [
     "ticketing",
@@ -57,6 +61,7 @@
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
+    "autocannon": "^7.10.0",
     "autoprefixer": "^10.4.17",
     "jest": "^30.2.0",
     "node-mocks-http": "^1.17.2",
