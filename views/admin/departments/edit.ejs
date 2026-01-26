@@ -27,6 +27,21 @@
                    value="<%= department.name %>" required maxlength="100">
           </div>
 
+          <div class="mb-3">
+            <label for="floor" class="form-label"><%= t('departments:fields.floor') %> *</label>
+            <select id="floor" name="floor" class="form-select" required>
+              <option value="">Select Floor</option>
+              <option value="Basement" <%= department.floor === 'Basement' ? 'selected' : '' %>>Basement</option>
+              <option value="Ground Floor" <%= department.floor === 'Ground Floor' ? 'selected' : '' %>>Ground Floor</option>
+              <option value="1st Floor" <%= department.floor === '1st Floor' ? 'selected' : '' %>>1st Floor</option>
+              <option value="2nd Floor" <%= department.floor === '2nd Floor' ? 'selected' : '' %>>2nd Floor</option>
+              <option value="3rd Floor" <%= department.floor === '3rd Floor' ? 'selected' : '' %>>3rd Floor</option>
+              <option value="4th Floor" <%= department.floor === '4th Floor' ? 'selected' : '' %>>4th Floor</option>
+              <option value="5th Floor" <%= department.floor === '5th Floor' ? 'selected' : '' %>>5th Floor</option>
+              <option value="6th Floor" <%= department.floor === '6th Floor' ? 'selected' : '' %>>6th Floor</option>
+            </select>
+          </div>
+
           <div class="mb-4">
             <label for="description" class="form-label"><%= t('departments:fields.description') %></label>
             <textarea id="description" name="description" class="form-textarea"

@@ -21,6 +21,7 @@
     "id": "ID",
     "name": "Name",
     "description": "Description",
+    "floor": "Floor",
     "active": "Active",
     "isSystem": "System Department",
     "usersCount": "Users",
@@ -37,7 +38,9 @@
     "namePlaceholder": "Enter department name",
     "nameHelp": "Unique name for the department (e.g., \"Marketing\", \"Legal\")",
     "descriptionPlaceholder": "Enter department description",
-    "descriptionHelp": "Optional description of the department's role"
+    "descriptionHelp": "Optional description of the department's role",
+    "selectFloor": "Select Floor",
+    "floorHelp": "Physical floor location of the department"
   },
   "actions": {
     "deactivate": "Deactivate",

@@ -27,6 +27,9 @@ const VALIDATION_MESSAGES = {
   PASSWORD_REQUIRED: 'Password is required',
   COMMENT_REQUIRED: 'Comment cannot be empty',
   COMMENT_TOO_LONG: `Comment cannot exceed ${MAX_LENGTHS.COMMENT_CONTENT} characters`,
+  // Department validation messages
+  FLOOR_REQUIRED: 'Floor is required',
+  FLOOR_INVALID: 'Invalid floor selected',
   // User management validation messages
   USERNAME_INVALID: 'Username must be 3-50 characters and contain only letters, numbers, and underscores',
   EMAIL_IN_USE: 'Email is already in use',

@@ -1,6 +1,6 @@
 {
   "name": "knii_ticketing",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A professional ticketing system with department/desk tracking, public submission and admin management",
   "main": "index.js",
   "scripts": {

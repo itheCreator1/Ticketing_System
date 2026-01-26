@@ -39,14 +39,19 @@ class DepartmentService {
   /**
    * Create new department
    * @param {number} actorId - User creating department
-   * @param {Object} data - {name, description}
+   * @param {Object} data - {name, description, floor}
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Created department
    */
-  async createDepartment(actorId, { name, description }, ipAddress) {
+  async createDepartment(actorId, { name, description, floor }, ipAddress) {
     // Validate name is not empty
     if (!name || name.trim() === '') {
       throw new Error('Department name is required');
+    }
+
+    // Validate floor is provided
+    if (!floor || floor.trim() === '') {
+      throw new Error('Floor is required');
     }
 
     // Check if department already exists
@@ -58,7 +63,8 @@ class DepartmentService {
     // Create department
     const department = await Department.create({
       name: name.trim(),
-      description: description?.trim()
+      description: description?.trim(),
+      floor: floor.trim()
     });
 
     // Log action
@@ -67,7 +73,7 @@ class DepartmentService {
       action: 'CREATE_DEPARTMENT',
       targetType: 'department',
       targetId: department.id,
-      details: { name: department.name, description: department.description },
+      details: { name: department.name, description: department.description, floor: department.floor },
       ipAddress
     });
 
@@ -78,11 +84,11 @@ class DepartmentService {
    * Update department
    * @param {number} actorId - User updating department
    * @param {number} id - Department ID
-   * @param {Object} data - {name, description, active}
+   * @param {Object} data - {name, description, floor, active}
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Updated department
    */
-  async updateDepartment(actorId, id, { name, description, active }, ipAddress) {
+  async updateDepartment(actorId, id, { name, description, floor, active }, ipAddress) {
     // Get current department
     const current = await this.getDepartmentById(id);
 
@@ -103,6 +109,7 @@ class DepartmentService {
     const updated = await Department.update(id, {
       name: name?.trim(),
       description: description?.trim(),
+      floor: floor?.trim(),
       active
     });
 
@@ -117,8 +124,8 @@ class DepartmentService {
       targetType: 'department',
       targetId: id,
       details: {
-        old: { name: current.name, description: current.description, active: current.active },
-        new: { name: updated.name, description: updated.description, active: updated.active }
+        old: { name: current.name, description: current.description, floor: current.floor, active: current.active },
+        new: { name: updated.name, description: updated.description, floor: updated.floor, active: updated.active }
       },
       ipAddress
     });

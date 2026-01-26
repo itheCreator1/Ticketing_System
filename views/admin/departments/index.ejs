@@ -26,6 +26,7 @@
           <thead>
             <tr>
               <th><%= t('departments:fields.name') %></th>
+              <th><%= t('departments:fields.floor') %></th>
               <th><%= t('departments:fields.description') %></th>
               <th><%= t('common:labels.status') %></th>
               <th><%= t('departments:management.type') %></th>
@@ -36,6 +37,7 @@
             <% departments.forEach(dept => { %>
               <tr>
                 <td><strong><%= dept.name %></strong></td>
+                <td><span class="badge badge-light"><%= dept.floor %></span></td>
                 <td><% if (dept.description) { %><%= dept.description %><% } else { %><em class="text-gray-500"><%= t('departments:fields.noDescription') %></em><% } %></td>
                 <td>
                   <% if (dept.active) { %>

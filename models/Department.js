@@ -58,15 +58,15 @@ class Department {
 
   /**
    * Create a new department
-   * @param {Object} data - {name, description}
+   * @param {Object} data - {name, description, floor}
    * @returns {Promise<Object>} Created department
    */
-  static async create({ name, description }) {
+  static async create({ name, description, floor }) {
     const result = await pool.query(
-      `INSERT INTO departments (name, description, is_system, active)
-       VALUES ($1, $2, false, true)
+      `INSERT INTO departments (name, description, floor, is_system, active)
+       VALUES ($1, $2, $3, false, true)
        RETURNING *`,
-      [name, description || null]
+      [name, description || null, floor]
     );
     return result.rows[0];
   }
@@ -74,10 +74,10 @@ class Department {
   /**
    * Update department (only non-system departments)
    * @param {number} id - Department ID
-   * @param {Object} data - {name, description, active}
+   * @param {Object} data - {name, description, floor, active}
    * @returns {Promise<Object>} Updated department
    */
-  static async update(id, { name, description, active }) {
+  static async update(id, { name, description, floor, active }) {
     const fields = [];
     const values = [];
     let paramCount = 1;
@@ -91,6 +91,12 @@ class Department {
     if (description !== undefined) {
       fields.push(`description = $${paramCount}`);
       values.push(description);
+      paramCount++;
+    }
+
+    if (floor !== undefined) {
+      fields.push(`floor = $${paramCount}`);
+      values.push(floor);
       paramCount++;
     }
 

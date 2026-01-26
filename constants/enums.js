@@ -51,11 +51,36 @@ const COMMENT_VISIBILITY = {
   INTERNAL: 'internal'
 };
 
+/**
+ * Department floor values
+ * Used for validation and dropdown options
+ */
+const DEPARTMENT_FLOOR = {
+  BASEMENT: 'Basement',
+  GROUND_FLOOR: 'Ground Floor',
+  FIRST_FLOOR: '1st Floor',
+  SECOND_FLOOR: '2nd Floor',
+  THIRD_FLOOR: '3rd Floor',
+  FOURTH_FLOOR: '4th Floor',
+  FIFTH_FLOOR: '5th Floor',
+  SIXTH_FLOOR: '6th Floor'
+};
+
+/**
+ * Helper function to get all floor values as array
+ * @returns {Array<string>} Array of valid floor values
+ */
+function getDepartmentFloors() {
+  return Object.values(DEPARTMENT_FLOOR);
+}
+
 module.exports = {
   TICKET_STATUS,
   TICKET_PRIORITY,
   USER_ROLE,
   USER_STATUS,
   REPORTER_DEPARTMENT,
-  COMMENT_VISIBILITY
+  COMMENT_VISIBILITY,
+  DEPARTMENT_FLOOR,
+  getDepartmentFloors
 };

@@ -42,7 +42,7 @@ router.post('/', validateDepartmentCreate, validateRequest, async (req, res, nex
   try {
     const department = await departmentService.createDepartment(
       req.session.user.id,
-      { name: req.body.name, description: req.body.description },
+      { name: req.body.name, description: req.body.description, floor: req.body.floor },
       req.ip
     );
 
@@ -102,7 +102,7 @@ router.post('/:id', validateDepartmentUpdate, validateRequest, async (req, res, 
     await departmentService.updateDepartment(
       req.session.user.id,
       parseInt(req.params.id),
-      { name: req.body.name, description: req.body.description, active: req.body.active },
+      { name: req.body.name, description: req.body.description, floor: req.body.floor, active: req.body.active },
       req.ip
     );
 

@@ -39,9 +39,10 @@ class Ticket {
     try {
       logger.debug('Ticket.findById: Starting query', { ticketId: id });
       const result = await pool.query(
-        `SELECT t.*, u.username as assigned_to_username
+        `SELECT t.*, u.username as assigned_to_username, d.floor as department_floor
          FROM tickets t
          LEFT JOIN users u ON t.assigned_to = u.id
+         LEFT JOIN departments d ON t.reporter_department = d.name
          WHERE t.id = $1`,
         [id]
       );
