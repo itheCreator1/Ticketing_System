@@ -113,12 +113,13 @@ class User {
     }
   }
 
-  static async create({ username, email, password, role = 'admin', department = null }) {
+  static async create({ username, email, password, role = 'admin', department = null }, client = null) {
+    const db = client || pool;
     const startTime = Date.now();
     try {
       logger.debug('User.create: Starting user creation', { username, email, role, department });
       const password_hash = await bcrypt.hash(password, 10);
-      const result = await pool.query(
+      const result = await db.query(
         'INSERT INTO users (username, email, password_hash, role, department) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, role, department',
         [username, email, password_hash, role, department]
       );
@@ -169,7 +170,8 @@ class User {
   }
 
   // Update user fields (excluding password)
-  static async update(id, { username, email, role, status, department }) {
+  static async update(id, { username, email, role, status, department }, client = null) {
+    const db = client || pool;
     const startTime = Date.now();
     const fields = [];
     const values = [];
@@ -215,7 +217,7 @@ class User {
         RETURNING id, username, email, role, status, department, created_at, updated_at
       `;
 
-      const result = await pool.query(query, values);
+      const result = await db.query(query, values);
       const duration = Date.now() - startTime;
 
       if (duration > 500) {
@@ -237,12 +239,13 @@ class User {
   }
 
   // Update password (admin-initiated, no verification)
-  static async updatePassword(id, newPassword) {
+  static async updatePassword(id, newPassword, client = null) {
+    const db = client || pool;
     const startTime = Date.now();
     try {
       logger.debug('User.updatePassword: Starting password update', { userId: id });
       const password_hash = await bcrypt.hash(newPassword, 10);
-      const result = await pool.query(
+      const result = await db.query(
         'UPDATE users SET password_hash = $1, password_changed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id',
         [password_hash, id]
       );
@@ -266,11 +269,12 @@ class User {
   }
 
   // Soft delete user
-  static async softDelete(id) {
+  static async softDelete(id, client = null) {
+    const db = client || pool;
     const startTime = Date.now();
     try {
       logger.debug('User.softDelete: Starting soft delete', { userId: id });
-      const result = await pool.query(
+      const result = await db.query(
         "UPDATE users SET status = 'deleted', deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING id",
         [id]
       );
@@ -401,7 +405,8 @@ class User {
   }
 
   // Clear all sessions for a specific user
-  static async clearUserSessions(userId) {
+  static async clearUserSessions(userId, client = null) {
+    const db = client || pool;
     const startTime = Date.now();
     try {
       logger.info('User.clearUserSessions: Clearing user sessions', { userId });
@@ -411,7 +416,7 @@ class User {
         DELETE FROM session
         WHERE sess::jsonb->'user'->>'id' = $1
       `;
-      const result = await pool.query(query, [userId.toString()]);
+      const result = await db.query(query, [userId.toString()]);
       const duration = Date.now() - startTime;
       const sessionsCleared = result.rowCount;
 
