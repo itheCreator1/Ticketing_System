@@ -1,5 +1,6 @@
 const { body, param } = require('express-validator');
 const { MAX_LENGTHS, VALIDATION_MESSAGES } = require('../constants/validation');
+const { getDepartmentFloors } = require('../constants/enums');
 
 /**
  * Validation rules for creating a department
@@ -15,7 +16,13 @@ const validateDepartmentCreate = [
     .optional({ nullable: true, checkFalsy: true })
     .trim()
     .isLength({ max: 500 })
-    .withMessage('Description must be less than 500 characters')
+    .withMessage('Description must be less than 500 characters'),
+
+  body('floor')
+    .trim()
+    .notEmpty().withMessage(VALIDATION_MESSAGES.FLOOR_REQUIRED)
+    .isIn(getDepartmentFloors())
+    .withMessage(VALIDATION_MESSAGES.FLOOR_INVALID)
 ];
 
 /**
@@ -36,6 +43,12 @@ const validateDepartmentUpdate = [
     .trim()
     .isLength({ max: 500 })
     .withMessage('Description must be less than 500 characters'),
+
+  body('floor')
+    .optional()
+    .trim()
+    .isIn(getDepartmentFloors())
+    .withMessage(VALIDATION_MESSAGES.FLOOR_INVALID),
 
   body('active')
     .optional()
