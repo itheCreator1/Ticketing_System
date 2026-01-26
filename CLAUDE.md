@@ -241,7 +241,9 @@ The system supports three types of ticket creation:
 ## Version History & Changes
 
 ### v2.2.0 (Current)
-**Critical Fix**: Admin-Created Department Tickets Now Visible to Department Users
+**Two Major Updates**: Admin-Created Department Tickets Now Visible + Department Floor Locations
+
+#### Part 1: Critical Fix - Admin-Created Department Tickets Visible to Department Users
 
 **Bug Fixed**:
 - ❌ **Before**: Admin-created department tickets were invisible to department users
@@ -264,10 +266,37 @@ The system supports three types of ticket creation:
 - ✅ Internal admin tickets remain hidden from all department users
 - ✅ Same security posture with improved correctness
 
+#### Part 2: New Feature - Department Floor Locations
+
+**Overview**:
+Added floor location field to departments for physical location tracking. Each department now has a required floor value from 8 predefined options.
+
+**Features**:
+- **Floor Values**: Basement, Ground Floor, 1st Floor - 6th Floor (8 total)
+- **Required Field**: All departments must have a floor assigned
+- **Database Validation**: CHECK constraint enforces valid floor values
+- **Display Locations**:
+  - Department management list (dedicated floor column)
+  - Department create/edit forms (dropdown selector)
+  - Ticket forms (shown as "Department Name (Floor)" in dropdown)
+  - Ticket detail views (separate floor field display)
+
+**Implementation Details**:
+- **Database**: Migration 020_add_department_floor.sql with CHECK constraint and index
+- **Models**: Department.create() and Department.update() now handle floor parameter
+- **Ticket Model**: Added LEFT JOIN to include department_floor in ticket details
+- **Service Layer**: departmentService validates floor on create/update with audit logging
+- **Validators**: Express-validator rules enforce floor selection with enum validation
+- **Constants**: DEPARTMENT_FLOOR object and getDepartmentFloors() helper for dropdown options
+- **Internationalization**: Translations added for both English and Greek (selectFloor, floorHelp)
+- **Seed Data**: Hospital departments seeded with realistic floor assignments
+
 **Testing**:
 - All 416 tests passing (62 new tests added)
 - Added comprehensive test coverage for department-based access control
 - Session migration handled gracefully with lazy initialization
+- Floor validation tested with CHECK constraint and validator rules
+- Data migration verified with all departments assigned proper floors
 
 ### v2.1.0 (Previous)
 - Initial department accounts and dual-portal architecture
@@ -279,8 +308,11 @@ The system supports three types of ticket creation:
 ## Database Schema
 
 ```sql
-departments (id, name, description, is_system, active, created_at, updated_at)
+departments (id, name, description, floor, is_system, active, created_at, updated_at)
   - name: VARCHAR(100) UNIQUE - Department name (e.g., 'IT Support', 'Finance')
+  - floor: VARCHAR(20) NOT NULL - Physical floor location (Basement, Ground Floor, 1st-6th Floor)
+    - Validated by CHECK constraint: floor IN ('Basement', 'Ground Floor', '1st Floor', '2nd Floor', '3rd Floor', '4th Floor', '5th Floor', '6th Floor')
+    - Indexed for efficient filtering
   - is_system: BOOLEAN - True for 'Internal' (admin-only), cannot be edited/deleted
   - active: BOOLEAN - Soft deletion flag (false = deactivated)
 
