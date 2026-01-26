@@ -23,6 +23,7 @@ const hospitalDepartments = [
   {
     name: 'Emergency Department',
     description: 'Emergency and urgent care services (ED)',
+    floor: 'Ground Floor',
     username: 'ed.coordinator',
     email: 'ed.coordinator@hospital.local',
     fullName: 'Dr. Sarah Martinez'
@@ -30,6 +31,7 @@ const hospitalDepartments = [
   {
     name: 'Cardiology',
     description: 'Cardiovascular and heart care services',
+    floor: '3rd Floor',
     username: 'cardiology.nurse',
     email: 'cardiology.nurse@hospital.local',
     fullName: 'James Anderson'
@@ -37,6 +39,7 @@ const hospitalDepartments = [
   {
     name: 'Radiology',
     description: 'Medical imaging and diagnostic radiology',
+    floor: '2nd Floor',
     username: 'radiology.tech',
     email: 'radiology.tech@hospital.local',
     fullName: 'Dr. Emily Chen'
@@ -44,6 +47,7 @@ const hospitalDepartments = [
   {
     name: 'Pharmacy',
     description: 'Pharmaceutical services and medication management',
+    floor: '1st Floor',
     username: 'pharmacy.director',
     email: 'pharmacy.director@hospital.local',
     fullName: 'Robert Williams'
@@ -51,6 +55,7 @@ const hospitalDepartments = [
   {
     name: 'Laboratory',
     description: 'Clinical laboratory and pathology services',
+    floor: '1st Floor',
     username: 'lab.supervisor',
     email: 'lab.supervisor@hospital.local',
     fullName: 'Dr. Lisa Thompson'
@@ -58,6 +63,7 @@ const hospitalDepartments = [
   {
     name: 'Surgery',
     description: 'Operating room and surgical services',
+    floor: '4th Floor',
     username: 'surgery.coordinator',
     email: 'surgery.coordinator@hospital.local',
     fullName: 'Dr. Michael Brown'
@@ -65,6 +71,7 @@ const hospitalDepartments = [
   {
     name: 'Intensive Care Unit',
     description: 'Critical care and ICU services',
+    floor: '5th Floor',
     username: 'icu.charge.nurse',
     email: 'icu.charge.nurse@hospital.local',
     fullName: 'Jennifer Davis'
@@ -72,6 +79,7 @@ const hospitalDepartments = [
   {
     name: 'Patient Registration',
     description: 'Patient admissions, registration, and scheduling',
+    floor: 'Ground Floor',
     username: 'registration.lead',
     email: 'registration.lead@hospital.local',
     fullName: 'Maria Garcia'
@@ -79,6 +87,7 @@ const hospitalDepartments = [
   {
     name: 'Medical Records',
     description: 'Health information management and medical records',
+    floor: '6th Floor',
     username: 'records.manager',
     email: 'records.manager@hospital.local',
     fullName: 'David Lee'
@@ -86,6 +95,7 @@ const hospitalDepartments = [
   {
     name: 'Facilities Management',
     description: 'Building maintenance, equipment, and operations',
+    floor: 'Basement',
     username: 'facilities.director',
     email: 'facilities.director@hospital.local',
     fullName: 'Thomas Johnson'
@@ -208,7 +218,8 @@ async function createDepartments() {
 
       await Department.create({
         name: dept.name,
-        description: dept.description
+        description: dept.description,
+        floor: dept.floor
       });
 
       createdDepartments.push(dept);
