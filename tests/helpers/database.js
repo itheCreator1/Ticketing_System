@@ -85,14 +85,31 @@ async function cleanTable(tableName) {
 
 /**
  * Delete all rows from all tables in the correct order to respect FK constraints
- * Order: audit_logs, comments, tickets, session, users
+ * Order optimized for CASCADE and SET NULL FK behaviors
+ *
+ * Order explanation:
+ * 1. comments - child of tickets and users (CASCADE on delete)
+ * 2. tickets - child of users (SET NULL for assigned_to, reporter_id)
+ * 3. audit_logs - child of users (SET NULL for actor_id after migration 021)
+ * 4. session - independent table (no FK dependencies)
+ * 5. users - parent of many tables
+ *
+ * Note: departments NOT deleted to preserve system departments and test data
  */
 async function cleanAllTables() {
-  await pool.query('DELETE FROM audit_logs');
+  // Child tables first (respects FK constraints)
   await pool.query('DELETE FROM comments');
   await pool.query('DELETE FROM tickets');
+  await pool.query('DELETE FROM audit_logs');
+
+  // Independent tables
   await pool.query('DELETE FROM session');
+
+  // Parent tables last
   await pool.query('DELETE FROM users');
+
+  // NOTE: Does NOT delete departments - test departments use ON CONFLICT DO NOTHING on insert
+  // This preserves system departments and avoids FK issues with transaction-based tests
 }
 
 /**
@@ -123,9 +140,47 @@ async function resetSequences() {
   await pool.query('ALTER SEQUENCE audit_logs_id_seq RESTART WITH 1');
 }
 
+/**
+ * Setup for integration tests that make HTTP requests
+ * Does NOT use transactions since HTTP requests can't see uncommitted data
+ * Seeds test departments that the app needs
+ */
+async function setupIntegrationTest() {
+  const testDepartments = [
+    { name: 'Emergency Department', description: 'Emergency and urgent care services', floor: 'Ground Floor' },
+    { name: 'Cardiology', description: 'Cardiovascular and heart care services', floor: '2nd Floor' },
+    { name: 'Radiology', description: 'Medical imaging and diagnostic radiology', floor: '3rd Floor' },
+    { name: 'Pharmacy', description: 'Pharmaceutical services and medication management', floor: '1st Floor' },
+    { name: 'Laboratory', description: 'Clinical laboratory and pathology services', floor: 'Ground Floor' },
+    { name: 'IT Support', description: 'IT Support Services', floor: 'Ground Floor' },
+    { name: 'Finance', description: 'Finance Department', floor: 'Ground Floor' },
+    { name: 'Facilities', description: 'Facilities Management', floor: '1st Floor' },
+    { name: 'Internal', description: 'Internal admin-only department', floor: 'Ground Floor', is_system: true }
+  ];
+
+  for (const dept of testDepartments) {
+    await pool.query(
+      `INSERT INTO departments (name, description, floor, is_system, active)
+       VALUES ($1, $2, $3, $4, true)
+       ON CONFLICT (name) DO NOTHING`,
+      [dept.name, dept.description, dept.floor, dept.is_system || false]
+    );
+  }
+}
+
+/**
+ * Cleanup for integration tests
+ * Removes all test data created during the test
+ */
+async function teardownIntegrationTest() {
+  await cleanAllTables();
+}
+
 module.exports = {
   setupTestDatabase,
   teardownTestDatabase,
+  setupIntegrationTest,
+  teardownIntegrationTest,
   getTestClient,
   cleanTable,
   cleanAllTables,
