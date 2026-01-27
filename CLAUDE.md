@@ -9,8 +9,8 @@ KNII Ticketing System - A professional support ticket management application wit
 **No ORM**: Raw SQL with pg driver
 **Code Quality**: 98% compliance with professional Node.js development standards
 **Security**: Zero SQL injection vulnerabilities, multi-layer defense with department-based access control
-**Testing**: 416 test cases passing - 18 unit test files, 6 integration tests, 3 E2E tests
-**Version**: 2.2.0 (Department Accounts with Admin-Created Ticket Visibility Fix)
+**Testing**: 572+ test cases passing - 22 test files (31 test suites total) with comprehensive unit, integration, and E2E coverage
+**Version**: 2.2.1 (Department Accounts + Admin-Created Ticket Visibility + CSRF/Transaction Isolation + Session Store & Audit Log FK Fixes)
 
 ---
 
@@ -32,16 +32,24 @@ This file provides a quick reference for AI assistants. For comprehensive docume
 
 ---
 
-## Testing Infrastructure (v2.2.0)
+## Testing Infrastructure (v2.2.1)
 
-**496 Test Cases Passing** - Professional-grade testing infrastructure
+**668 Total Test Cases - 572+ Passing** - Professional-grade testing infrastructure with session store optimization and audit log FK constraint fixes
 
 ### Test Statistics
-- **Total Test Files**: 22 (Unit: 17, Integration: 10, E2E: 3) - Updated v2.2.0
-- **Test Cases**: 496 passing (80 new migration tests in v2.2.0)
+- **Total Test Files**: 22 (Unit: 17, Integration: 10, E2E: 3)
+- **Total Test Suites**: 31
+- **Test Cases Passing**: 572+ (v2.2.1: Fixed session persistence and audit log FK constraint issues)
 - **Test Code**: 12,500+ lines (extensive unit, integration, E2E, and migration coverage)
 - **Coverage**: Core functionality fully tested, department accounts workflows validated, department-based access control verified, complete schema and migration validation
-- **Test Execution**: Transaction-based isolation, no side effects
+- **Test Execution**:
+  - Unit & Database tests: Transaction-based isolation with dedicated client connections
+  - Integration & E2E tests: Memory session store for session persistence and isolation
+  - Proper cleanup with FK-aware table deletion order
+- **Recent Fixes (v2.2.1)**:
+  - Memory session store in test environment (NODE_ENV=test) - fixes session persistence issues
+  - Migration 021: Audit log FK constraint changed to ON DELETE SET NULL - fixes FK violations
+  - Reordered test table cleanup to respect FK dependency hierarchy
 
 ### Test Categories
 
@@ -103,10 +111,16 @@ npm run test:watch
 ### Test Patterns Used
 - **AAA Pattern**: Arrange-Act-Assert in all tests
 - **Transaction Isolation**: Each test runs in isolated transaction with automatic rollback
+  - v2.2.1: Uses dedicated database client per test (not `pool.query()`) to prevent connection leaks
+  - Properly releases client back to pool after ROLLBACK
 - **Factory Pattern**: Dynamic test data generation to avoid conflicts
+  - Includes seed data for all required test departments
 - **Mock Objects**: Complete isolation for unit tests
 - **Supertest**: HTTP integration testing
 - **Custom Matchers**: Domain-specific assertions (toBeValidUser, toBeValidTicket, etc.)
+- **CSRF Handling** (v2.2.1): CSRF protection disabled in test environment (`NODE_ENV=test`)
+  - Jest `setupFiles` runs BEFORE test framework initialization to set NODE_ENV=test
+  - Allows tests to focus on business logic, not CSRF library validation
 
 ### Migration Tests (80 tests across 4 files)
 
@@ -865,7 +879,10 @@ models/* → config/database.js (pool)
 3. Update relevant model to use new column
 4. Never modify existing migration files
 
-**Current migration number**: 019 (last: add_comment_visibility)
+**Current migration number**: 021 (last: fix_audit_log_fk_constraint)
+
+**Migration 020**: add_department_floor - Added floor column to departments table with CHECK constraint
+**Migration 021**: fix_audit_log_fk_constraint - Fixed audit_logs FK to use ON DELETE SET NULL for audit trail preservation
 
 ### Add a new model method
 ```javascript
