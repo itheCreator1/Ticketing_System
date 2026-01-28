@@ -345,18 +345,25 @@
 
   /* Responsive */
   @media (max-width: 768px) {
+    /* Reduce badge sizes on mobile for better readability */
     .badge-status,
     .badge-priority {
-      @apply text-xs px-3 py-1.5;
+      font-size: var(--font-size-xs);
+      padding: var(--spacing-1) var(--spacing-2);
     }
+
     .stat-badge {
-      @apply text-xs px-3 py-1.5;
+      font-size: var(--font-size-xs);
+      padding: var(--spacing-1) var(--spacing-3);
     }
+
+    /* Reduce icon sizes on mobile */
     .empty-state-icon {
-      @apply text-5xl;
+      font-size: 3rem;
     }
+
     .error-code {
-      @apply text-5xl;
+      font-size: 3rem;
     }
   }
 }
