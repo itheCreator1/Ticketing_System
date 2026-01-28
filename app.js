@@ -116,6 +116,13 @@ app.use((req, res, next) => {
   next();
 });
 
+// Make design tokens available to all views
+const { DESIGN_TOKENS } = require('./constants/designTokens');
+app.use((req, res, next) => {
+  res.locals.tokens = DESIGN_TOKENS;
+  next();
+});
+
 app.use('/', publicRoutes);
 app.use('/auth', authRoutes);
 app.use('/admin', adminRoutes);
