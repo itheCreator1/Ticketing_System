@@ -10,107 +10,80 @@
 <body class="bg-gray-50">
   <%- include('../../partials/header') %>
 
-  <div class="container mx-auto px-4 py-8">
-  <div class="flex justify-between items-center mb-8">
-    <h1 class="text-4xl font-bold text-gray-900"><%= t('floors:title') %></h1>
-    <a href="/admin/floors/new" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center gap-2">
-      <i class="bi bi-plus-lg"></i>
-      <%= t('floors:actions.create') %>
-    </a>
-  </div>
-
-  <%- include('../../partials/flash') %>
-
-  <% if (floors && floors.length > 0) { %>
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-50">
-          <tr>
-            <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">
-              <%= t('floors:fields.name') %>
-            </th>
-            <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">
-              <%= t('floors:fields.sortOrder') %>
-            </th>
-            <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">
-              <%= t('floors:fields.status') %>
-            </th>
-            <th class="px-6 py-3 text-left text-sm font-medium text-gray-900">
-              <%= t('floors:fields.type') %>
-            </th>
-            <th class="px-6 py-3 text-right text-sm font-medium text-gray-900">
-              <%= t('common:labels.actions') %>
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-          <% floors.forEach(floor => { %>
-            <tr class="hover:bg-gray-50">
-              <td class="px-6 py-4 text-sm font-medium text-gray-900">
-                <%= floor.name %>
-              </td>
-              <td class="px-6 py-4 text-sm text-gray-600">
-                <%= floor.sort_order %>
-              </td>
-              <td class="px-6 py-4 text-sm">
-                <% if (floor.active) { %>
-                  <span class="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
-                    <%= t('common:messages.active') %>
-                  </span>
-                <% } else { %>
-                  <span class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">
-                    <%= t('common:messages.inactive') %>
-                  </span>
-                <% } %>
-              </td>
-              <td class="px-6 py-4 text-sm">
-                <% if (floor.is_system) { %>
-                  <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
-                    <%= t('common:types.system') %>
-                  </span>
-                <% } else { %>
-                  <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-semibold">
-                    <%= t('common:types.custom') %>
-                  </span>
-                <% } %>
-              </td>
-              <td class="px-6 py-4 text-sm text-right space-x-2">
-                <% if (!floor.is_system) { %>
-                  <a href="/admin/floors/<%= floor.id %>/edit" class="text-blue-600 hover:text-blue-900">
-                    <i class="bi bi-pencil"></i> <%= t('common:edit') %>
-                  </a>
-                  <% if (floor.active) { %>
-                    <form method="POST" action="/admin/floors/<%= floor.id %>/deactivate" style="display: inline;">
-                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                      <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('<%= t('floors:confirmDeactivate') %>')">
-                        <i class="bi bi-trash"></i> <%= t('floors:actions.deactivate') %>
-                      </button>
-                    </form>
-                  <% } else { %>
-                    <form method="POST" action="/admin/floors/<%= floor.id %>/reactivate" style="display: inline;">
-                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                      <button type="submit" class="text-green-600 hover:text-green-900">
-                        <i class="bi bi-arrow-counterclockwise"></i> <%= t('floors:actions.reactivate') %>
-                      </button>
-                    </form>
-                  <% } %>
-                <% } else { %>
-                  <span class="text-gray-400 text-sm cursor-not-allowed">
-                    <%= t('floors:messages.systemFloor') %>
-                  </span>
-                <% } %>
-              </td>
-            </tr>
-          <% }); %>
-        </tbody>
-      </table>
+  <main class="container-fluid px-4 py-6">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold"><%= t('floors:title') %></h2>
+      <a href="/admin/floors/new" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i>
+        <%= t('floors:actions.create') %>
+      </a>
     </div>
-  <% } else { %>
-    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
-      <p class="text-yellow-800"><%= t('common:messages.noData') %></p>
-    </div>
-  <% } %>
-  </div>
+
+    <%- include('../../partials/flash') %>
+
+    <% if (floors && floors.length > 0) { %>
+      <div class="card">
+        <div class="card-body">
+          <table class="table">
+            <thead>
+              <tr>
+                <th><%= t('floors:fields.name') %></th>
+                <th><%= t('floors:fields.sortOrder') %></th>
+                <th><%= t('floors:fields.status') %></th>
+                <th><%= t('floors:fields.type') %></th>
+                <th class="text-right"><%= t('common:labels.actions') %></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% floors.forEach(floor => { %>
+                <tr>
+                  <td><strong><%= floor.name %></strong></td>
+                  <td><%= floor.sort_order %></td>
+                  <td>
+                    <% if (floor.active) { %>
+                      <span class="badge badge-success"><%= t('common:messages.active') %></span>
+                    <% } else { %>
+                      <span class="badge badge-secondary"><%= t('common:messages.inactive') %></span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (floor.is_system) { %>
+                      <span class="badge badge-info"><%= t('common:types.system') %></span>
+                    <% } else { %>
+                      <span class="badge badge-light"><%= t('common:types.custom') %></span>
+                    <% } %>
+                  </td>
+                  <td class="text-right">
+                    <% if (!floor.is_system) { %>
+                      <a href="/admin/floors/<%= floor.id %>/edit" class="btn btn-sm btn-outline-primary"><%= t('common:edit') %></a>
+
+                      <% if (floor.active) { %>
+                        <form method="POST" action="/admin/floors/<%= floor.id %>/deactivate" style="display:inline;" onsubmit="return confirm('<%= t('floors:confirmDeactivate') %>');">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <button type="submit" class="btn btn-sm btn-outline-warning"><%= t('floors:actions.deactivate') %></button>
+                        </form>
+                      <% } else { %>
+                        <form method="POST" action="/admin/floors/<%= floor.id %>/reactivate" style="display:inline;">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <button type="submit" class="btn btn-sm btn-outline-success"><%= t('floors:actions.reactivate') %></button>
+                        </form>
+                      <% } %>
+                    <% } else { %>
+                      <span class="text-gray-500 text-sm"><%= t('floors:messages.systemFloor') %></span>
+                    <% } %>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% } else { %>
+      <div class="alert alert-warning">
+        <p><%= t('common:messages.noData') %></p>
+      </div>
+    <% } %>
+  </main>
 
   <%- include('../../partials/footer') %>
 </body>

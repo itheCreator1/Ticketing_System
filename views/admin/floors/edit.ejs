@@ -10,152 +10,138 @@
 <body class="bg-gray-50">
   <%- include('../../partials/header') %>
 
-  <div class="container mx-auto px-4 py-8 max-w-2xl">
-  <h1 class="text-3xl font-bold text-gray-900 mb-8"><%= t('floors:editFloor') %></h1>
+  <main class="container-fluid px-4 py-6">
+    <div class="mx-auto" style="max-width: 800px;">
+      <h2 class="text-2xl font-bold mb-4"><%= t('floors:editFloor') %></h2>
 
-  <%- include('../../partials/flash') %>
+      <%- include('../../partials/flash') %>
 
-  <% if (floor && floor.is_system) { %>
-    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-      <p class="text-blue-800 font-medium">
-        <i class="bi bi-info-circle"></i> <%= t('floors:messages.systemFloor') %>
-      </p>
-    </div>
-  <% } %>
+      <% if (floor && floor.is_system) { %>
+        <div class="alert alert-info mb-4">
+          <i class="bi bi-info-circle"></i> <%= t('floors:messages.systemFloor') %>
+        </div>
+      <% } %>
 
-  <div class="bg-white rounded-lg shadow p-6">
-    <div class="mb-6 pb-6 border-b border-gray-200">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4"><%= t('common:details') %></h2>
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <p class="text-sm text-gray-600"><%= t('common:id') %></p>
-          <p class="text-lg font-medium text-gray-900"><%= floor.id %></p>
-        </div>
-        <div>
-          <p class="text-sm text-gray-600"><%= t('common:type') %></p>
-          <p>
-            <% if (floor.is_system) { %>
-              <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
-                <%= t('common:system') %>
-              </span>
-            <% } else { %>
-              <span class="inline-block px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-semibold">
-                <%= t('common:custom') %>
-              </span>
-            <% } %>
-          </p>
-        </div>
-        <div>
-          <p class="text-sm text-gray-600"><%= t('common:status') %></p>
-          <p>
-            <% if (floor.active) { %>
-              <span class="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
-                <%= t('common:active') %>
-              </span>
-            <% } else { %>
-              <span class="inline-block px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">
-                <%= t('common:inactive') %>
-              </span>
-            <% } %>
-          </p>
-        </div>
-        <div>
-          <p class="text-sm text-gray-600"><%= t('common:departments') %></p>
-          <p class="text-lg font-medium text-gray-900"><%= departmentCount || 0 %></p>
+      <div class="card">
+        <div class="card-body">
+          <div class="mb-6 pb-6 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-900 mb-4"><%= t('common:details') %></h3>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-sm text-gray-600"><%= t('common:id') %></p>
+                <p class="text-lg font-medium text-gray-900"><%= floor.id %></p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600"><%= t('common:type') %></p>
+                <p>
+                  <% if (floor.is_system) { %>
+                    <span class="badge badge-info"><%= t('common:system') %></span>
+                  <% } else { %>
+                    <span class="badge badge-light"><%= t('common:custom') %></span>
+                  <% } %>
+                </p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600"><%= t('common:status') %></p>
+                <p>
+                  <% if (floor.active) { %>
+                    <span class="badge badge-success"><%= t('common:active') %></span>
+                  <% } else { %>
+                    <span class="badge badge-secondary"><%= t('common:inactive') %></span>
+                  <% } %>
+                </p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-600"><%= t('common:departments') %></p>
+                <p class="text-lg font-medium text-gray-900"><%= departmentCount || 0 %></p>
+              </div>
+            </div>
+          </div>
+
+          <% if (!floor.is_system) { %>
+            <form method="POST" action="/admin/floors/<%= floor.id %>">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+              <!-- Floor Name -->
+              <div class="mb-4">
+                <label for="name" class="form-label">
+                  <%= t('floors:fields.name') %> <span class="text-red-600">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  required
+                  maxlength="50"
+                  value="<%= floor.name %>"
+                  class="form-input"
+                  placeholder="<%= t('floors:placeholders.name') %>"
+                >
+                <p class="mt-1 text-sm text-gray-500">
+                  <%= t('common:maxChars', { count: 50 }) %>
+                </p>
+              </div>
+
+              <!-- Sort Order -->
+              <div class="mb-4">
+                <label for="sort_order" class="form-label">
+                  <%= t('floors:fields.sortOrder') %> <span class="text-red-600">*</span>
+                </label>
+                <input
+                  type="number"
+                  id="sort_order"
+                  name="sort_order"
+                  required
+                  min="0"
+                  value="<%= floor.sort_order %>"
+                  class="form-input"
+                >
+                <p class="mt-1 text-sm text-gray-500">
+                  <%= t('floors:help.sortOrder') %>
+                </p>
+              </div>
+
+              <!-- Active Status -->
+              <div class="mb-4">
+                <label class="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    name="active"
+                    value="true"
+                    <% if (floor.active) { %>checked<% } %>
+                    class="form-checkbox"
+                  >
+                  <span class="text-sm font-medium text-gray-900"><%= t('floors:fields.active') %></span>
+                </label>
+                <p class="mt-1 text-sm text-gray-500">
+                  <% if (!floor.active) { %>
+                    <%= t('floors:help.deactivated') %>
+                  <% } %>
+                </p>
+              </div>
+
+              <!-- Buttons -->
+              <div class="flex gap-2 pt-6 border-t border-gray-200">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check-lg"></i> <%= t('floors:actions.update') %>
+                </button>
+                <a href="/admin/floors" class="btn btn-secondary">
+                  <i class="bi bi-x-lg"></i> <%= t('common:cancel') %>
+                </a>
+              </div>
+            </form>
+          <% } else { %>
+            <div class="alert alert-warning">
+              <p><%= t('floors:messages.systemFloor') %></p>
+              <a href="/admin/floors" class="mt-2 inline-block text-blue-600 hover:text-blue-900">
+                &larr; <%= t('common:back') %>
+              </a>
+            </div>
+          <% } %>
         </div>
       </div>
     </div>
-
-    <% if (!floor.is_system) { %>
-      <form method="POST" action="/admin/floors/<%= floor.id %>">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-
-        <!-- Floor Name -->
-        <div class="mb-6">
-          <label for="name" class="block text-sm font-medium text-gray-900 mb-2">
-            <%= t('floors:fields.name') %> <span class="text-red-600">*</span>
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            required
-            maxlength="50"
-            value="<%= floor.name %>"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="<%= t('floors:placeholders.name') %>"
-          >
-          <p class="mt-1 text-sm text-gray-500">
-            <%= t('common:maxChars', { count: 50 }) %>
-          </p>
-        </div>
-
-        <!-- Sort Order -->
-        <div class="mb-6">
-          <label for="sort_order" class="block text-sm font-medium text-gray-900 mb-2">
-            <%= t('floors:fields.sortOrder') %> <span class="text-red-600">*</span>
-          </label>
-          <input
-            type="number"
-            id="sort_order"
-            name="sort_order"
-            required
-            min="0"
-            value="<%= floor.sort_order %>"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-          <p class="mt-1 text-sm text-gray-500">
-            <%= t('floors:help.sortOrder') %>
-          </p>
-        </div>
-
-        <!-- Active Status -->
-        <div class="mb-6">
-          <label class="flex items-center gap-2">
-            <input
-              type="checkbox"
-              name="active"
-              value="true"
-              <% if (floor.active) { %>checked<% } %>
-              class="w-4 h-4 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-            >
-            <span class="text-sm font-medium text-gray-900"><%= t('floors:fields.active') %></span>
-          </label>
-          <p class="mt-1 text-sm text-gray-500">
-            <% if (!floor.active) { %>
-              <%= t('floors:help.deactivated') %>
-            <% } %>
-          </p>
-        </div>
-
-        <!-- Buttons -->
-        <div class="flex gap-4 pt-6 border-t border-gray-200">
-          <button
-            type="submit"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
-          >
-            <i class="bi bi-check-lg"></i> <%= t('floors:actions.update') %>
-          </button>
-          <a
-            href="/admin/floors"
-            class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-lg font-medium transition-colors"
-          >
-            <i class="bi bi-x-lg"></i> <%= t('common:cancel') %>
-          </a>
-        </div>
-      </form>
-    <% } else { %>
-      <div class="bg-gray-50 rounded-lg p-4 text-center">
-        <p class="text-gray-600">
-          <%= t('floors:messages.systemFloor') %>
-        </p>
-        <a href="/admin/floors" class="mt-4 inline-block text-blue-600 hover:text-blue-900">
-          &larr; <%= t('common:back') %>
-        </a>
-      </div>
-    <% } %>
-  </div>
-  </div>
+  </main>
 
   <%- include('../../partials/footer') %>
 </body>
