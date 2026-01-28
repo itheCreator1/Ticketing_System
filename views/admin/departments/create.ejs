@@ -32,14 +32,11 @@
             <label for="floor" class="form-label"><%= t('departments:fields.floor') %> *</label>
             <select id="floor" name="floor" class="form-select" required>
               <option value=""><%= t('departments:form.selectFloor') %></option>
-              <option value="Basement">Basement</option>
-              <option value="Ground Floor">Ground Floor</option>
-              <option value="1st Floor">1st Floor</option>
-              <option value="2nd Floor">2nd Floor</option>
-              <option value="3rd Floor">3rd Floor</option>
-              <option value="4th Floor">4th Floor</option>
-              <option value="5th Floor">5th Floor</option>
-              <option value="6th Floor">6th Floor</option>
+              <% if (floors && floors.length > 0) { %>
+                <% floors.forEach(floor => { %>
+                  <option value="<%= floor.name %>"><%= floor.name %></option>
+                <% }) %>
+              <% } %>
             </select>
             <small class="text-sm text-gray-600"><%= t('departments:form.floorHelp') %></small>
           </div>

@@ -1,6 +1,6 @@
 const { body, param } = require('express-validator');
 const { MAX_LENGTHS, VALIDATION_MESSAGES } = require('../constants/validation');
-const { getDepartmentFloors } = require('../constants/enums');
+const Floor = require('../models/Floor');
 
 /**
  * Validation rules for creating a department
@@ -21,8 +21,14 @@ const validateDepartmentCreate = [
   body('floor')
     .trim()
     .notEmpty().withMessage(VALIDATION_MESSAGES.FLOOR_REQUIRED)
-    .isIn(getDepartmentFloors())
-    .withMessage(VALIDATION_MESSAGES.FLOOR_INVALID)
+    .custom(async (value) => {
+      const floors = await Floor.findAll(true); // Include system floors
+      const floorNames = floors.map(f => f.name);
+      if (!floorNames.includes(value)) {
+        throw new Error(VALIDATION_MESSAGES.FLOOR_INVALID);
+      }
+      return true;
+    })
 ];
 
 /**
@@ -47,8 +53,17 @@ const validateDepartmentUpdate = [
   body('floor')
     .optional()
     .trim()
-    .isIn(getDepartmentFloors())
-    .withMessage(VALIDATION_MESSAGES.FLOOR_INVALID),
+    .custom(async (value) => {
+      if (value === '' || value === null || value === undefined) {
+        return true; // Optional field can be empty
+      }
+      const floors = await Floor.findAll(true); // Include system floors
+      const floorNames = floors.map(f => f.name);
+      if (!floorNames.includes(value)) {
+        throw new Error(VALIDATION_MESSAGES.FLOOR_INVALID);
+      }
+      return true;
+    }),
 
   body('active')
     .optional()

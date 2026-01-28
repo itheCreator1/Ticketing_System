@@ -52,8 +52,12 @@ const COMMENT_VISIBILITY = {
 };
 
 /**
- * Department floor values
- * Used for validation and dropdown options
+ * @deprecated Floors are now database-driven. Use Floor.findAll() instead.
+ * This constant is kept for backward compatibility only.
+ *
+ * Department floor values were previously hardcoded here. As of v2.3.0,
+ * floors are managed via the floors table and can be customized by superadmins.
+ * See Floor model and /admin/floors for management.
  */
 const DEPARTMENT_FLOOR = {
   BASEMENT: 'Basement',
@@ -67,6 +71,7 @@ const DEPARTMENT_FLOOR = {
 };
 
 /**
+ * @deprecated Floors are now database-driven. Use Floor.findAll() instead.
  * Helper function to get all floor values as array
  * @returns {Array<string>} Array of valid floor values
  */

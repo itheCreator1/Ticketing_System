@@ -6,6 +6,7 @@ const { validateRequest } = require('../middleware/validation');
 const departmentService = require('../services/departmentService');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
 const logger = require('../utils/logger');
+const Floor = require('../models/Floor');
 
 // All routes require super admin
 router.use(requireAuth, requireSuperAdmin);
@@ -29,10 +30,17 @@ router.get('/', async (req, res, next) => {
 /**
  * GET /admin/departments/new - New department form
  */
-router.get('/new', (req, res) => {
-  res.render('admin/departments/create', {
-    title: 'Create Department'
-  });
+router.get('/new', async (req, res, next) => {
+  try {
+    const floors = await Floor.findAll(true); // Include system floors
+    res.render('admin/departments/create', {
+      title: 'Create Department',
+      floors
+    });
+  } catch (error) {
+    logger.error('Error loading department form', { error: error.message });
+    next(error);
+  }
 });
 
 /**
@@ -82,11 +90,15 @@ router.get('/:id/edit', validateDepartmentId, validateRequest, async (req, res, 
       user.active_tickets = await User.countActiveTickets(user.id);
     }
 
+    // Get all floors for dropdown
+    const floors = await Floor.findAll(true); // Include system floors
+
     res.render('admin/departments/edit', {
       title: 'Edit Department',
       department,
       users,
-      availableUsers
+      availableUsers,
+      floors
     });
   } catch (error) {
     logger.error('Error loading department', { error: error.message });
