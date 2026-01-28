@@ -17,6 +17,7 @@
     "seed:sample": "node scripts/seed-sample-data.js",
     "build:css": "tailwindcss -i ./public/css/input.css -o ./public/css/output.css --minify",
     "watch:css": "tailwindcss -i ./public/css/input.css -o ./public/css/output.css --watch",
+    "tokens:generate": "node scripts/generateCssTokens.js",
     "version-check": "node scripts/check-version-consistency.js",
     "pretest": "node scripts/check-version-consistency.js",
     "test": "jest",
