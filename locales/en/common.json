@@ -62,11 +62,25 @@
     "never": "Never",
     "na": "N/A"
   },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "deleted": "Deleted"
+  },
+  "types": {
+    "system": "System",
+    "custom": "Custom"
+  },
   "messages": {
     "noResults": "No results found",
     "loading": "Loading...",
     "confirmDelete": "Are you sure you want to delete this item?",
     "showing": "Showing {{count}} record",
-    "showing_plural": "Showing {{count}} records"
+    "showing_plural": "Showing {{count}} records",
+    "noData": "No data available",
+    "active": "Active",
+    "inactive": "Inactive",
+    "system": "System",
+    "custom": "Custom"
   }
 }
