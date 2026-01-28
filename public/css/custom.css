@@ -13,15 +13,15 @@
 }
 
 .password-strength.weak {
-  color: var(--bs-danger);
+  color: var(--intent-danger-bg);
 }
 
 .password-strength.medium {
-  color: var(--bs-warning);
+  color: var(--intent-warning-bg);
 }
 
 .password-strength.strong {
-  color: var(--bs-success);
+  color: var(--intent-success-bg);
 }
 
 /* Success Icon (Public success page) */
@@ -30,8 +30,8 @@
   height: 80px;
   line-height: 80px;
   margin: 0 auto 1.5rem;
-  background: var(--bs-success);
-  color: white;
+  background: var(--intent-success-bg);
+  color: var(--intent-success-text);
   font-size: 3rem;
   border-radius: 50%;
   display: inline-block;
@@ -46,10 +46,10 @@
 
 /* Comment Styling */
 .comment {
-  border-left: 3px solid var(--bs-primary);
+  border-left: 3px solid var(--intent-primary-bg);
   padding: 1rem;
   margin-bottom: 1rem;
-  background-color: var(--bs-light);
+  background-color: var(--color-gray-50);
   border-radius: var(--bs-border-radius);
 }
 
@@ -63,7 +63,7 @@
 
 .comment-meta {
   font-size: 0.875rem;
-  color: var(--bs-secondary);
+  color: var(--color-gray-600);
 }
 
 .comment-content {
@@ -91,7 +91,7 @@
 /* Error page */
 .error-code {
   font-size: 6rem;
-  color: var(--bs-primary);
+  color: var(--intent-primary-bg);
   font-weight: 700;
 }
 
@@ -178,6 +178,7 @@
   font-size: 5rem;
   font-weight: 700;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  color: var(--intent-primary-bg);
 }
 
 @media (max-width: 768px) {
