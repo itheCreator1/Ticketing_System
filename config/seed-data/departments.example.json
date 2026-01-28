@@ -1,0 +1,132 @@
+{
+  "version": "1.0.0",
+  "metadata": {
+    "organization": "Example Hospital",
+    "environment": "production",
+    "description": "Example department configuration for a hospital. Customize with your organization's departments."
+  },
+  "super_admin": {
+    "username": "superadmin",
+    "email": "superadmin@hospital.local",
+    "password": "admin123",
+    "full_name": "Super Administrator"
+  },
+  "departments": [
+    {
+      "name": "Emergency Department",
+      "description": "Emergency and urgent care services (ED)",
+      "floor": "Ground Floor",
+      "user": {
+        "username": "ed.coordinator",
+        "email": "ed.coordinator@hospital.local",
+        "password": "password123",
+        "full_name": "Dr. Sarah Martinez"
+      }
+    },
+    {
+      "name": "Cardiology",
+      "description": "Cardiovascular and heart care services",
+      "floor": "3rd Floor",
+      "user": {
+        "username": "cardiology.nurse",
+        "email": "cardiology.nurse@hospital.local",
+        "password": "password123",
+        "full_name": "James Anderson"
+      }
+    },
+    {
+      "name": "Radiology",
+      "description": "Medical imaging and diagnostic radiology",
+      "floor": "2nd Floor",
+      "user": {
+        "username": "radiology.tech",
+        "email": "radiology.tech@hospital.local",
+        "password": "password123",
+        "full_name": "Dr. Emily Chen"
+      }
+    },
+    {
+      "name": "Pharmacy",
+      "description": "Pharmaceutical services and medication management",
+      "floor": "1st Floor",
+      "user": {
+        "username": "pharmacy.director",
+        "email": "pharmacy.director@hospital.local",
+        "password": "password123",
+        "full_name": "Robert Williams"
+      }
+    },
+    {
+      "name": "Laboratory",
+      "description": "Clinical laboratory and pathology services",
+      "floor": "1st Floor",
+      "user": {
+        "username": "lab.supervisor",
+        "email": "lab.supervisor@hospital.local",
+        "password": "password123",
+        "full_name": "Dr. Lisa Thompson"
+      }
+    },
+    {
+      "name": "Surgery",
+      "description": "Operating room and surgical services",
+      "floor": "4th Floor",
+      "user": {
+        "username": "surgery.coordinator",
+        "email": "surgery.coordinator@hospital.local",
+        "password": "password123",
+        "full_name": "Dr. Michael Brown"
+      }
+    },
+    {
+      "name": "Intensive Care Unit",
+      "description": "Critical care and ICU services",
+      "floor": "5th Floor",
+      "user": {
+        "username": "icu.charge.nurse",
+        "email": "icu.charge.nurse@hospital.local",
+        "password": "password123",
+        "full_name": "Jennifer Davis"
+      }
+    },
+    {
+      "name": "Patient Registration",
+      "description": "Patient admissions, registration, and scheduling",
+      "floor": "Ground Floor",
+      "user": {
+        "username": "registration.lead",
+        "email": "registration.lead@hospital.local",
+        "password": "password123",
+        "full_name": "Maria Garcia"
+      }
+    },
+    {
+      "name": "Medical Records",
+      "description": "Health information management and medical records",
+      "floor": "6th Floor",
+      "user": {
+        "username": "records.manager",
+        "email": "records.manager@hospital.local",
+        "password": "password123",
+        "full_name": "David Lee"
+      }
+    },
+    {
+      "name": "Facilities Management",
+      "description": "Building maintenance, equipment, and operations",
+      "floor": "Basement",
+      "user": {
+        "username": "facilities.director",
+        "email": "facilities.director@hospital.local",
+        "password": "password123",
+        "full_name": "Thomas Johnson"
+      }
+    },
+    {
+      "name": "Internal",
+      "description": "Admin-only internal department for administrative tasks",
+      "floor": "Ground Floor",
+      "user": null
+    }
+  ]
+}

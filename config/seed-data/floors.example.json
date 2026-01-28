@@ -1,0 +1,46 @@
+{
+  "version": "1.0.0",
+  "description": "Example floor configuration. Customize for your building layout.",
+  "floors": [
+    {
+      "name": "Basement",
+      "sort_order": 0,
+      "active": true
+    },
+    {
+      "name": "Ground Floor",
+      "sort_order": 1,
+      "active": true
+    },
+    {
+      "name": "1st Floor",
+      "sort_order": 2,
+      "active": true
+    },
+    {
+      "name": "2nd Floor",
+      "sort_order": 3,
+      "active": true
+    },
+    {
+      "name": "3rd Floor",
+      "sort_order": 4,
+      "active": true
+    },
+    {
+      "name": "4th Floor",
+      "sort_order": 5,
+      "active": true
+    },
+    {
+      "name": "5th Floor",
+      "sort_order": 6,
+      "active": true
+    },
+    {
+      "name": "6th Floor",
+      "sort_order": 7,
+      "active": true
+    }
+  ]
+}
