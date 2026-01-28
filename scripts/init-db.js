@@ -27,7 +27,8 @@ async function initDatabase() {
     '020_add_department_floor.sql',
     '021_fix_audit_log_fk_constraint.sql',
     '022_create_floors_table.sql',
-    '023_convert_floor_to_fk.sql'
+    '023_convert_floor_to_fk.sql',
+    '024_remove_hardcoded_system_floors.sql'
   ];
 
   try {

@@ -52,32 +52,12 @@ const COMMENT_VISIBILITY = {
 };
 
 /**
- * @deprecated Floors are now database-driven. Use Floor.findAll() instead.
- * This constant is kept for backward compatibility only.
+ * NOTE: DEPARTMENT_FLOOR constant was removed in v2.4.0
+ * Floors are now fully database-driven and seeded via JSON configuration files.
+ * Use Floor.findAll() to retrieve available floors at runtime.
  *
- * Department floor values were previously hardcoded here. As of v2.3.0,
- * floors are managed via the floors table and can be customized by superadmins.
- * See Floor model and /admin/floors for management.
+ * See docs/CUSTOMIZATION.md for information on customizing floors and departments.
  */
-const DEPARTMENT_FLOOR = {
-  BASEMENT: 'Basement',
-  GROUND_FLOOR: 'Ground Floor',
-  FIRST_FLOOR: '1st Floor',
-  SECOND_FLOOR: '2nd Floor',
-  THIRD_FLOOR: '3rd Floor',
-  FOURTH_FLOOR: '4th Floor',
-  FIFTH_FLOOR: '5th Floor',
-  SIXTH_FLOOR: '6th Floor'
-};
-
-/**
- * @deprecated Floors are now database-driven. Use Floor.findAll() instead.
- * Helper function to get all floor values as array
- * @returns {Array<string>} Array of valid floor values
- */
-function getDepartmentFloors() {
-  return Object.values(DEPARTMENT_FLOOR);
-}
 
 module.exports = {
   TICKET_STATUS,
@@ -85,7 +65,5 @@ module.exports = {
   USER_ROLE,
   USER_STATUS,
   REPORTER_DEPARTMENT,
-  COMMENT_VISIBILITY,
-  DEPARTMENT_FLOOR,
-  getDepartmentFloors
+  COMMENT_VISIBILITY
 };
