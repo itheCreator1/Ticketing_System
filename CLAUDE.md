@@ -956,31 +956,135 @@ docker-compose exec db psql -U ticketing_user -d ticketing_db -c "\dt"
 
 The `scripts/` directory contains helpful utilities for development and testing:
 
+### Customizing Floors and Departments (v2.4.0+)
+
+**Overview**: The system uses JSON configuration files to define floors and departments, making it fully customizable without code changes.
+
+**Configuration Files** (`config/seed-data/`):
+- `floors.json` - Floor definitions (building layout)
+- `departments.json` - Department and user configurations
+- `floors.example.json` - Template with examples
+- `departments.example.json` - Template with examples
+
+**Key Features**:
+- ✅ No hardcoded floors or departments
+- ✅ Fresh installations start with empty floors table
+- ✅ Fully customizable via JSON before seeding
+- ✅ Internal department protected (is_system=true)
+- ✅ Idempotent seeding (safe to run multiple times)
+- ✅ Comprehensive validation before database changes
+
+**Customization Steps**:
+1. Edit `config/seed-data/floors.json` to define your building floors
+2. Edit `config/seed-data/departments.json` to define departments and assign floors
+3. Run seeder: `docker-compose exec web npm run seed:hospital`
+4. Validation errors display before any database changes
+
+**Seeding Workflow**:
+```
+Load JSON configs
+    ↓
+Validate all configs (50+ validation rules)
+    ↓
+Create floors from floors.json
+    ↓
+Create super admin from departments.json
+    ↓
+Create departments from departments.json
+    ↓
+Create department users from departments.json
+    ↓
+Complete with audit logging
+```
+
+**Example Customization**:
+
+`config/seed-data/floors.json`:
+```json
+{
+  "version": "1.0.0",
+  "floors": [
+    {"name": "Basement", "sort_order": 0, "active": true},
+    {"name": "Ground Floor", "sort_order": 1, "active": true},
+    {"name": "1st Floor", "sort_order": 2, "active": true}
+  ]
+}
+```
+
+`config/seed-data/departments.json`:
+```json
+{
+  "version": "1.0.0",
+  "super_admin": {
+    "username": "admin",
+    "email": "admin@hospital.local",
+    "password": "securepassword",
+    "full_name": "Administrator"
+  },
+  "departments": [
+    {
+      "name": "Emergency",
+      "description": "Emergency services",
+      "floor": "Ground Floor",
+      "user": {
+        "username": "ed.coordinator",
+        "email": "ed@hospital.local",
+        "password": "password123",
+        "full_name": "Emergency Coordinator"
+      }
+    },
+    {
+      "name": "Internal",
+      "description": "Admin-only department",
+      "floor": "Ground Floor",
+      "user": null
+    }
+  ]
+}
+```
+
+**Validation**:
+- Each floor must have unique name and sort_order
+- Departments must reference valid floors
+- Usernames must be 3-50 alphanumeric characters
+- Emails must be valid format
+- Passwords must be at least 6 characters
+- "Internal" department is required and protected
+
+**For more details**, see [docs/CUSTOMIZATION.md](docs/CUSTOMIZATION.md)
+
+---
+
 ### seed-hospital-data.js
-Seeds the database with hospital-specific departments and users (minimal bootstrap data).
+Seeding script that reads from JSON configuration files to populate the database with floors, departments, and users.
 
 ```bash
-# Create hospital departments and users
+# Create floors and departments from JSON configs
 docker-compose exec web npm run seed:hospital
 
 # Or with clean flag (removes existing data with confirmation)
 docker-compose exec web npm run seed:hospital -- --clean
 ```
 
-**Creates**:
-- 10 hospital departments (Emergency Department, Cardiology, Radiology, etc.)
-- 1 department user per department (realistic hospital staff names)
-- 1 super admin user
+**Creates** (from JSON configuration):
+- Floors from `config/seed-data/floors.json`
+- 10 hospital departments from `config/seed-data/departments.json`
+- 1 department user per department (as defined in config)
+- 1 super admin user (from config)
 
-**Features**:
-- Idempotent (safe to run multiple times)
-- Clean flag with confirmation prompt
-- No tickets/comments (minimal setup)
+**Features** (v2.4.0+):
+- **Config-driven**: Fully customizable via JSON files
+- **Validated**: Comprehensive validation before seeding
+- **Idempotent**: Safe to run multiple times
+- **Transaction-based**: All-or-nothing for departments
+- **Clear errors**: Field-level validation messages
+- **System protected**: Internal department cannot be deleted
 
 **Use cases**:
-- Initial hospital environment setup
+- Initial floor/department setup
+- Customizing organizational structure
 - Production-like configuration
-- Clean department/user bootstrap
+- Clean bootstrap with JSON configuration
 
 ### seed-sample-data.js
 Seeds the database with hospital-themed sample tickets and comments for testing.
@@ -1107,28 +1211,54 @@ const departments = await Department.findAll(false);
 const allDepartments = await Department.findAll(true);
 ```
 
-### Hospital Departments
+### Departments and Floors (v2.4.0+)
 
-The system uses hospital-specific departments seeded via the `seed-hospital-data.js` script:
+**Dynamic Configuration** (NEW in v2.4.0):
+The system is now fully dynamic - no hardcoded floors or departments. All are defined in JSON configuration files:
 
-**Default Hospital Departments**:
-- **Emergency Department** - Emergency and urgent care services (ED)
+**Configuration Location**: `config/seed-data/`
+- `floors.json` - Define your building's floors
+- `departments.json` - Define departments and assign floors
+- `floors.example.json` - Example template for reference
+- `departments.example.json` - Example template for reference
+
+**Key Changes (v2.4.0)**:
+- ✅ Fresh installations start with **empty floors table**
+- ✅ Floors are created entirely from `floors.json`
+- ✅ Departments are created entirely from `departments.json`
+- ✅ Zero hardcoded floor/department values in code
+- ✅ System manages "Internal" department automatically
+
+**Default Example Departments** (in `departments.example.json`):
+- **Emergency Department** - Emergency and urgent care services
 - **Cardiology** - Cardiovascular and heart care services
 - **Radiology** - Medical imaging and diagnostic radiology
 - **Pharmacy** - Pharmaceutical services and medication management
 - **Laboratory** - Clinical laboratory and pathology services
 - **Surgery** - Operating room and surgical services
 - **Intensive Care Unit** - Critical care and ICU services
-- **Patient Registration** - Patient admissions, registration, and scheduling
-- **Medical Records** - Health information management and medical records
-- **Facilities Management** - Building maintenance, equipment, and operations
+- **Patient Registration** - Patient admissions and scheduling
+- **Medical Records** - Health information management
+- **Facilities Management** - Building maintenance and operations
+- **Internal** - Admin-only system department (protected, cannot delete)
 
-**System Departments**:
-- **Internal** - Admin-only tickets (is_system=true, cannot be deleted)
+**Customization Workflow**:
+1. Copy example configs: `cp config/seed-data/*.example.json config/seed-data/`
+2. Edit `floors.json` for your building layout
+3. Edit `departments.json` for your departments and staff
+4. Run seeder: `npm run seed:hospital`
+5. Validator will check configs and display errors if invalid
+
+**Production Customization Tips**:
+- Define custom floors that match your physical building
+- Use secure passwords (min 6 chars, longer in production)
+- Consider using environment variables for passwords in production
+- Store passwords securely (encrypted, secret management)
+- Departments can be further customized via admin UI after seeding
 
 **Seeding Hospital Data**:
 ```bash
-# Create hospital departments and users
+# Create floors and departments from JSON configs
 npm run seed:hospital
 
 # Or with clean flag (removes existing data)
@@ -1138,12 +1268,24 @@ npm run seed:hospital -- --clean
 npm run seed:sample
 ```
 
-**Migration from Generic Departments**:
-If upgrading from older versions with generic departments (IT Support, Finance, etc.):
-1. Admin manually deactivates old departments via Admin UI
-2. Re-assign existing users to new hospital departments
-3. Historical tickets retain original department names (data preservation)
-4. Run `npm run seed:hospital` to add new hospital departments
+**Validator Features**:
+- Validates floor names and sort orders
+- Ensures department names are unique
+- Verifies departments reference valid floors
+- Checks username format (3-50 alphanumeric, dots, underscores, hyphens)
+- Validates email format
+- Enforces password minimum length
+- Detects duplicate emails and usernames
+- Ensures "Internal" department exists
+- Field-level error messages show exactly what to fix
+
+**Migration from Hardcoded Departments** (v2.3 → v2.4):
+If upgrading from versions with hardcoded departments:
+1. Existing departments persist in database
+2. Run `npm run seed:hospital` with updated JSON configs
+3. New departments added from config
+4. Existing departments remain unchanged
+5. Admin UI allows customizing departments further
 
 ### Validation Messages (constants/validation.js)
 ```javascript

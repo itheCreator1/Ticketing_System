@@ -408,6 +408,33 @@ Pharmacy:             pharmacy.director / password123
 Super Admin:          superadmin / admin123
 ```
 
+### 🎨 **Customizing Floors & Departments** *(v2.4.0+)*
+
+The system is **fully dynamic** - customize floors and departments without code changes:
+
+```bash
+# 1. Edit configuration files (JSON)
+nano config/seed-data/floors.json        # Define your building floors
+nano config/seed-data/departments.json   # Define your departments
+
+# 2. Seed the database
+docker-compose exec web npm run seed:hospital
+
+# 3. Verify in Admin UI
+# Visit http://localhost:3000/admin/floors
+# Visit http://localhost:3000/admin/departments
+```
+
+**Key Features**:
+- ✅ **No code changes needed** - JSON configuration only
+- ✅ **Validation included** - Errors shown before database changes
+- ✅ **Any organization** - Works for hospitals, offices, factories, etc.
+- ✅ **Safe to rerun** - Idempotent seeding
+
+**📖 [Complete Customization Guide →](docs/CUSTOMIZATION.md)**
+
+> Examples: Hospital (8 floors), Office (4 levels), Factory (2 buildings)
+
 ---
 
 ## 📂 Project Structure
@@ -542,6 +569,7 @@ KNII_Ticketing/
 
 ### 📙 **Additional Guides**
 
+- 🎨 **[Customization Guide](docs/CUSTOMIZATION.md)** - Configure floors & departments (v2.4.0+)
 - 🚀 **[Deployment Guide](docs/howToDeploy.md)** - Production deployment
 - 🌿 **[Git Workflow](docs/git_rules.md)** - Branch strategy & commits
 - 🤖 **[CLAUDE.md](CLAUDE.md)** - AI assistant context
