@@ -280,6 +280,48 @@
   .stat-progress { @apply border-l-4 border-bs-info; }
   .stat-waiting { @apply border-l-4 border-bs-warning; }
 
+  /* === ACCESSIBILITY: FOCUS-VISIBLE STATES === */
+  /* Provides visible keyboard focus indicators for all interactive elements */
+
+  /* Buttons */
+  .btn:focus-visible {
+    outline: 2px solid var(--color-blue-500);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+  }
+
+  /* Form inputs */
+  .form-input:focus-visible,
+  .form-select:focus-visible,
+  .form-textarea:focus-visible {
+    outline: 2px solid var(--color-blue-500);
+    outline-offset: 0;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+  }
+
+  /* Links */
+  a:focus-visible {
+    outline: 2px solid var(--color-blue-500);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  /* Badges (when clickable/interactive) */
+  .badge:focus-visible {
+    outline: 2px solid var(--color-blue-500);
+    outline-offset: 2px;
+  }
+
+  /* Remove default browser outline */
+  *:focus {
+    outline: none;
+  }
+
+  /* Keep focus-visible for keyboard navigation only */
+  *:focus-visible {
+    /* Styles defined above for specific elements */
+  }
+
   /* Empty State */
   .empty-state {
     @apply border-2 border-dashed border-gray-300 bg-gradient-to-br from-bs-light to-white;
