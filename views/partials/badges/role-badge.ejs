@@ -1,0 +1,51 @@
+<%#
+  Role Badge Component - Reusable user role rendering
+
+  Consolidates 3 duplicated role badge blocks across admin user list and header navigation.
+  Provides consistent visual identification of user roles (super_admin, admin, department).
+
+  Required Parameters:
+  - role: string - User role (super_admin, admin, department)
+
+  Optional Parameters:
+  - withIcon: boolean - Show Bootstrap icon [default: false]
+  - size: string - Badge size (sm, md, lg) [default: 'md']
+
+  Usage Examples:
+  <%- include('partials/badges/role-badge', { role: user.role }) %>
+  <%- include('partials/badges/role-badge', { role: user.role, withIcon: true }) %>
+  <%- include('partials/badges/role-badge', { role: 'admin', withIcon: true, size: 'sm' }) %>
+
+  Design Tokens:
+  - Icons come from tokens.semantic.role[role]
+  - Colors mapped: super_admin=danger (red), admin=primary (blue), department=info (cyan)
+  - I18n labels from 'users:roles.*' translation keys
+%>
+
+<%
+  // Get role badge data from design tokens
+  const roleData = tokens.semantic.role[role];
+
+  // Defaults
+  const showIcon = typeof withIcon !== 'undefined' ? withIcon : false;
+  const badgeSize = typeof size !== 'undefined' ? size : 'md';
+
+  // Map roles to Bootstrap badge color classes
+  // Colors: super_admin=danger (red, highest privilege), admin=primary (blue, medium privilege), department=info (cyan, lowest privilege)
+  const roleColorMap = {
+    'super_admin': 'danger',
+    'admin': 'primary',
+    'department': 'info'
+  };
+  const badgeColor = roleColorMap[role] || 'secondary';
+
+  // Size class
+  const sizeClass = badgeSize === 'sm' ? 'badge-sm' : badgeSize === 'lg' ? 'badge-lg' : '';
+%>
+
+<span class="badge badge-<%= badgeColor %> <%= sizeClass %>">
+  <% if (showIcon && roleData && roleData.icon) { %>
+    <i class="bi bi-<%= roleData.icon %>"></i>
+  <% } %>
+  <span><%= t('users:roles.' + role) %></span>
+</span>
