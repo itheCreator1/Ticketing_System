@@ -1368,6 +1368,196 @@ views/
 
 ---
 
+## UI Component System (v2.2.1+)
+
+**Location:** `views/partials/badges/` and `views/partials/forms/`
+
+The application now uses a reusable component system for consistent UI rendering across all templates.
+
+### Badge Components
+
+#### 1. Generic Badge (`badge.ejs`)
+Renders a colored badge with text.
+
+**Usage:**
+```ejs
+<%- include('../partials/badges/badge', {
+  color: 'success',        // Required: success, danger, warning, info, secondary, light, dark
+  text: 'Active',          // Required: Badge text (can use t() for i18n)
+  size: 'sm',              // Optional: sm, md, lg (default: md)
+  cssClass: 'ml-2'         // Optional: Additional CSS classes
+}) %>
+```
+
+**Examples:**
+```ejs
+<!-- Simple status badge -->
+<%- include('../partials/badges/badge', { color: 'success', text: t('users:status.active') }) %>
+
+<!-- Floor badge with custom styling -->
+<%- include('../partials/badges/badge', { color: 'light', text: dept.floor, size: 'sm', cssClass: 'ml-2' }) %>
+```
+
+#### 2. Status Badge (`status-badge.ejs`)
+Renders ticket status badges with automatic color mapping.
+
+**Usage:**
+```ejs
+<%- include('../partials/badges/status-badge', {
+  status: ticket.status,   // Required: open, in_progress, waiting_on_admin, waiting_on_department, closed
+  withIcon: false,         // Optional: true for icons (default: false)
+  size: 'md',              // Optional: sm, md, lg (default: md)
+  cssClass: 'ml-2'         // Optional: Additional CSS classes
+}) %>
+```
+
+**Status Color Mapping:**
+- `open` → info (blue)
+- `in_progress` → warning (yellow)
+- `waiting_on_admin` → info (blue)
+- `waiting_on_department` → danger (red)
+- `closed` → success (green)
+
+**Examples:**
+```ejs
+<!-- Admin dashboard (no icons) -->
+<%- include('../partials/badges/status-badge', { status: ticket.status, withIcon: false }) %>
+
+<!-- Client dashboard (with icons and animations) -->
+<%- include('../partials/badges/status-badge', { status: ticket.status, withIcon: true }) %>
+```
+
+#### 3. Priority Badge (`priority-badge.ejs`)
+Renders ticket priority badges with automatic color mapping.
+
+**Usage:**
+```ejs
+<%- include('../partials/badges/priority-badge', {
+  priority: ticket.priority, // Required: unset, low, medium, high, critical
+  withIcon: false,           // Optional: true for icons (default: false)
+  size: 'md',                // Optional: sm, md, lg (default: md)
+  cssClass: 'ml-2'           // Optional: Additional CSS classes
+}) %>
+```
+
+**Priority Color Mapping:**
+- `unset` → light (gray)
+- `low` → secondary (dark gray)
+- `medium` → info (blue)
+- `high` → warning (yellow)
+- `critical` → danger (red)
+
+**Examples:**
+```ejs
+<!-- Admin ticket detail (no icons) -->
+<%- include('../partials/badges/priority-badge', { priority: ticket.priority, withIcon: false, size: 'md' }) %>
+
+<!-- Client dashboard (with icons and glow effect) -->
+<%- include('../partials/badges/priority-badge', { priority: ticket.priority, withIcon: true }) %>
+```
+
+#### 4. Role Badge (`role-badge.ejs`)
+Renders user role badges with automatic color mapping.
+
+**Usage:**
+```ejs
+<%- include('../partials/badges/role-badge', {
+  role: user.role,         // Required: super_admin, admin, department
+  withIcon: false,         // Optional: true for user icon (default: false)
+  size: 'sm',              // Optional: sm, md, lg (default: md)
+  cssClass: 'inline-block' // Optional: Additional CSS classes
+}) %>
+```
+
+**Role Color Mapping:**
+- `super_admin` → danger (red)
+- `admin` → primary (blue)
+- `department` → info (cyan)
+
+**Examples:**
+```ejs
+<!-- User management table -->
+<%- include('../../partials/badges/role-badge', { role: u.role, withIcon: false }) %>
+
+<!-- Header navigation -->
+<%- include('./badges/role-badge', { role: user.role, withIcon: false, size: 'sm', cssClass: 'inline-block ml-2' }) %>
+```
+
+### Form Components
+
+#### 5. Form Field (`form-field.ejs`)
+Renders a complete form field with label, input, and validation.
+
+**Usage:**
+```ejs
+<%- include('../partials/forms/form-field', {
+  type: 'text',            // Required: text, email, password, tel, number, url
+  name: 'username',        // Required: Input name attribute
+  label: t('users:fields.username'), // Required: Label text
+  value: user.username,    // Optional: Pre-filled value
+  required: true,          // Optional: Required field (default: false)
+  placeholder: 'Enter username', // Optional: Placeholder text
+  helpText: 'Must be unique', // Optional: Help text below input
+  autocomplete: 'username', // Optional: Autocomplete attribute
+  disabled: false          // Optional: Disabled state (default: false)
+}) %>
+```
+
+#### 6. Select Field (`select-field.ejs`)
+Renders a dropdown select field with options.
+
+**Usage:**
+```ejs
+<%- include('../partials/forms/select-field', {
+  name: 'role',            // Required: Select name attribute
+  label: t('users:fields.role'), // Required: Label text
+  value: user.role,        // Optional: Pre-selected value
+  required: true,          // Optional: Required field (default: false)
+  options: [               // Required: Array of option objects
+    { value: 'admin', label: t('users:roles.admin') },
+    { value: 'department', label: t('users:roles.department') }
+  ],
+  helpText: 'Select user role', // Optional: Help text below select
+  disabled: false          // Optional: Disabled state (default: false)
+}) %>
+```
+
+### Component Testing
+
+All components can be tested at: **http://localhost:3000/test-components**
+
+This page displays all badge variations and form field examples for visual verification.
+
+**Test Route:** `routes/test-components.js`
+**Test View:** `views/test-components.ejs`
+
+### Migration Guide
+
+**Before (Old Pattern):**
+```ejs
+<% if (ticket.status === 'open') { %>
+  <span class="badge badge-info"><%= t('tickets:status.open') %></span>
+<% } else if (ticket.status === 'in_progress') { %>
+  <span class="badge badge-warning"><%= t('tickets:status.in_progress') %></span>
+<% } else if (ticket.status === 'closed') { %>
+  <span class="badge badge-success"><%= t('tickets:status.closed') %></span>
+<% } %>
+```
+
+**After (Component Pattern):**
+```ejs
+<%- include('../partials/badges/status-badge', { status: ticket.status, withIcon: false }) %>
+```
+
+**Benefits:**
+- ✅ 10+ lines reduced to 1 line per usage
+- ✅ Consistent styling across all pages
+- ✅ Single source of truth for badge logic
+- ✅ Easier to update styles globally
+- ✅ Type-safe with clear API parameters
+
+---
+
 ## Git Workflow
 
 Follow rules in `docs/git_rules.md`:
