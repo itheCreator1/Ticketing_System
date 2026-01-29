@@ -140,60 +140,10 @@
                     </a>
                   </td>
                   <td>
-                    <% if (ticket.status === 'open') { %>
-                      <span class="badge-status badge-status-open">
-                        <i class="bi bi-inbox-fill"></i>
-                        <span><%= t('tickets:status.open') %></span>
-                      </span>
-                    <% } else if (ticket.status === 'in_progress') { %>
-                      <span class="badge-status badge-status-progress">
-                        <i class="bi bi-gear-fill"></i>
-                        <span><%= t('tickets:status.in_progress') %></span>
-                      </span>
-                    <% } else if (ticket.status === 'waiting_on_admin') { %>
-                      <span class="badge-status badge-status-waiting-admin">
-                        <i class="bi bi-hourglass-split"></i>
-                        <span><%= t('tickets:status.waiting_on_admin') %></span>
-                      </span>
-                    <% } else if (ticket.status === 'waiting_on_department') { %>
-                      <span class="badge-status badge-status-waiting-dept">
-                        <i class="bi bi-exclamation-circle-fill"></i>
-                        <span><%= t('tickets:status.waiting_on_you') %></span>
-                      </span>
-                    <% } else if (ticket.status === 'closed') { %>
-                      <span class="badge-status badge-status-closed">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <span><%= t('tickets:status.closed') %></span>
-                      </span>
-                    <% } %>
+                    <%- include('../partials/badges/status-badge', { status: ticket.status, withIcon: true }) %>
                   </td>
                   <td>
-                    <% if (ticket.priority === 'critical') { %>
-                      <span class="badge-priority badge-priority-critical">
-                        <i class="bi bi-exclamation-triangle-fill"></i>
-                        <span><%= t('tickets:priority.critical') %></span>
-                      </span>
-                    <% } else if (ticket.priority === 'high') { %>
-                      <span class="badge-priority badge-priority-high">
-                        <i class="bi bi-arrow-up-circle-fill"></i>
-                        <span><%= t('tickets:priority.high') %></span>
-                      </span>
-                    <% } else if (ticket.priority === 'medium') { %>
-                      <span class="badge-priority badge-priority-medium">
-                        <i class="bi bi-dash-circle-fill"></i>
-                        <span><%= t('tickets:priority.medium') %></span>
-                      </span>
-                    <% } else if (ticket.priority === 'low') { %>
-                      <span class="badge-priority badge-priority-low">
-                        <i class="bi bi-arrow-down-circle-fill"></i>
-                        <span><%= t('tickets:priority.low') %></span>
-                      </span>
-                    <% } else { %>
-                      <span class="badge-priority badge-priority-unset">
-                        <i class="bi bi-circle"></i>
-                        <span><%= t('tickets:priority.unset') %></span>
-                      </span>
-                    <% } %>
+                    <%- include('../partials/badges/priority-badge', { priority: ticket.priority, withIcon: true }) %>
                   </td>
                   <td class="text-sm text-gray-600 max-w-xs truncate">
                     <% if (ticket.last_comment) { %>
