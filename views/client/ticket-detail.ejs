@@ -29,31 +29,11 @@
           <div class="space-y-3">
             <div>
               <span class="font-medium"><%= t('common:labels.status') %>:</span>
-              <% if (ticket.status === 'open') { %>
-                <span class="badge badge-info ml-2"><%= t('tickets:status.open') %></span>
-              <% } else if (ticket.status === 'in_progress') { %>
-                <span class="badge badge-warning ml-2"><%= t('tickets:status.in_progress') %></span>
-              <% } else if (ticket.status === 'waiting_on_admin') { %>
-                <span class="badge badge-warning ml-2"><%= t('tickets:status.waiting_on_admin') %></span>
-              <% } else if (ticket.status === 'waiting_on_department') { %>
-                <span class="badge badge-danger ml-2"><%= t('tickets:status.waiting_on_you') %></span>
-              <% } else if (ticket.status === 'closed') { %>
-                <span class="badge badge-success ml-2"><%= t('tickets:status.closed') %></span>
-              <% } %>
+              <%- include('../partials/badges/status-badge', { status: ticket.status, withIcon: false, size: 'md', cssClass: 'ml-2' }) %>
             </div>
             <div>
               <span class="font-medium"><%= t('common:labels.priority') %>:</span>
-              <% if (ticket.priority === 'critical') { %>
-                <span class="badge badge-danger ml-2"><%= t('tickets:priority.critical') %></span>
-              <% } else if (ticket.priority === 'high') { %>
-                <span class="badge badge-warning ml-2"><%= t('tickets:priority.high') %></span>
-              <% } else if (ticket.priority === 'medium') { %>
-                <span class="badge badge-info ml-2"><%= t('tickets:priority.medium') %></span>
-              <% } else if (ticket.priority === 'low') { %>
-                <span class="badge badge-secondary ml-2"><%= t('tickets:priority.low') %></span>
-              <% } else { %>
-                <span class="badge badge-light ml-2"><%= t('tickets:priority.unset') %></span>
-              <% } %>
+              <%- include('../partials/badges/priority-badge', { priority: ticket.priority, withIcon: false, size: 'md', cssClass: 'ml-2' }) %>
             </div>
             <% if (ticket.reporter_name) { %>
               <div>
@@ -67,7 +47,7 @@
             </div>
             <div>
               <span class="font-medium"><%= t('departments:fields.floor') %>:</span>
-              <span class="ml-2 badge badge-light"><%= ticket.department_floor || 'N/A' %></span>
+              <%- include('../partials/badges/badge', { color: 'light', text: ticket.department_floor || 'N/A', size: 'sm', cssClass: 'ml-2' }) %>
             </div>
             <% if (ticket.reporter_phone) { %>
               <div>
