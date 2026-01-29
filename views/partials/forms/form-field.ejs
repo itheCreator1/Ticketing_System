@@ -1,0 +1,104 @@
+<%#
+  Form Field Component - Reusable input field with label, help text, and error handling
+
+  Consolidates ~300 lines of duplicated form field HTML across 15+ form templates.
+  Provides consistent styling, validation feedback, and accessibility features.
+
+  Required Parameters:
+  - id: string - Input element ID (must be unique in form)
+  - name: string - Input name attribute (form field name)
+  - label: string - Field label text (displayed to user)
+
+  Optional Parameters:
+  - type: string - Input type attribute (text, email, tel, password, number, date, etc.) [default: 'text']
+  - value: string - Input pre-filled value [default: '']
+  - placeholder: string - Placeholder text when empty [default: '']
+  - required: boolean - Required field marker (red asterisk) [default: false]
+  - disabled: boolean - Disabled field (grayed out, not submittable) [default: false]
+  - helpText: string - Help text displayed below input [default: null]
+  - error: string - Error message (shows red styling + message) [default: null]
+  - maxLength: number - Maximum character length [default: null]
+  - pattern: string - Regex pattern for HTML5 validation [default: null]
+  - autocomplete: string - Autocomplete attribute (email, tel, username, password, etc.) [default: null]
+
+  Usage Examples:
+  <%- include('partials/forms/form-field', {
+    id: 'username',
+    name: 'username',
+    label: t('users:fields.username'),
+    required: true,
+    helpText: t('users:form.usernameHelp')
+  }) %>
+
+  <%- include('partials/forms/form-field', {
+    id: 'email',
+    name: 'email',
+    label: 'Email Address',
+    type: 'email',
+    placeholder: 'user@example.com',
+    required: true,
+    error: errors && errors.email ? errors.email[0].msg : null
+  }) %>
+
+  <%- include('partials/forms/form-field', {
+    id: 'phone',
+    name: 'phone',
+    label: 'Phone Number',
+    type: 'tel',
+    value: user.phone_number,
+    maxLength: 20
+  }) %>
+
+  Design Features:
+  - Required asterisk (*) displays when required=true
+  - Help text displays in small gray text below input
+  - Error state: red border + error message displayed
+  - Disabled state: grayed out, prevents interaction
+  - Supports all HTML5 input types
+  - Accessibility: proper label association via id/for
+%>
+
+<%
+  // Defaults
+  const inputType = typeof type !== 'undefined' ? type : 'text';
+  const inputValue = typeof value !== 'undefined' ? value : '';
+  const placeholderText = typeof placeholder !== 'undefined' ? placeholder : '';
+  const isRequired = typeof required !== 'undefined' ? required : false;
+  const isDisabled = typeof disabled !== 'undefined' ? disabled : false;
+  const helpMessage = typeof helpText !== 'undefined' ? helpText : null;
+  const errorMessage = typeof error !== 'undefined' ? error : null;
+  const maxLen = typeof maxLength !== 'undefined' ? maxLength : null;
+  const validationPattern = typeof pattern !== 'undefined' ? pattern : null;
+  const autoComplete = typeof autocomplete !== 'undefined' ? autocomplete : null;
+
+  // Error state class - red border when error present
+  const errorClass = errorMessage ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '';
+%>
+
+<div class="mb-4">
+  <label for="<%= id %>" class="form-label">
+    <%= label %><% if (isRequired) { %> <span class="text-red-600">*</span><% } %>
+  </label>
+
+  <input
+    type="<%= inputType %>"
+    id="<%= id %>"
+    name="<%= name %>"
+    class="form-input <%= errorClass %>"
+    value="<%= inputValue %>"
+    <% if (placeholderText) { %>placeholder="<%= placeholderText %>"<% } %>
+    <% if (isRequired) { %>required<% } %>
+    <% if (isDisabled) { %>disabled<% } %>
+    <% if (maxLen) { %>maxlength="<%= maxLen %>"<% } %>
+    <% if (validationPattern) { %>pattern="<%= validationPattern %>"<% } %>
+    <% if (autoComplete) { %>autocomplete="<%= autoComplete %>"<% } %>
+  >
+
+  <% if (helpMessage) { %>
+    <small class="text-sm text-gray-600 mt-1 block"><%= helpMessage %></small>
+  <% } %>
+
+  <% if (errorMessage) { %>
+    <p class="text-sm text-red-600 mt-1"><%= errorMessage %></p>
+  <% } %>
+</div>
