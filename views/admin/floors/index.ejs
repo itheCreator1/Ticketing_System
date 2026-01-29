@@ -40,18 +40,10 @@
                   <td><strong><%= floor.name %></strong></td>
                   <td><%= floor.sort_order %></td>
                   <td>
-                    <% if (floor.active) { %>
-                      <span class="badge badge-success"><%= t('common:messages.active') %></span>
-                    <% } else { %>
-                      <span class="badge badge-secondary"><%= t('common:messages.inactive') %></span>
-                    <% } %>
+                    <%- include('../../partials/badges/badge', { color: floor.active ? 'success' : 'secondary', text: t(floor.active ? 'common:messages.active' : 'common:messages.inactive'), size: 'sm' }) %>
                   </td>
                   <td>
-                    <% if (floor.is_system) { %>
-                      <span class="badge badge-info"><%= t('common:types.system') %></span>
-                    <% } else { %>
-                      <span class="badge badge-light"><%= t('common:types.custom') %></span>
-                    <% } %>
+                    <%- include('../../partials/badges/badge', { color: floor.is_system ? 'info' : 'light', text: t(floor.is_system ? 'common:types.system' : 'common:types.custom'), size: 'sm' }) %>
                   </td>
                   <td class="text-right">
                     <% if (!floor.is_system) { %>
