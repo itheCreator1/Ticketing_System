@@ -1,0 +1,35 @@
+<%#
+  Generic Badge Component - Foundation for all badge types
+
+  Required Parameters:
+  - text: string - Badge text content
+
+  Optional Parameters:
+  - color: string - Badge color (info, success, danger, warning, primary, secondary, light) [default: 'light']
+  - icon: string - Bootstrap icon name without 'bi-' prefix (e.g., 'inbox-fill') [default: null]
+  - size: string - Badge size (sm, md, lg) [default: 'md']
+  - cssClass: string - Additional CSS classes [default: '']
+
+  Usage Examples:
+  <%- include('partials/badges/badge', { text: 'Internal', color: 'warning' }) %>
+  <%- include('partials/badges/badge', { text: 'Active', color: 'success', icon: 'check-circle-fill' }) %>
+  <%- include('partials/badges/badge', { text: '2nd Floor', color: 'light', icon: 'building' }) %>
+%>
+
+<%
+  // Defaults
+  const badgeColor = typeof color !== 'undefined' ? color : 'light';
+  const badgeIcon = typeof icon !== 'undefined' ? icon : null;
+  const badgeSize = typeof size !== 'undefined' ? size : 'md';
+  const additionalClass = typeof cssClass !== 'undefined' ? cssClass : '';
+
+  // Size classes
+  const sizeClass = badgeSize === 'sm' ? 'badge-sm' : badgeSize === 'lg' ? 'badge-lg' : '';
+%>
+
+<span class="badge badge-<%= badgeColor %> <%= sizeClass %> <%= additionalClass %>">
+  <% if (badgeIcon) { %>
+    <i class="bi bi-<%= badgeIcon %>"></i>
+  <% } %>
+  <span><%= text %></span>
+</span>
