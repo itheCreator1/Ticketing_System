@@ -37,13 +37,7 @@
               <% } %>
               <span class="text-gray-300">
                 <%= t('common:nav.welcome', { username: user.username }) %>
-                <% if (user.role === 'super_admin') { %>
-                  <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-red-600 text-white"><%= t('common:roles.super_admin') %></span>
-                <% } else if (user.role === 'admin') { %>
-                  <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-blue-600 text-white"><%= t('common:roles.admin') %></span>
-                <% } else if (user.role === 'department') { %>
-                  <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-cyan-400 text-black"><%= t('common:roles.department') %></span>
-                <% } %>
+                <%- include('./badges/role-badge', { role: user.role, withIcon: false, size: 'sm', cssClass: 'inline-block ml-2' }) %>
               </span>
               <form action="/auth/logout" method="POST" class="inline">
                 <input type="hidden" name="_csrf" value="<%= csrfToken %>">
@@ -67,13 +61,7 @@
           <div class="pt-3 border-t border-gray-700">
             <span class="text-gray-300 block mb-3">
               <%= t('common:nav.welcome', { username: user.username }) %>
-              <% if (user.role === 'super_admin') { %>
-                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-red-600 text-white"><%= t('common:roles.super_admin') %></span>
-              <% } else if (user.role === 'admin') { %>
-                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-blue-600 text-white"><%= t('common:roles.admin') %></span>
-              <% } else if (user.role === 'department') { %>
-                <span class="inline-block ml-2 px-2 py-1 text-xs font-semibold rounded bg-cyan-400 text-black"><%= t('common:roles.department') %></span>
-              <% } %>
+              <%- include('./badges/role-badge', { role: user.role, withIcon: false, size: 'sm', cssClass: 'inline-block ml-2' }) %>
             </span>
             <form action="/auth/logout" method="POST">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
