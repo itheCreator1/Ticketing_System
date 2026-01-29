@@ -132,7 +132,12 @@
             </div>
 
             <!-- Priority Update Section -->
-            <h3 class="text-lg font-semibold mb-3"><%= t('tickets:detail.updatePriority') %></h3>
+            <div class="card-header-enhanced" style="margin-bottom: 1.5rem; margin-top: 1.5rem;">
+              <h3 class="card-title-icon">
+                <i class="bi bi-exclamation-circle"></i>
+                <%= t('tickets:detail.updatePriority') %>
+              </h3>
+            </div>
             <form action="/admin/tickets/<%= ticket.id %>/priority" method="POST">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <div class="mb-3">
