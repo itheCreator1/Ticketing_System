@@ -24,7 +24,7 @@
     <h2 class="text-2xl font-bold mb-4">
       <%= t('tickets:table.id') %> #<%= ticket.id %>: <%= ticket.title %>
       <% if (ticket.reporter_department === 'Internal') { %>
-        <span class="badge badge-warning ml-2"><%= t('tickets:detail.internalAdminOnly') %></span>
+        <%- include('../partials/badges/badge', { color: 'warning', text: t('tickets:detail.internalAdminOnly'), size: 'sm', cssClass: 'ml-2' }) %>
       <% } %>
     </h2>
     <%- include('../partials/flash') %>
@@ -36,31 +36,11 @@
             <h3 class="text-lg font-semibold mb-3"><%= t('tickets:detail.ticketInfo') %></h3>
             <div class="mb-2">
               <span class="font-medium"><%= t('common:labels.status') %>:</span>
-              <% if (ticket.status === 'open') { %>
-                <span class="badge badge-info ml-2"><%= t('tickets:status.open') %></span>
-              <% } else if (ticket.status === 'in_progress') { %>
-                <span class="badge badge-warning ml-2"><%= t('tickets:status.in_progress') %></span>
-              <% } else if (ticket.status === 'waiting_on_admin') { %>
-                <span class="badge badge-warning ml-2"><%= t('tickets:status.waiting_on_admin') %></span>
-              <% } else if (ticket.status === 'waiting_on_department') { %>
-                <span class="badge badge-secondary ml-2"><%= t('tickets:status.waiting_on_department') %></span>
-              <% } else { %>
-                <span class="badge badge-success ml-2"><%= t('tickets:status.closed') %></span>
-              <% } %>
+              <%- include('../partials/badges/status-badge', { status: ticket.status, withIcon: false, size: 'md', cssClass: 'ml-2' }) %>
             </div>
             <div class="mb-2">
               <span class="font-medium"><%= t('common:labels.priority') %>:</span>
-              <% if (ticket.priority === 'unset') { %>
-                <span class="badge badge-light ml-2"><%= t('tickets:priority.unset') %></span>
-              <% } else if (ticket.priority === 'low') { %>
-                <span class="badge badge-secondary ml-2"><%= t('tickets:priority.low') %></span>
-              <% } else if (ticket.priority === 'medium') { %>
-                <span class="badge badge-info ml-2"><%= t('tickets:priority.medium') %></span>
-              <% } else if (ticket.priority === 'high') { %>
-                <span class="badge badge-warning ml-2"><%= t('tickets:priority.high') %></span>
-              <% } else if (ticket.priority === 'critical') { %>
-                <span class="badge badge-danger ml-2"><%= t('tickets:priority.critical') %></span>
-              <% } %>
+              <%- include('../partials/badges/priority-badge', { priority: ticket.priority, withIcon: false, size: 'md', cssClass: 'ml-2' }) %>
             </div>
             <% if (ticket.reporter_name) { %>
               <div class="mb-2">
@@ -74,7 +54,7 @@
             </div>
             <div class="mb-2">
               <span class="font-medium"><%= t('departments:fields.floor') %>:</span>
-              <span class="ml-2 badge badge-light"><%= ticket.department_floor || 'N/A' %></span>
+              <%- include('../partials/badges/badge', { color: 'light', text: ticket.department_floor || 'N/A', size: 'sm', cssClass: 'ml-2' }) %>
             </div>
             <% if (ticket.reporter_phone) { %>
               <div class="mb-2">
@@ -202,7 +182,7 @@
                 <div class="comment-header">
                   <strong><%= comment.username %></strong>
                   <% if (comment.visibility_type === 'internal') { %>
-                    <span class="badge badge-warning ml-2"><%= t('tickets:badges.internal') %></span>
+                    <%- include('../partials/badges/badge', { color: 'warning', text: t('tickets:badges.internal'), size: 'sm', cssClass: 'ml-2' }) %>
                   <% } %>
                   <span class="comment-meta ml-2"><%= new Date(comment.created_at).toLocaleString() %></span>
                 </div>
