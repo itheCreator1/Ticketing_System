@@ -198,19 +198,87 @@
   font-size: 1rem;
 }
 
+/* Enhanced Card Headers */
+.card-header-enhanced {
+  background: linear-gradient(to right, #f3f4f6, #ffffff);
+  border-bottom: 2px solid #e5e7eb;
+  padding: 1rem 1.5rem;
+  margin: -1rem -1.5rem 1rem -1.5rem;
+}
+
+.card-header-enhanced h3,
+.card-header-enhanced h4 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.card-title-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.card-title-icon i {
+  color: #2563eb;
+  font-size: 1.25rem;
+}
+
+/* Enhanced Link Styling */
+a:not(.btn) {
+  color: #2563eb;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+
+a:not(.btn):hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+/* Enhanced Button Styling */
+.btn {
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+}
+
 /* Status Button Styling */
 .status-form {
   margin: 0;
 }
 
 .status-form button {
-  font-weight: 500;
+  font-weight: 600;
   transition: all 0.2s ease-in-out;
 }
 
 .status-form button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /* Current status button emphasis */
@@ -265,29 +333,34 @@
 }
 
 .badge-status-open {
-  background-color: #0d6efd;
+  background-color: #2563eb;
   color: white;
+  font-weight: 700;
 }
 
 .badge-status-progress {
-  background-color: #0dcaf0;
-  color: #000;
+  background-color: #0891b2;
+  color: white;
+  font-weight: 700;
 }
 
 .badge-status-waiting-admin {
-  background-color: #ffc107;
-  color: #000;
+  background-color: #ca8a04;
+  color: white;
+  font-weight: 700;
 }
 
 .badge-status-waiting-dept {
-  background-color: #6c757d;
+  background-color: #dc2626;
   color: white;
+  font-weight: 700;
   animation: pulse-subtle 2s ease-in-out infinite;
 }
 
 .badge-status-closed {
-  background-color: #198754;
+  background-color: #16a34a;
   color: white;
+  font-weight: 700;
 }
 
 /* Pulse animation for "Waiting on You" */
@@ -312,30 +385,35 @@
 }
 
 .badge-priority-critical {
-  background-color: #dc3545;
+  background-color: #dc2626;
   color: white;
-  box-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.4);
 }
 
 .badge-priority-high {
-  background-color: #fd7e14;
+  background-color: #ea580c;
   color: white;
+  font-weight: 600;
 }
 
 .badge-priority-medium {
-  background-color: #0dcaf0;
-  color: #000;
+  background-color: #0891b2;
+  color: white;
+  font-weight: 600;
 }
 
 .badge-priority-low {
-  background-color: #6c757d;
+  background-color: #64748b;
   color: white;
+  font-weight: 600;
 }
 
 .badge-priority-unset {
-  background-color: #f8f9fa;
-  color: #6c757d;
-  border: 1px solid #dee2e6;
+  background-color: #e5e7eb;
+  color: #374151;
+  border: 2px solid #d1d5db;
+  font-weight: 500;
 }
 
 /* Enhanced Empty State */
@@ -350,24 +428,80 @@
   opacity: 0.5;
 }
 
+/* Prominent Ticket IDs */
+.ticket-id {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #2563eb;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
+}
+
+.ticket-id-header {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e40af;
+  font-family: 'Courier New', monospace;
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+  border-radius: 0.375rem;
+  border: 2px solid #93c5fd;
+}
+
+/* Enhanced Table Headers */
+.table thead th {
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #374151;
+  background-color: #f9fafb;
+  border-bottom: 2px solid #d1d5db;
+  padding: 1rem 0.75rem;
+}
+
+/* Better Row Hover States */
+.table tbody tr {
+  transition: all 0.15s ease-in-out;
+}
+
+.table tbody tr:hover {
+  background-color: #f0f9ff;
+  transform: translateX(2px);
+  box-shadow: -4px 0 0 #3b82f6 inset;
+}
+
+/* Striped rows for better readability */
+.table-striped tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.table-striped tbody tr:nth-child(even):hover {
+  background-color: #f0f9ff;
+}
+
 /* Ticket Table Enhancements */
 .ticket-table thead th {
-  font-weight: 600;
+  font-weight: 700;
   padding: 1rem 0.75rem;
 }
 
 .ticket-row {
-  transition: background-color 0.2s ease;
+  transition: all 0.15s ease-in-out;
 }
 
 .ticket-row:hover {
-  background-color: rgba(13, 110, 253, 0.05);
+  background-color: #f0f9ff;
+  transform: translateX(2px);
+  box-shadow: -4px 0 0 #3b82f6 inset;
 }
 
 .ticket-link {
   color: var(--bs-dark);
   text-decoration: none;
   font-weight: 500;
+  transition: all 0.15s ease;
 }
 
 .ticket-link:hover {

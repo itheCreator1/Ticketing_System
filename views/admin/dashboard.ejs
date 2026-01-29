@@ -13,8 +13,8 @@
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold"><%= t('tickets:dashboard.title') %></h2>
       <div class="flex gap-2">
-        <a href="/admin/tickets/department/new" class="btn btn-primary"><%= t('tickets:dashboard.createDepartmentTicket') %></a>
-        <a href="/admin/tickets/new" class="btn btn-outline-secondary"><%= t('tickets:dashboard.createInternalTicket') %></a>
+        <a href="/admin/tickets/department/new" class="btn btn-primary"><i class="bi bi-plus-circle"></i> <%= t('tickets:dashboard.createDepartmentTicket') %></a>
+        <a href="/admin/tickets/new" class="btn btn-outline-secondary"><i class="bi bi-gear-fill"></i> <%= t('tickets:dashboard.createInternalTicket') %></a>
       </div>
     </div>
     <%- include('../partials/flash') %>
@@ -88,7 +88,7 @@
             <tbody>
               <% tickets.forEach(ticket => { %>
                 <tr>
-                  <td>#<%= ticket.id %></td>
+                  <td><span class="ticket-id">#<%= ticket.id %></span></td>
                   <td>
                     <%= ticket.title %>
                     <% if (ticket.reporter_department === 'Internal') { %>
@@ -96,10 +96,10 @@
                     <% } %>
                   </td>
                   <td>
-                    <%- include('../partials/badges/status-badge', { status: ticket.status, withIcon: false }) %>
+                    <%- include('../partials/badges/status-badge', { status: ticket.status, withIcon: true }) %>
                   </td>
                   <td>
-                    <%- include('../partials/badges/priority-badge', { priority: ticket.priority, withIcon: false }) %>
+                    <%- include('../partials/badges/priority-badge', { priority: ticket.priority, withIcon: true }) %>
                   </td>
                   <td><%= ticket.reporter_name || t('tickets:table.anonymous') %></td>
                   <td class="text-sm text-gray-600 max-w-xs truncate">
@@ -111,7 +111,7 @@
                   </td>
                   <td><%= new Date(ticket.created_at).toLocaleDateString(language === 'el' ? 'el-GR' : 'en-US') %></td>
                   <td>
-                    <a href="/admin/tickets/<%= ticket.id %>" class="btn btn-sm btn-primary"><%= t('common:buttons.view') %></a>
+                    <a href="/admin/tickets/<%= ticket.id %>" class="btn btn-sm btn-primary"><i class="bi bi-eye"></i> <%= t('common:buttons.view') %></a>
                   </td>
                 </tr>
               <% }); %>
