@@ -317,9 +317,24 @@ a:not(.btn):hover {
   font-weight: 600;
 }
 
-.stat-open { border-left: 4px solid var(--bs-primary); }
-.stat-progress { border-left: 4px solid var(--bs-info); }
-.stat-waiting { border-left: 4px solid var(--bs-warning); }
+.stat-open {
+  background-color: #dbeafe;
+  color: #1e3a8a;
+  border-left: 4px solid #93c5fd;
+}
+
+.stat-progress {
+  background-color: #cffafe;
+  color: #164e63;
+  border-left: 4px solid #06b6d4;
+}
+
+.stat-waiting {
+  background-color: #fee2e2;
+  color: #7f1d1d;
+  border-left: 4px solid #fca5a5;
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
 
 /* Enhanced Status Badges */
 .badge-status {

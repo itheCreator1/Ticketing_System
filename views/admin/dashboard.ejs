@@ -20,6 +20,12 @@
     <%- include('../partials/flash') %>
 
     <div class="card mb-6">
+      <div class="card-header-enhanced">
+        <h3 class="card-title-icon">
+          <i class="bi bi-funnel"></i>
+          <%= t('tickets:filters.title') %>
+        </h3>
+      </div>
       <div class="card-body">
         <form action="/admin/dashboard" method="GET">
           <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -71,6 +77,12 @@
       </div>
     <% } else { %>
       <div class="card mb-4">
+        <div class="card-header-enhanced">
+          <h3 class="card-title-icon">
+            <i class="bi bi-table"></i>
+            <%= t('tickets:table.allTickets') %>
+          </h3>
+        </div>
         <div class="overflow-x-auto">
           <table class="table">
             <thead>
