@@ -18,7 +18,8 @@ const {
   verifyTableColumns,
   getColumnDataType,
   isColumnNullable,
-  getColumnMaxLength
+  getColumnMaxLength,
+  getForeignKeys
 } = require('../../helpers/schemaHelpers');
 const { setupTestDatabase, teardownTestDatabase, getTestClient } = require('../../helpers/database');
 
@@ -237,15 +238,15 @@ describe('Database Schema Integrity', () => {
       expect(uniqueConstraints).toContain('departments_name_key');
     });
 
-    it('should have floor CHECK constraint with all valid floor values', async () => {
-      // Arrange
-      const validFloors = ['Basement', 'Ground Floor', '1st Floor', '2nd Floor', '3rd Floor', '4th Floor', '5th Floor', '6th Floor'];
-
+    it('should have floor as foreign key reference to floors table', async () => {
       // Act
-      const isValid = await verifyCheckConstraint('departments', 'floor', validFloors);
+      const foreignKeys = await getForeignKeys('departments');
+      const floorFK = foreignKeys.find(fk => fk.column_name === 'floor');
 
       // Assert
-      expect(isValid).toBe(true);
+      expect(floorFK).toBeDefined();
+      expect(floorFK.foreign_table_name).toBe('floors');
+      expect(floorFK.foreign_column_name).toBe('name');
     });
 
     it('should have floor as non-nullable', async () => {

@@ -18,7 +18,7 @@ let testClient = null;
 /**
  * Begin a database transaction for test isolation
  * Call this in beforeEach() hooks
- * Also seeds required test departments to ensure FK constraints are satisfied
+ * Also seeds required test floors and departments to ensure FK constraints are satisfied
  *
  * IMPORTANT: Must acquire dedicated client from pool (not use pool.query directly)
  * to ensure BEGIN and ROLLBACK operate on same connection.
@@ -29,6 +29,27 @@ async function setupTestDatabase() {
 
   // Start transaction on dedicated client
   await testClient.query('BEGIN');
+
+  // Seed required test floors first (departments reference floors via FK)
+  const testFloors = [
+    { name: 'Basement', sort_order: 0 },
+    { name: 'Ground Floor', sort_order: 1 },
+    { name: '1st Floor', sort_order: 2 },
+    { name: '2nd Floor', sort_order: 3 },
+    { name: '3rd Floor', sort_order: 4 },
+    { name: '4th Floor', sort_order: 5 },
+    { name: '5th Floor', sort_order: 6 },
+    { name: '6th Floor', sort_order: 7 }
+  ];
+
+  for (const floor of testFloors) {
+    await testClient.query(
+      `INSERT INTO floors (name, sort_order, is_system, active)
+       VALUES ($1, $2, false, true)
+       ON CONFLICT (name) DO NOTHING`,
+      [floor.name, floor.sort_order]
+    );
+  }
 
   // Seed required test departments for ticket creation tests
   // These departments match what createTicketData() factory uses
@@ -89,27 +110,26 @@ async function cleanTable(tableName) {
  *
  * Order explanation:
  * 1. comments - child of tickets and users (CASCADE on delete)
- * 2. tickets - child of users (SET NULL for assigned_to, reporter_id)
+ * 2. tickets - child of users and departments (SET NULL for assigned_to, reporter_id)
  * 3. audit_logs - child of users (SET NULL for actor_id after migration 021)
  * 4. session - independent table (no FK dependencies)
- * 5. users - parent of many tables
+ * 5. users - parent of many tables, child of departments
+ * 6. departments - parent of tickets and users, child of floors
+ * 7. floors - parent of departments
  *
- * Note: departments NOT deleted to preserve system departments and test data
+ * Note: departments and floors deleted to ensure clean state between integration tests
+ * Uses TRUNCATE with CASCADE and RESTART IDENTITY for complete cleanup
  */
 async function cleanAllTables() {
-  // Child tables first (respects FK constraints)
+  // Delete in reverse dependency order to respect FK constraints
+  // Must delete children before parents to avoid FK violations
   await pool.query('DELETE FROM comments');
   await pool.query('DELETE FROM tickets');
   await pool.query('DELETE FROM audit_logs');
-
-  // Independent tables
   await pool.query('DELETE FROM session');
-
-  // Parent tables last
   await pool.query('DELETE FROM users');
-
-  // NOTE: Does NOT delete departments - test departments use ON CONFLICT DO NOTHING on insert
-  // This preserves system departments and avoids FK issues with transaction-based tests
+  await pool.query('DELETE FROM departments');
+  await pool.query('DELETE FROM floors');
 }
 
 /**
@@ -143,9 +163,31 @@ async function resetSequences() {
 /**
  * Setup for integration tests that make HTTP requests
  * Does NOT use transactions since HTTP requests can't see uncommitted data
- * Seeds test departments that the app needs
+ * Seeds test floors and departments that the app needs
  */
 async function setupIntegrationTest() {
+  // Seed required test floors first (departments reference floors via FK)
+  const testFloors = [
+    { name: 'Basement', sort_order: 0 },
+    { name: 'Ground Floor', sort_order: 1 },
+    { name: '1st Floor', sort_order: 2 },
+    { name: '2nd Floor', sort_order: 3 },
+    { name: '3rd Floor', sort_order: 4 },
+    { name: '4th Floor', sort_order: 5 },
+    { name: '5th Floor', sort_order: 6 },
+    { name: '6th Floor', sort_order: 7 }
+  ];
+
+  for (const floor of testFloors) {
+    await pool.query(
+      `INSERT INTO floors (name, sort_order, is_system, active)
+       VALUES ($1, $2, false, true)
+       ON CONFLICT (name) DO NOTHING`,
+      [floor.name, floor.sort_order]
+    );
+  }
+
+  // Seed required test departments
   const testDepartments = [
     { name: 'Emergency Department', description: 'Emergency and urgent care services', floor: 'Ground Floor' },
     { name: 'Cardiology', description: 'Cardiovascular and heart care services', floor: '2nd Floor' },

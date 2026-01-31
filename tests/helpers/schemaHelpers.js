@@ -104,21 +104,21 @@ async function getPrimaryKeyColumns(tableName) {
 async function getForeignKeys(tableName) {
   const result = await pool.query(`
     SELECT
-      constraint_name,
-      column_name,
-      referenced_table_name,
-      referenced_column_name,
+      rc.constraint_name,
+      kcu.column_name,
+      kcu2.table_name as foreign_table_name,
+      kcu2.column_name as foreign_column_name,
       CASE
-        WHEN update_rule = 'CASCADE' THEN 'CASCADE'
-        WHEN update_rule = 'SET NULL' THEN 'SET NULL'
-        WHEN update_rule = 'RESTRICT' THEN 'RESTRICT'
-        ELSE update_rule
+        WHEN rc.update_rule = 'CASCADE' THEN 'CASCADE'
+        WHEN rc.update_rule = 'SET NULL' THEN 'SET NULL'
+        WHEN rc.update_rule = 'RESTRICT' THEN 'RESTRICT'
+        ELSE rc.update_rule
       END as on_update,
       CASE
-        WHEN delete_rule = 'CASCADE' THEN 'CASCADE'
-        WHEN delete_rule = 'SET NULL' THEN 'SET NULL'
-        WHEN delete_rule = 'RESTRICT' THEN 'RESTRICT'
-        ELSE delete_rule
+        WHEN rc.delete_rule = 'CASCADE' THEN 'CASCADE'
+        WHEN rc.delete_rule = 'SET NULL' THEN 'SET NULL'
+        WHEN rc.delete_rule = 'RESTRICT' THEN 'RESTRICT'
+        ELSE rc.delete_rule
       END as on_delete
     FROM information_schema.referential_constraints rc
     JOIN information_schema.key_column_usage kcu

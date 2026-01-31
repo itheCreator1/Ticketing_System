@@ -25,3 +25,9 @@ jest.setTimeout(10000);
 //   warn: jest.fn(),
 //   error: jest.fn(),
 // };
+
+// Global teardown - close database pool after all tests
+afterAll(async () => {
+  const pool = require('../config/database');
+  await pool.end();
+});

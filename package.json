@@ -21,15 +21,19 @@
     "version-check": "node scripts/check-version-consistency.js",
     "pretest": "node scripts/check-version-consistency.js",
     "test": "jest",
-    "test:unit": "jest --testPathPattern=tests/unit",
-    "test:integration": "jest --testPathPattern=tests/integration --runInBand",
+    "test:unit": "jest tests/unit",
+    "test:integration": "jest tests/integration --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:coverage:html": "jest --coverage && open coverage/lcov-report/index.html 2>/dev/null || echo 'Open coverage/lcov-report/index.html in your browser'",
     "bench": "node tests/performance/run-all.js",
     "bench:auth": "node tests/performance/authentication.bench.js",
     "bench:tickets": "node tests/performance/ticketOperations.bench.js",
-    "bench:comments": "node tests/performance/commentOperations.bench.js"
+    "bench:comments": "node tests/performance/commentOperations.bench.js",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [
     "ticketing",
@@ -64,11 +68,14 @@
     "@types/jest": "^30.0.0",
     "autocannon": "^7.10.0",
     "autoprefixer": "^10.4.17",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
     "jest": "^30.2.0",
     "memorystore": "^1.6.1",
     "node-mocks-http": "^1.17.2",
     "nodemon": "^3.0.2",
     "postcss": "^8.4.35",
+    "prettier": "^3.2.5",
     "supertest": "^7.1.4",
     "tailwindcss": "^3.4.1"
   }
