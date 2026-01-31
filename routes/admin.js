@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { requireAuth, requireAdmin } = require('../middleware/auth');
+const { adminMutationLimiter } = require('../middleware/rateLimiter');
 const Comment = require('../models/Comment');
 const { validateRequest } = require('../middleware/validation');
 const { TICKET_MESSAGES, COMMENT_MESSAGES } = require('../constants/messages');
@@ -78,7 +79,7 @@ router.get('/tickets/:id', validateTicketId, validateRequest, async (req, res, n
   }
 });
 
-router.post('/tickets/:id/update', requireAdmin, validateTicketId, validateTicketUpdate, validateRequest, async (req, res, next) => {
+router.post('/tickets/:id/update', requireAdmin, adminMutationLimiter, validateTicketId, validateTicketUpdate, validateRequest, async (req, res, next) => {
   try {
     await ticketService.updateTicket(req.params.id, req.body);
     successRedirect(req, res, TICKET_MESSAGES.UPDATED, `/admin/tickets/${req.params.id}`);
@@ -88,7 +89,7 @@ router.post('/tickets/:id/update', requireAdmin, validateTicketId, validateTicke
 });
 
 // Separate status update route (for button-based status updates)
-router.post('/tickets/:id/status', requireAdmin, validateTicketId, validateTicketStatusUpdate, validateRequest, async (req, res, next) => {
+router.post('/tickets/:id/status', requireAdmin, adminMutationLimiter, validateTicketId, validateTicketStatusUpdate, validateRequest, async (req, res, next) => {
   try {
     await ticketService.updateTicket(req.params.id, { status: req.body.status });
     successRedirect(req, res, 'Status updated successfully', `/admin/tickets/${req.params.id}`);
@@ -99,7 +100,7 @@ router.post('/tickets/:id/status', requireAdmin, validateTicketId, validateTicke
 });
 
 // Separate priority update route (for button-based priority updates)
-router.post('/tickets/:id/priority', requireAdmin, validateTicketId, validateTicketPriorityUpdate, validateRequest, async (req, res, next) => {
+router.post('/tickets/:id/priority', requireAdmin, adminMutationLimiter, validateTicketId, validateTicketPriorityUpdate, validateRequest, async (req, res, next) => {
   try {
     await ticketService.updateTicket(req.params.id, { priority: req.body.priority });
     successRedirect(req, res, 'Priority updated successfully', `/admin/tickets/${req.params.id}`);
@@ -109,7 +110,7 @@ router.post('/tickets/:id/priority', requireAdmin, validateTicketId, validateTic
   }
 });
 
-router.post('/tickets/:id/comments', validateTicketId, validateCommentCreation, validateRequest, async (req, res, next) => {
+router.post('/tickets/:id/comments', adminMutationLimiter, validateTicketId, validateCommentCreation, validateRequest, async (req, res, next) => {
   try {
     const ticketId = req.params.id;
     const visibility_type = req.body.is_internal === 'on' ? 'internal' : 'public';
@@ -152,7 +153,7 @@ router.post('/tickets/:id/comments', validateTicketId, validateCommentCreation, 
 });
 
 // POST /admin/tickets - Create admin ticket
-router.post('/tickets', requireAdmin, validateAdminTicketCreation, validateRequest, async (req, res, next) => {
+router.post('/tickets', requireAdmin, adminMutationLimiter, validateAdminTicketCreation, validateRequest, async (req, res, next) => {
   try {
     const ticketData = {
       title: req.body.title,
@@ -187,7 +188,7 @@ router.post('/tickets', requireAdmin, validateAdminTicketCreation, validateReque
 });
 
 // POST /admin/tickets/department - Create department ticket (on behalf of department)
-router.post('/tickets/department', requireAdmin, validateDepartmentTicketCreation, validateRequest, async (req, res, next) => {
+router.post('/tickets/department', requireAdmin, adminMutationLimiter, validateDepartmentTicketCreation, validateRequest, async (req, res, next) => {
   try {
     const ticketData = {
       title: req.body.title,
