@@ -4,6 +4,8 @@
 
 ### *Professional Support Ticket Management Platform*
 
+[![CI](https://github.com/itheCreator1/KNII_Ticketing/actions/workflows/ci.yml/badge.svg)](https://github.com/itheCreator1/KNII_Ticketing/actions/workflows/ci.yml)
+[![Lint](https://github.com/itheCreator1/KNII_Ticketing/actions/workflows/lint.yml/badge.svg)](https://github.com/itheCreator1/KNII_Ticketing/actions/workflows/lint.yml)
 [![Code Quality](https://img.shields.io/badge/Code%20Quality-98%25%20Compliant-brightgreen?style=for-the-badge)](docs/node_js.md)
 [![Security](https://img.shields.io/badge/Security-Zero%20Vulnerabilities-brightgreen?style=for-the-badge)](docs/node_js.md)
 [![Architecture](https://img.shields.io/badge/Architecture-100%25%20Compliant-brightgreen?style=for-the-badge)](docs/node_js.md)
