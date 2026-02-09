@@ -56,7 +56,7 @@ router.post('/', validateDepartmentCreate, validateRequest, async (req, res, nex
     const department = await departmentService.createDepartment(
       req.session.user.id,
       { name: req.body.name, description: req.body.description, floor: req.body.floor },
-      req.ip,
+      req.ip
     );
 
     logger.info('Department created', {
@@ -125,7 +125,7 @@ router.post('/:id', validateDepartmentUpdate, validateRequest, async (req, res, 
         floor: req.body.floor,
         active: req.body.active,
       },
-      req.ip,
+      req.ip
     );
 
     successRedirect(req, res, 'Department updated successfully', '/admin/departments');
@@ -143,7 +143,7 @@ router.post('/:id/deactivate', validateDepartmentId, validateRequest, async (req
     await departmentService.deactivateDepartment(
       req.session.user.id,
       parseInt(req.params.id),
-      req.ip,
+      req.ip
     );
 
     successRedirect(req, res, 'Department deactivated successfully', '/admin/departments');
@@ -161,7 +161,7 @@ router.post('/:id/reactivate', validateDepartmentId, validateRequest, async (req
     await departmentService.reactivateDepartment(
       req.session.user.id,
       parseInt(req.params.id),
-      req.ip,
+      req.ip
     );
 
     successRedirect(req, res, 'Department reactivated successfully', '/admin/departments');
@@ -188,7 +188,7 @@ router.post(
         req.session.user.id,
         departmentId,
         userId,
-        req.ip,
+        req.ip
       );
 
       logger.info('User assigned to department', {
@@ -201,7 +201,7 @@ router.post(
         req,
         res,
         'User assigned to department successfully',
-        `/admin/departments/${departmentId}/edit`,
+        `/admin/departments/${departmentId}/edit`
       );
     } catch (error) {
       logger.error('Error assigning user', {
@@ -211,7 +211,7 @@ router.post(
       });
       next(error);
     }
-  },
+  }
 );
 
 /**
@@ -230,7 +230,7 @@ router.post(
         req.session.user.id,
         departmentId,
         userId,
-        req.ip,
+        req.ip
       );
 
       logger.info('User removed from department', {
@@ -243,7 +243,7 @@ router.post(
         req,
         res,
         'User removed from department successfully',
-        `/admin/departments/${departmentId}/edit`,
+        `/admin/departments/${departmentId}/edit`
       );
     } catch (error) {
       logger.error('Error removing user', {
@@ -253,7 +253,7 @@ router.post(
       });
       next(error);
     }
-  },
+  }
 );
 
 module.exports = router;

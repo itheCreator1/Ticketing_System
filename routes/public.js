@@ -57,7 +57,7 @@ if (process.env.NODE_ENV === 'development') {
       };
 
       const activeSessions = await pool.query(
-        'SELECT COUNT(*) as count FROM pg_stat_activity WHERE datname = current_database()',
+        'SELECT COUNT(*) as count FROM pg_stat_activity WHERE datname = current_database()'
       );
 
       res.json({
@@ -85,9 +85,9 @@ if (process.env.NODE_ENV === 'development') {
       cookies: req.cookies,
       session: req.session
         ? {
-          id: req.session.id,
-          hasUser: !!req.session.user,
-        }
+            id: req.session.id,
+            hasUser: !!req.session.user,
+          }
         : null,
       csrfToken: res.locals.csrfToken || 'NOT_GENERATED',
       headers: {

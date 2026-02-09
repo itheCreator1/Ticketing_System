@@ -100,7 +100,7 @@ const validateDepartmentTicketCreation = [
 
       if (!validNames.includes(value)) {
         throw new Error(
-          'Invalid department. Cannot create department tickets for Internal department.',
+          'Invalid department. Cannot create department tickets for Internal department.'
         );
       }
       return true;

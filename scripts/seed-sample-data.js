@@ -275,7 +275,7 @@ async function createDepartmentUsers() {
     }
 
     console.log(
-      `   ✓ Found ${departments.length} departments: ${departments.map((d) => d.name).join(', ')}`,
+      `   ✓ Found ${departments.length} departments: ${departments.map((d) => d.name).join(', ')}`
     );
 
     console.log('\n[3/5] Creating department users...');

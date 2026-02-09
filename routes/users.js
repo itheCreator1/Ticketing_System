@@ -66,7 +66,7 @@ router.post(
           department: cleanDepartment,
         },
         req.session.user.id,
-        req.ip,
+        req.ip
       );
 
       return successRedirect(req, res, 'User created successfully', '/admin/users');
@@ -74,7 +74,7 @@ router.post(
       logger.error('Error creating user', { error: error.message, stack: error.stack });
       return errorRedirect(req, res, error.message, 'back');
     }
-  },
+  }
 );
 
 // GET /admin/users/:id/edit - Show edit user form
@@ -140,7 +140,7 @@ router.post(
       logger.error('Error updating user', { error: error.message, stack: error.stack });
       return errorRedirect(req, res, error.message, 'back');
     }
-  },
+  }
 );
 
 // POST /admin/users/:id/delete - Delete user
@@ -159,7 +159,7 @@ router.post(
       logger.error('Error deleting user', { error: error.message, stack: error.stack });
       return errorRedirect(req, res, error.message, '/admin/users');
     }
-  },
+  }
 );
 
 // POST /admin/users/:id/password - Reset user password
@@ -182,7 +182,7 @@ router.post(
       logger.error('Error resetting password', { error: error.message, stack: error.stack });
       return errorRedirect(req, res, error.message, 'back');
     }
-  },
+  }
 );
 
 // POST /admin/users/:id/toggle-status - Toggle user status
@@ -203,7 +203,7 @@ router.post(
       logger.error('Error toggling status', { error: error.message, stack: error.stack });
       return errorRedirect(req, res, error.message, '/admin/users');
     }
-  },
+  }
 );
 
 module.exports = router;

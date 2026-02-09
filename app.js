@@ -60,7 +60,7 @@ app.use(
       },
     },
     hsts: process.env.NODE_ENV === 'production',
-  }),
+  })
 );
 app.use(morgan('combined'));
 app.use(compression());

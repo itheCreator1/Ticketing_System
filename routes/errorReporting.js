@@ -33,7 +33,7 @@ router.post('/report', async (req, res) => {
       category || 'USER_REPORTED',
       userContext,
       userDescription || '',
-      additionalData || {},
+      additionalData || {}
     );
 
     if (result.success) {

@@ -145,7 +145,7 @@ class FloorService {
     const departmentCount = await Floor.countDepartments(floor.name);
     if (departmentCount > 0) {
       throw new Error(
-        `Cannot deactivate floor: ${departmentCount} department(s) still assigned. Please reassign departments first.`,
+        `Cannot deactivate floor: ${departmentCount} department(s) still assigned. Please reassign departments first.`
       );
     }
 

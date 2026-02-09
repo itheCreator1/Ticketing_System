@@ -23,7 +23,7 @@ const sessionConfig = {
     if (!process.env.SESSION_SECRET) {
       throw new Error(
         'SESSION_SECRET environment variable is required. ' +
-          'Generate one using: openssl rand -base64 32',
+          'Generate one using: openssl rand -base64 32'
       );
     }
 

@@ -101,7 +101,7 @@ router.post(
     } catch (error) {
       next(error);
     }
-  },
+  }
 );
 
 // Separate status update route (for button-based status updates)
@@ -114,13 +114,18 @@ router.post(
   validateRequest,
   async (req, res, next) => {
     try {
-      await ticketService.updateTicket(req.params.id, { status: req.body.status }, req.session.user.id, req.ip);
+      await ticketService.updateTicket(
+        req.params.id,
+        { status: req.body.status },
+        req.session.user.id,
+        req.ip
+      );
       successRedirect(req, res, 'Status updated successfully', `/admin/tickets/${req.params.id}`);
     } catch (error) {
       logger.error('Status update error', { ticketId: req.params.id, error: error.message });
       next(error);
     }
-  },
+  }
 );
 
 // Separate priority update route (for button-based priority updates)
@@ -133,13 +138,18 @@ router.post(
   validateRequest,
   async (req, res, next) => {
     try {
-      await ticketService.updateTicket(req.params.id, { priority: req.body.priority }, req.session.user.id, req.ip);
+      await ticketService.updateTicket(
+        req.params.id,
+        { priority: req.body.priority },
+        req.session.user.id,
+        req.ip
+      );
       successRedirect(req, res, 'Priority updated successfully', `/admin/tickets/${req.params.id}`);
     } catch (error) {
       logger.error('Priority update error', { ticketId: req.params.id, error: error.message });
       next(error);
     }
-  },
+  }
 );
 
 router.post(
@@ -174,7 +184,12 @@ router.post(
         ticket.status !== 'closed' &&
         ticket.reporter_id !== null
       ) {
-        await ticketService.updateTicket(ticketId, { status: 'waiting_on_department' }, req.session.user.id, req.ip);
+        await ticketService.updateTicket(
+          ticketId,
+          { status: 'waiting_on_department' },
+          req.session.user.id,
+          req.ip
+        );
         logger.info('Admin comment triggered status update', {
           ticketId,
           oldStatus: ticket.status,
@@ -192,7 +207,7 @@ router.post(
       });
       next(error);
     }
-  },
+  }
 );
 
 // POST /admin/tickets - Create admin ticket
@@ -216,7 +231,7 @@ router.post(
       const ticket = await adminTicketService.createAdminTicket(
         req.session.user.id,
         ticketData,
-        req.ip,
+        req.ip
       );
 
       logger.info('Admin created admin ticket', {
@@ -234,7 +249,7 @@ router.post(
       });
       next(error);
     }
-  },
+  }
 );
 
 // POST /admin/tickets/department - Create department ticket (on behalf of department)
@@ -258,7 +273,7 @@ router.post(
       const ticket = await adminTicketService.createDepartmentTicket(
         req.session.user.id,
         ticketData,
-        req.ip,
+        req.ip
       );
 
       logger.info('Admin created department ticket', {
@@ -272,7 +287,7 @@ router.post(
         req,
         res,
         'Department ticket created successfully',
-        `/admin/tickets/${ticket.id}`,
+        `/admin/tickets/${ticket.id}`
       );
     } catch (error) {
       logger.error('Admin department ticket creation error', {
@@ -282,7 +297,7 @@ router.post(
       });
       next(error);
     }
-  },
+  }
 );
 
 module.exports = router;

@@ -157,7 +157,7 @@ async function seedAdmin() {
 
     const result = await pool.query(
       'INSERT INTO users (username, email, password_hash, role) VALUES ($1, $2, $3, $4) RETURNING id, username, email, role',
-      [username, email, password_hash, 'admin'],
+      [username, email, password_hash, 'admin']
     );
 
     const user = result.rows[0];
@@ -198,7 +198,7 @@ async function seedDemoUsers() {
         defaultPassword,
         'super_admin',
         'Internal',
-      ],
+      ]
     );
     createdUsers.push({
       ...superAdminResult.rows[0],
@@ -212,7 +212,7 @@ async function seedDemoUsers() {
       const username = greekToLatin(firstName).toLowerCase() + (i + 1);
       const result = await pool.query(
         'INSERT INTO users (username, email, password_hash, role, department) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, role, department',
-        [username, `${username}@example.com`, defaultPassword, 'admin', 'Internal'],
+        [username, `${username}@example.com`, defaultPassword, 'admin', 'Internal']
       );
       createdUsers.push({ ...result.rows[0], greekName: `${firstName} ${lastName}` });
     }
@@ -225,7 +225,7 @@ async function seedDemoUsers() {
       const username = greekToLatin(firstName).toLowerCase() + '_dept' + (i + 1);
       const result = await pool.query(
         'INSERT INTO users (username, email, password_hash, role, department) VALUES ($1, $2, $3, $4, $5) RETURNING id, username, email, role, department',
-        [username, `${username}@example.com`, defaultPassword, 'department', department],
+        [username, `${username}@example.com`, defaultPassword, 'department', department]
       );
       createdUsers.push({ ...result.rows[0], greekName: `${firstName} ${lastName}` });
     }

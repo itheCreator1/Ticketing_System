@@ -25,7 +25,7 @@ class Department {
    */
   static async findAllForAdmin() {
     const result = await pool.query(
-      'SELECT * FROM departments ORDER BY is_system DESC, active DESC, name',
+      'SELECT * FROM departments ORDER BY is_system DESC, active DESC, name'
     );
     return result.rows;
   }
@@ -61,7 +61,7 @@ class Department {
       `INSERT INTO departments (name, description, floor, is_system, active)
        VALUES ($1, $2, $3, false, true)
        RETURNING *`,
-      [name, description || null, floor],
+      [name, description || null, floor]
     );
     return result.rows[0];
   }
@@ -110,7 +110,7 @@ class Department {
        SET ${fields.join(', ')}
        WHERE id = $${paramCount} AND is_system = false
        RETURNING *`,
-      values,
+      values
     );
 
     return result.rows[0];
@@ -127,7 +127,7 @@ class Department {
        SET active = false, updated_at = NOW()
        WHERE id = $1 AND is_system = false
        RETURNING *`,
-      [id],
+      [id]
     );
     return result.rows[0];
   }
@@ -152,7 +152,7 @@ class Department {
   static async countTickets(name) {
     const result = await pool.query(
       'SELECT COUNT(*) as count FROM tickets WHERE reporter_department = $1',
-      [name],
+      [name]
     );
     return parseInt(result.rows[0].count);
   }
@@ -168,7 +168,7 @@ class Department {
        FROM users
        WHERE department = $1
        ORDER BY username`,
-      [name],
+      [name]
     );
     return result.rows;
   }
@@ -186,7 +186,7 @@ class Department {
          AND role = 'department'
          AND status = 'active'
        ORDER BY username`,
-      [name],
+      [name]
     );
     return result.rows;
   }

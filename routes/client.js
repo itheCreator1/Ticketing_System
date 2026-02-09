@@ -32,7 +32,7 @@ router.get('/dashboard', async (req, res, next) => {
     const tickets = await clientTicketService.getDepartmentTickets(
       req.session.user.id,
       req.session.user.department,
-      filters,
+      filters
     );
 
     res.render('client/dashboard', {
@@ -209,7 +209,7 @@ router.post(
       });
       next(error);
     }
-  },
+  }
 );
 
 /**
@@ -272,7 +272,7 @@ router.post(
       });
       next(error);
     }
-  },
+  }
 );
 
 module.exports = router;

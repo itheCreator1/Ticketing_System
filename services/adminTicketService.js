@@ -52,7 +52,7 @@ class AdminTicketService {
             userId: adminUserId,
             userRole: admin.role,
             ip: ipAddress,
-          },
+          }
         );
         throw new Error('Only admins can create admin tickets');
       }
@@ -157,7 +157,7 @@ class AdminTicketService {
             userId: adminUserId,
             userRole: admin.role,
             ip: ipAddress,
-          },
+          }
         );
         throw new Error('Only admins can create department tickets');
       }
@@ -165,7 +165,7 @@ class AdminTicketService {
       // Prevent creating department tickets for 'Internal' department
       if (ticketData.reporter_department === 'Internal') {
         throw new Error(
-          'Cannot create department ticket for Internal department. Use Create Internal Ticket instead.',
+          'Cannot create department ticket for Internal department. Use Create Internal Ticket instead.'
         );
       }
 
@@ -210,7 +210,7 @@ class AdminTicketService {
           reporterName: ticket.reporter_name,
           priority: ticket.priority,
           duration,
-        },
+        }
       );
 
       return ticket;
@@ -224,7 +224,7 @@ class AdminTicketService {
           error: error.message,
           stack: error.stack,
           duration,
-        },
+        }
       );
       throw error;
     }

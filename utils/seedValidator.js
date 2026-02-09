@@ -12,7 +12,6 @@
  *   }
  */
 
-
 /**
  * Validates floor configuration
  * @param {Array} floors - Array of floor objects from floors.json
@@ -195,7 +194,7 @@ function validateDepartmentUser(user, deptIndex, errors, seenUsernames, seenEmai
     // Username format validation (alphanumeric, dots, underscores, hyphens)
     if (!/^[a-zA-Z0-9._-]+$/.test(user.username)) {
       errors.push(
-        `${prefix}.username: Only alphanumeric characters, dots, underscores, and hyphens allowed`,
+        `${prefix}.username: Only alphanumeric characters, dots, underscores, and hyphens allowed`
       );
     }
 

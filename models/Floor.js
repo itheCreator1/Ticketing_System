@@ -25,7 +25,7 @@ class Floor {
    */
   static async findAllForAdmin() {
     const result = await pool.query(
-      'SELECT * FROM floors ORDER BY is_system DESC, active DESC, sort_order, name',
+      'SELECT * FROM floors ORDER BY is_system DESC, active DESC, sort_order, name'
     );
     return result.rows;
   }
@@ -62,7 +62,7 @@ class Floor {
       `INSERT INTO floors (name, sort_order, is_system, active)
        VALUES ($1, $2, false, true)
        RETURNING *`,
-      [name, sort_order || 0],
+      [name, sort_order || 0]
     );
     return result.rows[0];
   }
@@ -106,7 +106,7 @@ class Floor {
        SET ${fields.join(', ')}
        WHERE id = $${paramCount} AND is_system = false
        RETURNING *`,
-      values,
+      values
     );
 
     return result.rows[0];
@@ -123,7 +123,7 @@ class Floor {
        SET active = false, updated_at = NOW()
        WHERE id = $1 AND is_system = false
        RETURNING *`,
-      [id],
+      [id]
     );
     return result.rows[0];
   }
@@ -139,7 +139,7 @@ class Floor {
        SET active = true, updated_at = NOW()
        WHERE id = $1 AND is_system = false
        RETURNING *`,
-      [id],
+      [id]
     );
     return result.rows[0];
   }

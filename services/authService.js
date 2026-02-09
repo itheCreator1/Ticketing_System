@@ -22,7 +22,7 @@ class AuthService {
         const duration = Date.now() - startTime;
         logger.warn(
           'authService.authenticate: Authentication failed - user not found or invalid credentials',
-          { username, duration },
+          { username, duration }
         );
         return null;
       }

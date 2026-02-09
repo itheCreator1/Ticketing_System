@@ -9,7 +9,7 @@ class User {
       logger.debug('User.findById: Starting query', { userId: id });
       const result = await pool.query(
         'SELECT id, username, email, role, status, department, login_attempts, last_login_at, deleted_at, created_at, updated_at FROM users WHERE id = $1',
-        [id],
+        [id]
       );
       const duration = Date.now() - startTime;
 
@@ -40,7 +40,7 @@ class User {
       logger.debug('User.findByUsername: Starting query', { username });
       const result = await pool.query(
         'SELECT id, username, email, role, status, department, login_attempts, last_login_at, deleted_at, created_at, updated_at FROM users WHERE username = $1',
-        [username],
+        [username]
       );
       const duration = Date.now() - startTime;
 
@@ -101,7 +101,7 @@ class User {
       logger.debug('User.findByEmail: Starting query', { email });
       const result = await pool.query(
         'SELECT id, username, email, role, status, department, login_attempts, last_login_at, deleted_at, created_at, updated_at FROM users WHERE email = $1',
-        [email],
+        [email]
       );
       const duration = Date.now() - startTime;
 
@@ -128,7 +128,7 @@ class User {
 
   static async create(
     { username, email, password, role = 'admin', department = null, status = 'active' },
-    client = null,
+    client = null
   ) {
     const db = client || pool;
     const startTime = Date.now();
@@ -143,7 +143,7 @@ class User {
       const password_hash = await bcrypt.hash(password, 10);
       const result = await db.query(
         'INSERT INTO users (username, email, password_hash, role, department, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, username, email, role, department, status',
-        [username, email, password_hash, role, department, status],
+        [username, email, password_hash, role, department, status]
       );
       const duration = Date.now() - startTime;
 
@@ -177,7 +177,7 @@ class User {
     try {
       logger.debug('User.findAll: Starting query');
       const result = await pool.query(
-        'SELECT id, username, email, role, status, department, login_attempts, last_login_at, deleted_at, created_at, updated_at FROM users ORDER BY created_at DESC',
+        'SELECT id, username, email, role, status, department, login_attempts, last_login_at, deleted_at, created_at, updated_at FROM users ORDER BY created_at DESC'
       );
       const duration = Date.now() - startTime;
 
@@ -201,7 +201,11 @@ class User {
   }
 
   // Update user fields (excluding password)
-  static async update(id, { username, email, role, status, department, login_attempts }, client = null) {
+  static async update(
+    id,
+    { username, email, role, status, department, login_attempts },
+    client = null
+  ) {
     const db = client || pool;
     const startTime = Date.now();
     const fields = [];
@@ -286,7 +290,7 @@ class User {
       const password_hash = await bcrypt.hash(newPassword, 10);
       const result = await db.query(
         'UPDATE users SET password_hash = $1, password_changed_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING id',
-        [password_hash, id],
+        [password_hash, id]
       );
       const duration = Date.now() - startTime;
 
@@ -315,7 +319,7 @@ class User {
       logger.debug('User.softDelete: Starting soft delete', { userId: id });
       const result = await db.query(
         "UPDATE users SET status = 'deleted', deleted_at = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING id",
-        [id],
+        [id]
       );
       const duration = Date.now() - startTime;
 
@@ -343,7 +347,7 @@ class User {
       logger.debug('User.updateLastLogin: Updating last login', { userId: id });
       await pool.query(
         'UPDATE users SET last_login_at = CURRENT_TIMESTAMP, login_attempts = 0 WHERE id = $1',
-        [id],
+        [id]
       );
       const duration = Date.now() - startTime;
 
@@ -401,7 +405,7 @@ class User {
     try {
       logger.debug('User.countActiveSuperAdmins: Starting count query');
       const result = await pool.query(
-        "SELECT COUNT(*) FROM users WHERE role = 'super_admin' AND status = 'active'",
+        "SELECT COUNT(*) FROM users WHERE role = 'super_admin' AND status = 'active'"
       );
       const duration = Date.now() - startTime;
       const count = parseInt(result.rows[0].count);
@@ -428,7 +432,7 @@ class User {
     try {
       logger.debug('User.findAllActive: Starting query');
       const result = await pool.query(
-        "SELECT id, username, email, role, status, department, created_at, last_login_at FROM users WHERE status != 'deleted' ORDER BY created_at DESC",
+        "SELECT id, username, email, role, status, department, created_at, last_login_at FROM users WHERE status != 'deleted' ORDER BY created_at DESC"
       );
       const duration = Date.now() - startTime;
 
@@ -507,7 +511,7 @@ class User {
        SET department = $1, updated_at = NOW()
        WHERE id = $2 AND role = 'department'
        RETURNING id, username, email, role, status, department, login_attempts, last_login_at, deleted_at, created_at, updated_at`,
-      [department, userId],
+      [department, userId]
     );
     return result.rows[0];
   }
@@ -522,7 +526,7 @@ class User {
       `SELECT COUNT(*) as count
        FROM tickets
        WHERE reporter_id = $1 AND status != 'closed'`,
-      [userId],
+      [userId]
     );
     return parseInt(result.rows[0].count);
   }

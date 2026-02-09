@@ -15,7 +15,7 @@ class Ticket {
       status = 'open',
       is_admin_created = false,
     },
-    client = null,
+    client = null
   ) {
     const db = client || pool;
     const startTime = Date.now();
@@ -42,7 +42,7 @@ class Ticket {
           priority,
           status,
           is_admin_created,
-        ],
+        ]
       );
       const duration = Date.now() - startTime;
 
@@ -89,7 +89,7 @@ class Ticket {
          LEFT JOIN users u ON t.assigned_to = u.id
          LEFT JOIN departments d ON t.reporter_department = d.name
          WHERE t.id = $1`,
-        [id],
+        [id]
       );
       const duration = Date.now() - startTime;
 

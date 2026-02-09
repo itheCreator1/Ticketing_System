@@ -18,7 +18,7 @@ class ErrorReportingService {
     category,
     userContext = {},
     userDescription = '',
-    additionalData = {},
+    additionalData = {}
   ) {
     try {
       const report = {

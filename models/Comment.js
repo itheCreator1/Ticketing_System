@@ -16,7 +16,7 @@ class Comment {
         `INSERT INTO comments (ticket_id, user_id, content, visibility_type)
          VALUES ($1, $2, $3, $4)
          RETURNING *`,
-        [ticket_id, user_id, content, visibility_type],
+        [ticket_id, user_id, content, visibility_type]
       );
       const duration = Date.now() - startTime;
 
@@ -60,7 +60,7 @@ class Comment {
          JOIN users u ON c.user_id = u.id
          WHERE c.ticket_id = $1
          ORDER BY c.created_at ASC`,
-        [ticketId],
+        [ticketId]
       );
       const duration = Date.now() - startTime;
 

@@ -13,7 +13,7 @@ const logger = winston.createLogger({
     }),
     winston.format.errors({ stack: true }),
     winston.format.splat(),
-    winston.format.json(),
+    winston.format.json()
   ),
   defaultMeta: { service: 'knii-ticketing' },
   transports: [
@@ -45,9 +45,9 @@ if (process.env.NODE_ENV !== 'production') {
             msg += ` ${JSON.stringify(metadata)}`;
           }
           return msg;
-        }),
+        })
       ),
-    }),
+    })
   );
 }
 

@@ -304,7 +304,7 @@ class DepartmentService {
     const activeTickets = await User.countActiveTickets(userId);
     if (activeTickets > 0) {
       throw new Error(
-        `Cannot remove user: ${activeTickets} active ticket(s). Please close or reassign tickets first.`,
+        `Cannot remove user: ${activeTickets} active ticket(s). Please close or reassign tickets first.`
       );
     }
 

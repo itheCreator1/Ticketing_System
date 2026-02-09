@@ -15,7 +15,7 @@ services:
     volumes:
       - ./coverage:/usr/src/app/coverage
     command: npm run test:coverage
-    entrypoint: ["/usr/local/bin/docker-entrypoint.sh"]
+    entrypoint: ['/usr/local/bin/docker-entrypoint.sh']
 
   db:
     image: postgres:16-alpine

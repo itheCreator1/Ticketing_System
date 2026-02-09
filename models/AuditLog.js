@@ -4,7 +4,7 @@ const logger = require('../utils/logger');
 class AuditLog {
   static async create(
     { actorId, action, targetType, targetId, details, ipAddress },
-    client = null,
+    client = null
   ) {
     const db = client || pool;
     const startTime = Date.now();
@@ -18,7 +18,7 @@ class AuditLog {
       });
       const result = await db.query(
         'INSERT INTO audit_logs (actor_id, action, target_type, target_id, details, ip_address) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-        [actorId, action, targetType, targetId, JSON.stringify(details), ipAddress],
+        [actorId, action, targetType, targetId, JSON.stringify(details), ipAddress]
       );
       const duration = Date.now() - startTime;
 
@@ -61,7 +61,7 @@ class AuditLog {
       logger.debug('AuditLog.findByTarget: Starting query', { targetType, targetId, limit });
       const result = await pool.query(
         'SELECT * FROM audit_logs WHERE target_type = $1 AND target_id = $2 ORDER BY created_at DESC LIMIT $3',
-        [targetType, targetId, limit],
+        [targetType, targetId, limit]
       );
       const duration = Date.now() - startTime;
 
@@ -99,7 +99,7 @@ class AuditLog {
       logger.debug('AuditLog.findByActor: Starting query', { actorId, limit });
       const result = await pool.query(
         'SELECT * FROM audit_logs WHERE actor_id = $1 ORDER BY created_at DESC LIMIT $2',
-        [actorId, limit],
+        [actorId, limit]
       );
       const duration = Date.now() - startTime;
 

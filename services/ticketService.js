@@ -89,7 +89,7 @@ class TicketService {
                 assignedUserId: updates.assigned_to,
                 userFound: !!assignedUser,
                 userStatus: assignedUser?.status,
-              },
+              }
             );
             throw new Error('Cannot assign to inactive or non-existent user');
           }
