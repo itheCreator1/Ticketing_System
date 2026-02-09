@@ -7,264 +7,194 @@
 ![Node.js 20](https://img.shields.io/badge/Node.js-20-339933?logo=node.js)
 ![Express 5.x](https://img.shields.io/badge/Express-5.x-000000?logo=express)
 ![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql)
-![Tests](https://img.shields.io/badge/Tests-797%2F945%20Passing-orange)
-![Coverage](https://img.shields.io/badge/Coverage-84%25-orange)
+![Tests](https://img.shields.io/badge/Tests-945%2F945%20Passing-brightgreen)
+![Coverage](https://img.shields.io/badge/Coverage-67%25-yellow)
 
-**Version**: 2.3.0 | [Features](#features) | [Architecture](#architecture) |
-[Quick Start](#quick-start) | [Documentation](#documentation)
+**Version 2.4.0** | [Quick Start](#quick-start) | [Features](#features) |
+[Architecture](#architecture) | [Testing](#testing) |
+[Documentation](#documentation)
 
 ---
 
-## What's New in v2.3.0 ⚡
+## Quick Start
 
-- **CI/CD Automation**: GitHub Actions workflows for automated testing and
-  linting
-- **Test Infrastructure**: Improved test reliability (73% → 84.3% pass rate)
-- **Performance**: Composite indexes provide 50-80% query improvement
-- **Security**: Admin mutation rate limiting and search input sanitization
+### Prerequisites
+
+- Docker & Docker Compose
+
+### Setup
+
+```bash
+git clone https://github.com/itheCreator1/KNII_Ticketing.git
+cd KNII_Ticketing
+docker-compose up --build
+```
+
+Open `http://localhost:3000` and log in:
+
+```
+Username: admin
+Password: admin123
+Role:     super_admin
+```
+
+> **Change default credentials immediately in production.**
+
+### Run Tests
+
+All tests **must** run inside the Docker container:
+
+```bash
+docker-compose exec web npm test                  # All 945 tests
+docker-compose exec web npm run test:unit         # Unit tests (416)
+docker-compose exec web npm run test:integration  # Integration + E2E (529)
+docker-compose exec web npm run test:coverage     # With coverage report
+```
 
 ---
 
 ## Features
 
-**Dual-Portal Architecture**: Separate client portal for departments and admin
-portal for support staff.
+### Dual-Portal Architecture
 
-### Department Portal (`/client/*`)
+**Client Portal** (`/client/*`) — Department users manage their own department's
+tickets:
 
-- Create and manage department tickets
-- View tickets from own department only
+- Create tickets (auto-populated department info)
+- View all tickets within own department
 - Add public comments
-- Update ticket status (waiting_on_admin, closed)
-- Auto-populated department information
+- Update status (waiting_on_admin, closed)
 
-### Admin Portal (`/admin/*`)
+**Admin Portal** (`/admin/*`) — Support staff manage all tickets:
 
-- Manage all tickets (department + internal)
-- Create department tickets on behalf of users
+- View and manage all tickets (department + internal)
+- Create tickets on behalf of departments
 - Create internal admin-only tickets
-- Add public or internal comments (visibility control)
-- Assign tickets to support staff
-- Complete workflow management
-- User management (super_admin only)
-- Department management (super_admin only)
+- Add public or internal comments
+- Assign tickets to staff
+- Manage users and departments (super_admin)
 
-### Core Capabilities
+### Security
 
-- **Authentication**: Session-based auth with bcrypt (cost 10)
-- **Authorization**: Role-based access control (super_admin, admin, department)
-- **Audit Trail**: Complete logging of administrative actions
-- **Rate Limiting**: Login protection (10/15min), Admin mutations (20/min)
-- **Security**: CSRF protection, SQL injection prevention, search sanitization
-- **Workflow States**: open, in_progress, waiting_on_admin,
-  waiting_on_department, closed
+- Parameterized SQL queries (zero injection surface)
+- CSRF protection (double-submit cookie pattern)
+- Rate limiting: login (10/15min), admin mutations (20/min)
+- bcrypt password hashing (cost 10)
+- Account lockout after 5 failed attempts
+- Session security (httpOnly, secure, sameSite strict)
+- Department-based access control
+- Search input sanitization
+- Audit logging on all admin actions
+
+### Workflow
+
+Tickets move through five states: **open**, **in_progress**,
+**waiting_on_admin**, **waiting_on_department**, **closed**.
+
+Three roles control access: **super_admin**, **admin**, **department**.
+
+Five priority levels: **unset**, **low**, **medium**, **high**, **critical**.
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 **Stack**: Node.js 20 | Express 5.x | PostgreSQL 16 | EJS | Docker | PM2
 
-**Pattern**: Routes → Validators → Middleware → Services → Models → Database
+**No ORM** — raw SQL with the `pg` driver. All queries are parameterized.
 
 ```
-Request Flow:
-  HTTP Request
-    → Rate Limiter (login/mutations)
-    → CSRF Protection
-    → Authentication (requireAuth)
-    → Authorization (requireAdmin/requireSuperAdmin/requireDepartment)
-    → Input Validation (express-validator)
-    → Route Handler
-      → Service Layer (business logic)
-        → Model Layer (data access)
-          → PostgreSQL Database
-    ← Response (redirect/render)
+HTTP Request
+  -> Rate Limiter
+  -> CSRF Protection
+  -> Authentication (requireAuth)
+  -> Authorization (requireAdmin / requireSuperAdmin / requireDepartment)
+  -> Input Validation (express-validator)
+  -> Route Handler
+    -> Service Layer (business logic)
+      -> Model Layer (parameterized SQL)
+        -> PostgreSQL
+  <- Response (redirect / render)
 ```
 
-**Directory Structure**:
-
 ```
-├── config/           # Database pool, session config
-├── constants/        # Enums, messages, validation rules
-├── middleware/       # Auth, validation, error handling, rate limiting
-├── migrations/       # 25 SQL migrations (sequential)
-├── models/           # Static class methods for DB ops
-├── routes/           # Express routers (public, auth, admin, client)
-├── services/         # Business logic layer
-├── utils/            # Helpers (logger, sanitization, password validation)
-├── validators/       # express-validator chains
-└── views/            # EJS templates
+├── config/           Database pool, session config
+├── constants/        Enums, messages, validation rules
+├── middleware/       Auth, validation, error handling, rate limiting
+├── migrations/       25 SQL migrations (sequential, never modify after deploy)
+├── models/           Static class methods (no instantiation)
+├── routes/           Express routers (public, auth, admin, client)
+├── services/         Business logic
+├── utils/            Logger, sanitization, password validation
+├── validators/       express-validator chains
+└── views/            EJS templates
 ```
 
-See: **[Node.js Development Rules](docs/node_js.md)** for comprehensive
-architecture documentation.
+### Database
+
+7 tables across 25 migrations:
+
+| Table         | Purpose                                                   |
+| ------------- | --------------------------------------------------------- |
+| `departments` | Department management with floor FK                       |
+| `users`       | Authentication with RBAC (admin, super_admin, department) |
+| `tickets`     | Support tickets with department FK and workflow states    |
+| `comments`    | Public and internal comments with visibility control      |
+| `audit_logs`  | Admin action tracking (compliance)                        |
+| `floors`      | Building floor locations (database-driven)                |
+| `session`     | Session storage (connect-pg-simple)                       |
 
 ---
 
-## 🛡️ Security & Compliance
+## Testing
 
-**Zero Known Vulnerabilities** | **98% Code Quality Compliance**
+**945 / 945 passing** across 38 test suites. Zero failures, zero skipped.
 
-### Security Features
+| Category          | Tests | Status |
+| ----------------- | ----- | ------ |
+| Unit              | 416   | Pass   |
+| Database          | 112   | Pass   |
+| Integration / E2E | 417   | Pass   |
 
-- Parameterized SQL queries (all queries)
-- Input validation (express-validator)
-- CSRF protection (double-submit cookie)
-- Rate limiting (authentication + admin mutations)
-- Search input sanitization (SQL wildcard escaping)
-- Password hashing (bcrypt cost 10)
-- Account lockout (5 failed attempts)
-- Session security (httpOnly, secure, sameSite strict)
-- Audit logging (all admin actions)
-- Department-based access control
-- Internal ticket visibility
+### Infrastructure
 
-### Compliance
-
-- **OWASP Top 10**: SQL Injection ✓ | XSS ✓ | CSRF ✓ | Authentication ✓
-- **Session Management**: Secure cookies, automatic invalidation
-- **Data Protection**: Minimal session data, no sensitive logging
-- **Access Control**: Role-based (RBAC), ownership verification
-
-See: **[Node.js Development Rules](docs/node_js.md)** for security patterns.
+- **Sequential execution**: `--runInBand` on all test scripts (prevents
+  cross-suite PostgreSQL contamination)
+- **Transaction isolation**: Unit tests use dedicated clients with rollback
+- **FK-aware cleanup**: Correct deletion order across all tables
+- **Floor seeding**: Runs before departments to satisfy FK constraints
+- **Coverage thresholds**: 60% minimum (branches, functions, lines, statements)
 
 ---
 
-## 🧪 Testing & Quality
+## CI/CD
 
-**Test Suite**: 797 passing / 945 total (84.3% pass rate)
+Two GitHub Actions workflows run on every push and pull request.
 
-### Test Breakdown
+### CI Workflow — Docker-Based Testing
 
-| Category        | Passing | Total | Pass Rate | Status |
-| --------------- | ------- | ----- | --------- | ------ |
-| Unit Tests      | 416     | 416   | 100%      | ✅     |
-| Database Tests  | 112     | 112   | 100%      | ✅     |
-| Integration/E2E | 269     | 417   | 64.5%     | 🔄     |
-
-### Coverage
-
-- **Thresholds**: 70% minimum (branches, functions, lines, statements)
-- **Enforcement**: Jest enforces thresholds on every run
-- **Current**: ~70-80% across critical paths
-
-### Test Infrastructure (v2.3.0)
-
-- Transaction-based isolation for unit tests
-- FK-aware database cleanup
-- Floor seeding for department constraints
-- Migration testing (all 25 migrations validated)
-- Schema integrity validation
-
-### Running Tests
+Tests run **inside Docker containers**, identical to local development:
 
 ```bash
-npm test                  # All tests (945)
-npm run test:unit         # Unit tests only (416)
-npm run test:integration  # Integration + E2E + Database (529)
-npm run test:coverage     # Generate coverage report
+docker compose -f docker-compose.ci.yml up --build --exit-code-from web
 ```
 
-See: **[Testing Guidelines](docs/testing_rules.md)** for comprehensive testing
-documentation.
+- Builds the app image and starts PostgreSQL with healthcheck
+- Entrypoint handles database readiness and migrations
+- Runs all 945 tests with coverage inside the container
+- Uploads coverage report as build artifact (14-day retention)
+- `--exit-code-from web` fails the CI job if any test fails
 
----
+**Security audit** runs in parallel:
 
-## 🚀 Quick Start
+- `npm audit --omit=dev --audit-level=high` — hard fail on high/critical
+  vulnerabilities
+- `npm audit --audit-level=moderate` — informational only
 
-### Prerequisites
+### Lint Workflow
 
-- Docker & Docker Compose
-- Node.js 20+ (for local development)
-- PostgreSQL 16+ (or use Docker)
-
-### Development Setup
-
-**Option 1: Docker (Recommended)**
-
-```bash
-# Clone repository
-git clone https://github.com/itheCreator1/KNII_Ticketing.git
-cd KNII_Ticketing
-
-# Start services (PostgreSQL + App)
-docker-compose up --build
-
-# Application: http://localhost:3000
-# PostgreSQL: localhost:5432
-```
-
-**Option 2: Local**
-
-```bash
-# Install dependencies
-npm install
-
-# Setup database
-cp .env.example .env
-# Edit .env with your PostgreSQL connection details
-
-# Run migrations
-node scripts/init-db.js
-
-# Seed hospital data (optional)
-npm run seed:hospital
-
-# Start development server
-npm run dev  # Runs on port 3000
-```
-
-### Default Credentials
-
-```
-Username: admin
-Password: admin123
-Role: super_admin
-```
-
-⚠️ **Change default password immediately in production**
-
-### Verification
-
-1. Access application: `http://localhost:3000`
-2. Login with default credentials
-3. Navigate to Admin Dashboard
-4. Create test ticket
-5. Run tests: `npm test`
-
----
-
-## 📚 Documentation
-
-Comprehensive documentation covering all aspects of development, deployment, and
-maintenance.
-
-### Core Guides
-
-- **[Node.js Development Rules](docs/node_js.md)** (2,470 lines) - Coding
-  standards, architecture patterns, security best practices
-- **[Debugging & Troubleshooting](docs/debug_rules.md)** (4,085 lines) - Logging
-  infrastructure, error handling, performance debugging
-- **[Testing Guidelines](docs/testing_rules.md)** (850+ lines) - Test structure,
-  patterns, and best practices
-- **[CI/CD Guide](docs/ci-cd.md)** (480+ lines) - GitHub Actions, ESLint,
-  Prettier, troubleshooting
-
-### Operational Guides
-
-- **[Git Workflow](docs/git_rules.md)** - Branching strategy, commit standards,
-  PR discipline
-- **[Deployment Guide](docs/howToDeploy.md)** - Docker production, PM2 cluster
-  mode, environment setup
-- **[Customization Guide](docs/customisation_guide.md)** - Floors, departments,
-  and configuration
-
-### Reference
-
-- **[Performance Baseline](docs/performance-baseline.md)** - SLA targets,
-  benchmark results, optimization patterns
-- **[CLAUDE.md](CLAUDE.md)** - Complete project context for AI assistants
+- ESLint: zero errors required (style rules handled by Prettier)
+- Prettier: zero formatting drift allowed
 
 ---
 
@@ -273,282 +203,141 @@ maintenance.
 ### Commands
 
 ```bash
-# Development
-npm run dev              # Start dev server (nodemon)
-npm start                # Start production server
+# Start
+docker-compose up --build          # Docker (recommended)
+npm run dev                        # Local (nodemon)
 
-# Testing
-npm test                 # Run all tests
-npm run test:unit        # Unit tests only
-npm run test:integration # Integration + E2E
-npm run test:coverage    # Generate coverage report
-npm run test:watch       # Watch mode
+# Test (inside Docker)
+docker-compose exec web npm test
+docker-compose exec web npm run test:coverage
 
-# Code Quality
-npm run lint             # Check code with ESLint
-npm run lint:fix         # Auto-fix linting issues
-npm run format           # Auto-format with Prettier
-npm run format:check     # Check formatting
+# Code quality
+npm run lint                       # ESLint
+npm run lint:fix                   # Auto-fix
+npm run format                     # Prettier
+npm run format:check               # Check only
 
 # Database
-node scripts/init-db.js          # Run migrations
-npm run seed:hospital            # Seed hospital data
-npm run seed:sample              # Seed sample tickets
-node scripts/reset-passwords.js  # Reset all passwords (dev only)
-
-# CI/CD
-# Automated via GitHub Actions on push/PR
+docker-compose exec web node scripts/init-db.js
+docker-compose exec web npm run seed:hospital
+docker-compose exec web npm run seed:sample
 ```
 
-### Git Workflow
+### Pre-Commit Checklist
 
 ```bash
-# Create feature branch
-git checkout -b feature/my-feature
-
-# Make changes, format, lint, test
-npm run format
-npm run lint
-npm test
-
-# Commit with clear message
-git add .
-git commit -m "feat: add new feature
-
-- Implemented feature X
-- Added tests
-- Updated documentation"
-
-# Push and create PR
-git push -u origin feature/my-feature
+docker-compose exec web npm run format
+docker-compose exec web npm run lint
+docker-compose exec web npm test
 ```
 
-See: **[Git Workflow Rules](docs/git_rules.md)**
+### Environment Variables
 
-### CI/CD
+| Variable         | Required | Description                              |
+| ---------------- | -------- | ---------------------------------------- |
+| `DATABASE_URL`   | Yes      | PostgreSQL connection string             |
+| `SESSION_SECRET` | Yes      | Min 32 characters                        |
+| `NODE_ENV`       | Yes      | production, development, or test         |
+| `PORT`           | No       | Default 3000                             |
+| `LOG_LEVEL`      | No       | error, warn, info, debug (default: info) |
 
-GitHub Actions automatically:
+---
 
-- Runs full test suite on Node.js 18, 20, 22
-- Generates test coverage reports
-- Enforces ESLint and Prettier standards
-- Checks for security vulnerabilities
-- Comments coverage on PRs
+## Documentation
 
-**CI Status**: Check badges at top of README
-
-See: **[CI/CD Guide](docs/ci-cd.md)** for troubleshooting CI failures.
+| Guide                                                | Description                                       |
+| ---------------------------------------------------- | ------------------------------------------------- |
+| [Node.js Development Rules](docs/node_js.md)         | Coding standards, architecture, security patterns |
+| [Debugging & Troubleshooting](docs/debug_rules.md)   | Logging, error handling, performance              |
+| [Testing Guidelines](docs/testing_rules.md)          | Test structure, patterns, infrastructure          |
+| [CI/CD Guide](docs/ci-cd.md)                         | Workflows, ESLint, Prettier, troubleshooting      |
+| [Git Workflow](docs/git_rules.md)                    | Branching, commits, PR discipline                 |
+| [Deployment Guide](docs/howToDeploy.md)              | Docker production, PM2, environment setup         |
+| [Customization Guide](docs/customisation_guide.md)   | Floors, departments, seed data                    |
+| [Performance Baseline](docs/performance-baseline.md) | SLA targets, benchmarks                           |
+| [CLAUDE.md](CLAUDE.md)                               | Complete project context for AI assistants        |
 
 ---
 
 ## Deployment
 
-### Production Deployment (Docker)
-
 ```bash
-# Build production image
+# Production
 docker-compose -f docker-compose.prod.yml up --build -d
-
-# Run migrations
 docker-compose -f docker-compose.prod.yml exec web node scripts/init-db.js
-
-# Verify deployment
-docker-compose -f docker-compose.prod.yml logs -f web
 ```
 
-### Environment Variables
+### Checklist
 
-Required environment variables (`.env`):
-
-```bash
-# Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/db
-DB_PORT=5432
-
-# Security
-SESSION_SECRET=your-secret-min-32-chars  # REQUIRED: Min 32 characters
-NODE_ENV=production  # production|development|test
-
-# Application
-PORT=3000
-LOG_LEVEL=info  # error|warn|info|debug
-
-# Docker (optional)
-DOCKER_COMMAND=docker-compose
-RESTART_POLICY=cluster
-```
-
-### Migration Checklist
-
-Before deploying v2.3.0:
-
-- [ ] Run all 25 migrations (000-025)
-- [ ] Verify composite indexes created (Migration 025)
-- [ ] Update SESSION_SECRET (min 32 chars)
-- [ ] Set NODE_ENV=production
-- [ ] Configure LOG_LEVEL appropriately
-- [ ] Test rate limiters work (login + admin mutations)
-- [ ] Verify CI/CD workflows pass
-- [ ] Run `npm test` in staging
-- [ ] Check performance with new indexes
-- [ ] Backup database before migration
-
-See: **[Deployment Guide](docs/howToDeploy.md)** for comprehensive deployment
-instructions.
-
----
-
-## Database Schema
-
-**25 Migrations** (000-025) | **7 Tables** | **FK Constraints** | **Composite
-Indexes**
-
-### Key Tables
-
-- `floors` (8 predefined) - Building floor locations (v2.2.0+)
-- `departments` (customizable) - Department management with floor FK (v2.2.0+)
-- `users` (RBAC) - Authentication with department FK
-- `tickets` (workflow) - Support tickets with department FK
-- `comments` (visibility) - Public/internal comments
-- `audit_logs` (compliance) - Admin action tracking
-- `session` (connect-pg-simple) - Session storage
-
-### Recent Migrations
-
-- **Migration 022** (v2.3.0): Create floors table (database-driven)
-- **Migration 023** (v2.3.0): Convert floor to FK constraint
-- **Migration 024** (v2.3.0): Remove hardcoded floors (fully dynamic)
-- **Migration 025** (v2.3.0): Add composite indexes for performance
-
-See: **[CLAUDE.md](CLAUDE.md)** for complete schema documentation.
-
----
-
-## Contributing
-
-### Code Standards
-
-- Follow **[Node.js Development Rules](docs/node_js.md)** (98% compliance
-  required)
-- Write tests for all new features (maintain 70%+ coverage)
-- Run `npm run format && npm run lint && npm test` before committing
-- Follow git workflow in **[Git Rules](docs/git_rules.md)**
-- Ensure CI/CD passes (GitHub Actions)
-
-### Pull Request Process
-
-1. Create feature branch (`feature/`, `fix/`, `refactor/`, `chore/`)
-2. Implement changes with tests
-3. Update documentation
-4. Ensure all tests pass
-5. Run linting and formatting
-6. Create PR with clear description
-7. Wait for CI/CD to pass
-8. Request code review
-
-### Reporting Issues
-
-- Use GitHub Issues
-- Include reproduction steps
-- Specify Node.js/PostgreSQL versions
-- Attach relevant logs
-- Tag appropriately (bug, enhancement, documentation)
-
----
-
-## License
-
-This project is proprietary and confidential.
-
-**Copyright** © 2026 KNII Team. All rights reserved.
-
----
-
-## Support
-
-- **Issues**:
-  [GitHub Issues](https://github.com/itheCreator1/KNII_Ticketing/issues)
-- **Documentation**: See [Documentation](#documentation) section
-- **CI/CD**:
-  [Actions Tab](https://github.com/itheCreator1/KNII_Ticketing/actions)
+- [ ] All 25 migrations run (000-025)
+- [ ] `SESSION_SECRET` set (min 32 chars)
+- [ ] `NODE_ENV=production`
+- [ ] Default admin password changed
+- [ ] CI/CD workflows passing
+- [ ] Database backed up
 
 ---
 
 ## Changelog
 
 <details>
-<summary><strong>v2.3.0</strong> (Current - January 2026)</summary>
+<summary><strong>v2.4.0</strong> (Current - February 2026)</summary>
 
-### Test Infrastructure Improvements ✅
+### Docker-Based CI/CD
 
-- Floor seeding in test setup (fixes FK violations)
-- Database cleanup order fix (DELETE not TRUNCATE)
-- Schema helper SQL fixes
-- Global pool cleanup (prevents Jest hanging)
-- Pass rate: 73% → 84.3% (+107 tests fixed)
+- Tests run inside Docker containers in CI, matching local dev
+- `docker-compose.ci.yml` for CI-specific test execution
+- `--exit-code-from web` propagates test failures to CI
+- Coverage uploaded as build artifact
+- Production dependency audit gates builds
 
-### Performance Optimizations ⚡
+### 100% Test Pass Rate
 
-- **Migration 025**: Composite indexes
-  - `tickets(status, priority)` - 50-80% dashboard improvement
-  - `session(expire)` - faster session cleanup
+- All 945 tests passing (38 suites, 0 failures)
+- `--runInBand` enforced on all test scripts
+- Coverage thresholds set to 60%
 
-### Security Enhancements 🛡️
+### Code Quality
 
-- Admin mutation rate limiter (20 req/min)
-- Search input sanitization (SQL wildcard escaping)
-- Defense-in-depth for ILIKE queries
+- Zero ESLint errors (style rules delegated to Prettier)
+- Zero Prettier formatting issues
+- Resolved ESLint/Prettier comma-dangle conflict
+- Fixed all unused variable warnings
 
-### CI/CD Implementation 🔄
+### Security
 
-- GitHub Actions CI workflow (tests, coverage, security)
-- GitHub Actions Lint workflow (ESLint, Prettier)
-- Multi-version Node.js testing (18, 20, 22)
-- Automated code quality enforcement
-
-### Code Quality Tools 📐
-
-- ESLint configuration (eslint:recommended)
-- Prettier configuration (consistent formatting)
-- Pre-commit linting and formatting
-
-### Database Migrations
-
-- **Migration 022**: Create floors table
-- **Migration 023**: Convert floor to FK constraint
-- **Migration 024**: Remove hardcoded floors (fully dynamic)
-- **Migration 025**: Add composite indexes
+- Patched `qs` (high) and `lodash` (moderate) vulnerabilities
+- CI enforces `npm audit --omit=dev --audit-level=high`
 
 </details>
 
 <details>
-<summary><strong>v2.2.0</strong> (Previous - January 2026)</summary>
+<summary><strong>v2.3.0</strong> (January 2026)</summary>
 
-### Department Floor Locations 🏢
+- Test infrastructure: floor seeding, FK-aware cleanup, pool cleanup
+- Performance: composite indexes (50-80% dashboard improvement)
+- Security: admin mutation rate limiter, search sanitization
+- CI/CD: GitHub Actions workflows for testing and linting
+- Code quality: ESLint + Prettier configuration
+- Migrations 022-025
 
-- Added floor column to departments (8 predefined floors)
-- CHECK constraint validation
-- Floor display in department management
-- Floor selection in ticket forms
+</details>
+
+<details>
+<summary><strong>v2.2.0</strong> (January 2026)</summary>
+
+- Department floor locations with CHECK constraint
+- Admin-created department tickets visible to department users
+- Department-based access control (replaces user-based)
 - Migration 020: add_department_floor
 
-### Admin-Created Department Tickets Visible ✅
-
-- Fixed visibility issue: Department users can now see admin-created tickets
-- Session data: Added department field
-- Query change: Filter by reporter_department (not reporter_id)
-- Security: Department-based access control implemented
-
 </details>
 
 <details>
-<summary><strong>v2.1.0</strong> (Previous - January 2026)</summary>
-
-### Department Accounts Feature 🏢
+<summary><strong>v2.1.0</strong> (January 2026)</summary>
 
 - Dual-portal architecture (client + admin)
-- Department user role with client portal
-- Department-based ticket ownership
+- Department user role
 - Public/internal comment visibility
 - Admin creation of department tickets
 
@@ -556,5 +345,10 @@ This project is proprietary and confidential.
 
 ---
 
-**Built with ❤️ by the KNII Team** | **Version 2.3.0** | **Node.js 20 + Express
-5 + PostgreSQL 16**
+## License
+
+Proprietary and confidential. Copyright 2026 KNII Team. All rights reserved.
+
+---
+
+**Version 2.4.0** | Node.js 20 | Express 5.x | PostgreSQL 16
