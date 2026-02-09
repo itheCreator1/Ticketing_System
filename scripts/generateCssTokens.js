@@ -169,11 +169,14 @@ function main() {
 
     // Create directory if it doesn't exist
     const dirPath = path.dirname(outputPath);
+    // eslint-disable-next-line no-sync
     if (!fs.existsSync(dirPath)) {
+      // eslint-disable-next-line no-sync
       fs.mkdirSync(dirPath, { recursive: true });
     }
 
     // Write CSS file
+    // eslint-disable-next-line no-sync
     fs.writeFileSync(outputPath, cssContent, 'utf8');
 
     // Calculate statistics

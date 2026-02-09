@@ -49,12 +49,12 @@ router.get('/new', (req, res) => {
 /**
  * POST /admin/floors - Create floor
  */
-router.post('/', validateFloorCreate, validateRequest, async (req, res, next) => {
+router.post('/', validateFloorCreate, validateRequest, async (req, res, _next) => {
   try {
     const floor = await floorService.createFloor(
       req.session.user.id,
       { name: req.body.name, sort_order: req.body.sort_order },
-      req.ip,
+      req.ip
     );
 
     logger.info('Floor created', {
@@ -73,7 +73,7 @@ router.post('/', validateFloorCreate, validateRequest, async (req, res, next) =>
 /**
  * GET /admin/floors/:id/edit - Edit floor form
  */
-router.get('/:id/edit', validateFloorId, validateRequest, async (req, res, next) => {
+router.get('/:id/edit', validateFloorId, validateRequest, async (req, res, _next) => {
   try {
     const floorId = parseInt(req.params.id);
     const floor = await floorService.getFloorById(floorId);
@@ -100,7 +100,7 @@ router.get('/:id/edit', validateFloorId, validateRequest, async (req, res, next)
 /**
  * POST /admin/floors/:id - Update floor
  */
-router.post('/:id', validateFloorUpdate, validateRequest, async (req, res, next) => {
+router.post('/:id', validateFloorUpdate, validateRequest, async (req, res, _next) => {
   try {
     const floorId = parseInt(req.params.id);
 
@@ -108,7 +108,7 @@ router.post('/:id', validateFloorUpdate, validateRequest, async (req, res, next)
       req.session.user.id,
       floorId,
       { name: req.body.name, sort_order: req.body.sort_order, active: req.body.active },
-      req.ip,
+      req.ip
     );
 
     logger.info('Floor updated', {
@@ -126,7 +126,7 @@ router.post('/:id', validateFloorUpdate, validateRequest, async (req, res, next)
 /**
  * POST /admin/floors/:id/deactivate - Deactivate floor (soft delete)
  */
-router.post('/:id/deactivate', validateFloorId, validateRequest, async (req, res, next) => {
+router.post('/:id/deactivate', validateFloorId, validateRequest, async (req, res, _next) => {
   try {
     const floorId = parseInt(req.params.id);
     const floor = await floorService.getFloorById(floorId);
@@ -143,7 +143,7 @@ router.post('/:id/deactivate', validateFloorId, validateRequest, async (req, res
         req,
         res,
         `Cannot deactivate floor with ${departmentCount} department(s). Please reassign first.`,
-        '/admin/floors',
+        '/admin/floors'
       );
       return;
     }
@@ -165,7 +165,7 @@ router.post('/:id/deactivate', validateFloorId, validateRequest, async (req, res
 /**
  * POST /admin/floors/:id/reactivate - Reactivate floor
  */
-router.post('/:id/reactivate', validateFloorId, validateRequest, async (req, res, next) => {
+router.post('/:id/reactivate', validateFloorId, validateRequest, async (req, res, _next) => {
   try {
     const floorId = parseInt(req.params.id);
 

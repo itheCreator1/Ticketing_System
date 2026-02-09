@@ -55,16 +55,20 @@ function loadConfig() {
   const floorsPath = path.join(configDir, 'floors.json');
   const departmentsPath = path.join(configDir, 'departments.json');
 
+  // eslint-disable-next-line no-sync
   if (!fs.existsSync(floorsPath)) {
     throw new Error(`Floors configuration not found: ${floorsPath}`);
   }
 
+  // eslint-disable-next-line no-sync
   if (!fs.existsSync(departmentsPath)) {
     throw new Error(`Departments configuration not found: ${departmentsPath}`);
   }
 
   try {
+    // eslint-disable-next-line no-sync
     const floorsData = JSON.parse(fs.readFileSync(floorsPath, 'utf8'));
+    // eslint-disable-next-line no-sync
     const departmentsData = JSON.parse(fs.readFileSync(departmentsPath, 'utf8'));
 
     return { floorsData, departmentsData };
@@ -184,7 +188,7 @@ async function createSuperAdmin(superAdminConfig) {
     const existing = await User.findByUsername(superAdminConfig.username);
     if (existing) {
       console.log(
-        `   ⚠ Super admin "${superAdminConfig.username}" already exists, skipping creation`,
+        `   ⚠ Super admin "${superAdminConfig.username}" already exists, skipping creation`
       );
       return existing;
     }
@@ -289,7 +293,7 @@ async function createDepartmentUsers(departmentsConfig) {
         fullName: userConfig.full_name,
       });
       console.log(
-        `   ✓ Created user: ${userConfig.username} (${userConfig.full_name} - ${deptConfig.name})`,
+        `   ✓ Created user: ${userConfig.username} (${userConfig.full_name} - ${deptConfig.name})`
       );
     }
 
