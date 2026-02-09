@@ -1,0 +1,30 @@
+# CI/CD compose file — runs tests inside Docker, matching local dev workflow.
+# Usage: docker compose -f docker-compose.ci.yml up --build --exit-code-from web
+
+services:
+  web:
+    build: .
+    environment:
+      - NODE_ENV=test
+      - DATABASE_URL=postgresql://ticketing_user:ticketing_pass@db:5432/ticketing_db
+      - SESSION_SECRET=ci-session-secret-minimum-thirty-two-characters-long
+      - LOG_LEVEL=error
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./coverage:/usr/src/app/coverage
+    command: npm run test:coverage
+    entrypoint: ["/usr/local/bin/docker-entrypoint.sh"]
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ticketing_user
+      POSTGRES_PASSWORD: ticketing_pass
+      POSTGRES_DB: ticketing_db
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ticketing_user -d ticketing_db']
+      interval: 5s
+      timeout: 3s
+      retries: 10

@@ -8,84 +8,32 @@ on:
 
 jobs:
   test:
+    name: Tests (Docker)
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: ticketing_user
-          POSTGRES_PASSWORD: ticketing_password
-          POSTGRES_DB: ticketing_db
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
-    env:
-      DATABASE_URL: postgresql://ticketing_user:ticketing_password@localhost:5432/ticketing_db
-      SESSION_SECRET: test-session-secret-for-ci-pipeline-minimum-32-chars
-      NODE_ENV: test
-      LOG_LEVEL: error
-      I18N_DEFAULTLANGUAGE: en
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Wait for PostgreSQL
+      - name: Build and run tests in Docker
         run: |
-          until pg_isready -h localhost -p 5432 -U ticketing_user; do
-            echo "Waiting for PostgreSQL..."
-            sleep 2
-          done
+          mkdir -p coverage
+          docker compose -f docker-compose.ci.yml up --build --exit-code-from web --abort-on-container-exit
 
-      - name: Run database migrations
-        run: node scripts/init-db.js
-
-      - name: Run tests
-        run: npm test
-
-      - name: Generate coverage report
-        run: npm run test:coverage
-
-      - name: Check coverage thresholds
-        run: |
-          # Coverage thresholds are enforced by Jest configuration
-          # This step will fail if coverage is below 70%
-          echo "Coverage thresholds checked by Jest"
-
-      - name: Upload coverage to Codecov (optional)
-        if: github.event_name == 'pull_request'
-        uses: codecov/codecov-action@v3
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          files: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
-        continue-on-error: true
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
 
-      - name: Comment coverage on PR
-        if: github.event_name == 'pull_request'
-        uses: romeovs/lcov-reporter-action@v0.3.1
-        with:
-          lcov-file: ./coverage/lcov.info
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
+      - name: Clean up
+        if: always()
+        run: docker compose -f docker-compose.ci.yml down
 
   security:
+    name: Security Audit
     runs-on: ubuntu-latest
 
     steps:
@@ -101,9 +49,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run npm audit
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Audit all dependencies (informational)
         run: npm audit --audit-level=moderate
         continue-on-error: true
-
-      - name: Check for known vulnerabilities
-        run: npm audit --production --audit-level=high
