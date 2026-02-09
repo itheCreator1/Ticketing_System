@@ -41,13 +41,9 @@ module.exports = {
     'prefer-promise-reject-errors': 'error',
     'no-async-promise-executor': 'error',
 
-    // Style (minimal - let Prettier handle most)
-    indent: ['error', 2, { SwitchCase: 1 }],
-    quotes: ['error', 'single', { avoidEscape: true }],
-    semi: ['error', 'always'],
-    'comma-dangle': ['error', 'always-multiline'],
-    'no-trailing-spaces': 'error',
-    'eol-last': ['error', 'always'],
+    // Style — formatting rules (indent, quotes, semi, comma-dangle,
+    // trailing-spaces, eol-last) are handled by Prettier via
+    // eslint-config-prettier. Do not re-declare them here.
 
     // Node.js specific
     'no-path-concat': 'error',
