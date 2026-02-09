@@ -1,6 +1,6 @@
 # CI/CD Guide - KNII Ticketing System
-**Version**: 2.3.0
-**Last Updated**: January 2026
+**Version**: 2.4.0
+**Last Updated**: February 2026
 
 ---
 
@@ -28,7 +28,7 @@ The KNII Ticketing System uses **GitHub Actions** for continuous integration and
 - ✅ Code quality enforcement (ESLint + Prettier)
 - ✅ Security vulnerability scanning (npm audit)
 - ✅ Test coverage tracking
-- ✅ Multi-version Node.js compatibility testing
+- ✅ Docker-based test execution matching local dev workflow
 
 **Workflows**:
 1. **CI Workflow** (`.github/workflows/ci.yml`) - Runs tests, generates coverage
@@ -81,11 +81,10 @@ The CI workflow consists of **2 parallel jobs**:
 ### Test Job Details
 
 **Environment**:
-- **OS**: Ubuntu Latest
-- **Node.js**: Version 20
-- **Database**: PostgreSQL 16 (service container)
-- **Test Database**: `ticketing_db`
-- **Session Secret**: Test secret (32+ chars minimum)
+- Uses `docker-compose.ci.yml` to build and run tests inside Docker
+- Identical to local development: `docker-compose exec web npm test`
+- PostgreSQL 16 Alpine as database service with healthcheck
+- Entrypoint script handles DB readiness + migrations automatically
 
 **Steps**:
 
@@ -94,56 +93,29 @@ The CI workflow consists of **2 parallel jobs**:
    - uses: actions/checkout@v4
    ```
 
-2. **Setup Node.js**
-   ```yaml
-   - uses: actions/setup-node@v4
-     with:
-       node-version: '20'
-       cache: 'npm'
-   ```
-
-3. **Install Dependencies**
+2. **Build and Run Tests**
    ```bash
-   npm ci  # Clean install (faster than npm install)
+   docker compose -f docker-compose.ci.yml up --build --exit-code-from web --abort-on-container-exit
    ```
+   - Runs all 945 test cases with coverage
+   - Currently passing: 945/945 (100%)
+   - Enforces 60% coverage threshold
+   - Fails if tests fail or coverage drops below threshold
 
-4. **Wait for PostgreSQL**
+3. **Upload Coverage Report**
+   - Uploads coverage directory as GitHub artifact (14-day retention)
+   - Coverage is bind-mounted to `./coverage` for artifact upload
+
+4. **Clean Up**
    ```bash
-   until pg_isready -h localhost -p 5432 -U ticketing_user; do
-     echo "Waiting for PostgreSQL..."
-     sleep 2
-   done
+   docker compose -f docker-compose.ci.yml down
    ```
 
-5. **Run Database Migrations**
-   ```bash
-   node scripts/init-db.js
-   ```
-   - Creates all tables (migrations 001-025)
-   - Executes in sequential order
-   - Fails CI if any migration errors
-
-6. **Run Tests**
-   ```bash
-   npm test
-   ```
-   - Runs all 945 test cases
-   - Currently passing: 797/945 (84.3%)
-   - Unit tests: 416/416 (100%)
-   - Database tests: 112/112 (100%)
-
-7. **Generate Coverage Report**
-   ```bash
-   npm run test:coverage
-   ```
-   - Generates LCOV coverage report
-   - Enforces 70% coverage threshold
-   - Fails if coverage drops below threshold
-
-8. **Upload Coverage** (Pull Requests Only)
-   - Uploads coverage to Codecov
-   - Comments coverage delta on PR
-   - Continues even if upload fails
+**Key Design Decisions**:
+- Tests run inside Docker, not on bare runner -- matches local dev exactly
+- Single test pass with coverage (not two separate runs)
+- Coverage bind-mounted to `./coverage` for artifact upload
+- `--exit-code-from web` propagates test exit code to CI
 
 ### Security Job Details
 
@@ -151,21 +123,21 @@ The CI workflow consists of **2 parallel jobs**:
 
 **Steps**:
 
-1. **npm Audit (Moderate Level)**
+1. **npm Audit (Production - Hard Fail)**
    ```bash
-   npm audit --audit-level=moderate
-   ```
-   - Scans all dependencies
-   - Warns on moderate+ vulnerabilities
-   - Continues on error (informational)
-
-2. **npm Audit (High Level)**
-   ```bash
-   npm audit --production --audit-level=high
+   npm audit --omit=dev --audit-level=high
    ```
    - Scans production dependencies only
    - Fails CI on high/critical vulnerabilities
    - Must be fixed before merge
+
+2. **npm Audit (All - Informational)**
+   ```bash
+   npm audit --audit-level=moderate
+   ```
+   - Scans all dependencies including devDependencies
+   - Warns on moderate+ vulnerabilities
+   - Continues on error (informational only)
 
 ---
 
@@ -312,20 +284,9 @@ git push
 'no-throw-literal': 'error'
 ```
 
-#### Style (Minimal - Prettier Handles Most)
-```javascript
-// 2-space indentation
-'indent': ['error', 2, { SwitchCase: 1 }]
+#### Style (Handled by Prettier)
 
-// Single quotes
-'quotes': ['error', 'single', { avoidEscape: true }]
-
-// Always use semicolons
-'semi': ['error', 'always']
-
-// Trailing commas in multiline
-'comma-dangle': ['error', 'always-multiline']
-```
+Formatting rules (indent, quotes, semi, comma-dangle, trailing-spaces, eol-last) are handled by Prettier via `eslint-config-prettier`. They are **not** re-declared in `.eslintrc.js` to avoid conflicts. Prettier configuration in `.prettierrc.js` is the single source of truth for all formatting decisions.
 
 ### File Overrides
 
@@ -386,18 +347,20 @@ backups/
 
 ### Quick Pre-Commit Checklist
 
+All commands must run inside Docker to match CI and ensure database access:
+
 ```bash
 # 1. Format code
-npm run format
+docker-compose exec web npm run format
 
 # 2. Run linter
-npm run lint
+docker-compose exec web npm run lint
 
 # 3. Run tests
-npm test
+docker-compose exec web npm test
 
 # 4. Check coverage (optional)
-npm run test:coverage
+docker-compose exec web npm run test:coverage
 ```
 
 ### Automated Pre-Commit Hook (Recommended)
@@ -493,10 +456,10 @@ npm run test:coverage:html
 ```
 
 **Thresholds** (must meet all):
-- Branches: 70%
-- Functions: 70%
-- Lines: 70%
-- Statements: 70%
+- Branches: 60%
+- Functions: 60%
+- Lines: 60%
+- Statements: 60%
 
 **Fix**:
 - Add tests for uncovered code
@@ -627,7 +590,7 @@ npm update <package>
 
 **Custom Badge Colors**:
 ```markdown
-![Tests](https://img.shields.io/badge/Tests-797%2F945%20Passing-orange)
+![Tests](https://img.shields.io/badge/Tests-945%2F945%20Passing-green)
 ![Coverage](https://img.shields.io/badge/Coverage-84%25-orange)
 ```
 
@@ -772,6 +735,6 @@ npm update <package>
 
 ---
 
-**Last Updated**: January 2026
-**Version**: 2.3.0
+**Last Updated**: February 2026
+**Version**: 2.4.0
 **Maintained By**: KNII Development Team

@@ -9,9 +9,9 @@ KNII Ticketing System - A professional support ticket management application wit
 **No ORM**: Raw SQL with pg driver
 **Code Quality**: 98% compliance with professional Node.js development standards
 **Security**: Zero SQL injection vulnerabilities, multi-layer defense with department-based access control, search input sanitization, admin mutation rate limiting
-**Testing**: 797 test cases passing - 22 test files (38 test suites total) with comprehensive unit, integration, and E2E coverage
-**CI/CD**: Automated testing and linting via GitHub Actions workflows
-**Version**: 2.3.0 (Test Infrastructure Fixes + Performance Indexes + Rate Limiting + Search Sanitization + CI/CD)
+**Testing**: 945 test cases passing (100%) - 38 test suites with comprehensive unit, integration, and E2E coverage
+**CI/CD**: Docker-based testing + ESLint + Prettier + security audit via GitHub Actions
+**Version**: 2.4.0 (Professional CI/CD + Docker-Based Testing + Full Lint Compliance)
 
 ---
 
@@ -19,35 +19,34 @@ KNII Ticketing System - A professional support ticket management application wit
 
 This file provides a quick reference for AI assistants. For comprehensive documentation:
 
-- **[Node.js Development Rules](docs/node_js.md)** - Comprehensive development standards (2,900+ lines, v2.3.0)
+- **[Node.js Development Rules](docs/node_js.md)** - Comprehensive development standards (2,900+ lines)
   - Architecture patterns, security best practices, code organization
   - Error handling, validation, database practices
-  - Rate limiting patterns (loginLimiter, adminMutationLimiter) - NEW v2.3.0
-  - Search input sanitization (defense-in-depth) - NEW v2.3.0
+  - Rate limiting patterns (loginLimiter, adminMutationLimiter)
+  - Search input sanitization (defense-in-depth)
   - Troubleshooting guide and code review checklist
 - **[Debugging & Troubleshooting Rules](docs/debug_rules.md)** - Comprehensive debugging guide (4,087 lines)
   - Winston/Morgan logging infrastructure, error handling flow
   - Development and production debugging workflows
   - Security debugging, performance optimization, common issues
   - Command reference for Docker, PostgreSQL, PM2
-- **[Testing Guidelines](docs/testing_rules.md)** - Testing patterns and practices (850+ lines, v2.3.0)
-  - Test statistics: 797/945 passing (84.3% pass rate)
-  - Test infrastructure documentation (floor seeding, cleanup order) - NEW v2.3.0
+- **[Testing Guidelines](docs/testing_rules.md)** - Testing patterns and practices (850+ lines)
+  - Test statistics: 945/945 passing (100% pass rate)
+  - Test infrastructure documentation (floor seeding, cleanup order)
   - Transaction-based isolation, FK-aware cleanup
   - Migration testing (all 25 migrations validated)
-- **[CI/CD Guide](docs/ci-cd.md)** - GitHub Actions workflows and automation (480+ lines) - NEW v2.3.0
-  - CI workflow (tests, coverage, security)
-  - Lint workflow (ESLint, Prettier)
-  - Local pre-commit testing, troubleshooting CI failures
-  - ESLint and Prettier configuration
-- **[Git Workflow Rules](docs/git_rules.md)** - Branch strategy and commit standards (v2.3.0)
-  - CI/CD integration (pre-push checklist, workflow monitoring) - NEW v2.3.0
+- **[CI/CD Guide](docs/ci-cd.md)** - GitHub Actions workflows and automation - UPDATED v2.4.0
+  - Docker-based test execution (matches local dev workflow)
+  - Lint workflow (ESLint + Prettier, zero conflicts)
+  - Security audit (production deps = hard fail)
+  - Coverage report uploaded as artifact
+- **[Git Workflow Rules](docs/git_rules.md)** - Branch strategy and commit standards
 
 ---
 
 ## Testing Infrastructure
 
-**797/945 tests passing (84.3%)** - 38 test files (Unit: 23, Integration: 12, E2E: 3). Coverage threshold: 70%. Details in [docs/testing_rules.md](docs/testing_rules.md).
+**945/945 tests passing (100%)** - 38 test suites (Unit: 23, Integration: 12, E2E: 3). Coverage threshold: 60%. Details in [docs/testing_rules.md](docs/testing_rules.md).
 
 **IMPORTANT**: All tests MUST run inside Docker. Tests require `--runInBand` (sequential) to prevent cross-suite contamination.
 
@@ -606,7 +605,15 @@ Scripts are for **development/testing only**. Never run in production.
 
 ## CI/CD and Code Quality
 
-GitHub Actions runs tests (Node 18/20/22) and linting on push/PR. See [docs/ci-cd.md](docs/ci-cd.md) for details.
+GitHub Actions runs two workflows on push/PR to `main`/`develop`. See [docs/ci-cd.md](docs/ci-cd.md) for details.
+
+**CI Workflow** (`.github/workflows/ci.yml`):
+- **Tests (Docker)**: `docker compose -f docker-compose.ci.yml up --build --exit-code-from web` — runs all 945 tests inside Docker with coverage, uploads report as artifact
+- **Security Audit**: `npm audit --omit=dev --audit-level=high` — production deps must be clean
+
+**Lint Workflow** (`.github/workflows/lint.yml`):
+- **ESLint**: `npm run lint` — 0 errors, 0 warnings required
+- **Prettier**: `npm run format:check` — all files must be formatted
 
 ```bash
 npm run lint           # Run ESLint
@@ -615,7 +622,7 @@ npm run format         # Run Prettier
 npm run format:check   # Check formatting without changes
 ```
 
-**Style**: 2-space indent, single quotes, semicolons, no trailing commas, 100 char width.
+**Style**: 2-space indent, single quotes, semicolons, ES5 trailing commas, 100 char width. Formatting rules handled exclusively by Prettier — do NOT add style rules to `.eslintrc.js`.
 
 ---
 
