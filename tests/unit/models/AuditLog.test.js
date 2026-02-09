@@ -54,7 +54,7 @@ describe('AuditLog Model', () => {
           auditLogData.targetId,
           JSON.stringify(auditLogData.details),
           auditLogData.ipAddress,
-        ]),
+        ])
       );
     });
 
@@ -84,7 +84,7 @@ describe('AuditLog Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.any(String),
-        expect.arrayContaining([JSON.stringify(detailsObject)]),
+        expect.arrayContaining([JSON.stringify(detailsObject)])
       );
     });
 
@@ -143,7 +143,7 @@ describe('AuditLog Model', () => {
       const expectedJSON = JSON.stringify(complexDetails);
       expect(pool.query).toHaveBeenCalledWith(
         expect.any(String),
-        expect.arrayContaining([expectedJSON]),
+        expect.arrayContaining([expectedJSON])
       );
     });
 
@@ -191,7 +191,7 @@ describe('AuditLog Model', () => {
       expect(result).toHaveLength(2);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('WHERE target_type = $1 AND target_id = $2'),
-        ['user', 10, 50],
+        ['user', 10, 50]
       );
     });
 
@@ -241,7 +241,7 @@ describe('AuditLog Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('ORDER BY created_at DESC'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -286,7 +286,7 @@ describe('AuditLog Model', () => {
       expect(result).toHaveLength(2);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('WHERE actor_id = $1'),
-        [5, 50],
+        [5, 50]
       );
     });
 
@@ -329,7 +329,7 @@ describe('AuditLog Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('ORDER BY created_at DESC'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 

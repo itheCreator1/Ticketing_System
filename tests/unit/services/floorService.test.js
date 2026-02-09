@@ -217,7 +217,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(floorService.createFloor(1, data, '127.0.0.1')).rejects.toThrow(
-        'Floor name is required',
+        'Floor name is required'
       );
       expect(Floor.create).not.toHaveBeenCalled();
     });
@@ -228,7 +228,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(floorService.createFloor(1, data, '127.0.0.1')).rejects.toThrow(
-        'Floor name is required',
+        'Floor name is required'
       );
       expect(Floor.create).not.toHaveBeenCalled();
     });
@@ -248,7 +248,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(floorService.createFloor(1, data, '127.0.0.1')).rejects.toThrow(
-        'Floor name already exists',
+        'Floor name already exists'
       );
       expect(Floor.create).not.toHaveBeenCalled();
     });
@@ -349,7 +349,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(
-        floorService.updateFloor(1, 999, { name: 'New Name' }, '127.0.0.1'),
+        floorService.updateFloor(1, 999, { name: 'New Name' }, '127.0.0.1')
       ).rejects.toThrow('Cannot edit system floor');
       expect(Floor.update).not.toHaveBeenCalled();
     });
@@ -360,7 +360,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(
-        floorService.updateFloor(1, 999, { name: 'New Name' }, '127.0.0.1'),
+        floorService.updateFloor(1, 999, { name: 'New Name' }, '127.0.0.1')
       ).rejects.toThrow('Floor not found');
     });
 
@@ -386,7 +386,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(
-        floorService.updateFloor(1, 1, { name: 'New Name' }, '127.0.0.1'),
+        floorService.updateFloor(1, 1, { name: 'New Name' }, '127.0.0.1')
       ).rejects.toThrow('Floor name already exists');
       expect(Floor.update).not.toHaveBeenCalled();
     });
@@ -417,7 +417,7 @@ describe('FloorService', () => {
         1,
         1,
         { name: 'Ground Floor', sort_order: 5 },
-        '127.0.0.1',
+        '127.0.0.1'
       );
 
       // Assert
@@ -484,7 +484,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(
-        floorService.updateFloor(1, 1, { name: 'New Name' }, '127.0.0.1'),
+        floorService.updateFloor(1, 1, { name: 'New Name' }, '127.0.0.1')
       ).rejects.toThrow('Failed to update floor');
     });
   });
@@ -530,7 +530,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(floorService.deactivateFloor(1, 999, '127.0.0.1')).rejects.toThrow(
-        'Cannot deactivate system floor',
+        'Cannot deactivate system floor'
       );
       expect(Floor.deactivate).not.toHaveBeenCalled();
     });
@@ -541,7 +541,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(floorService.deactivateFloor(1, 999, '127.0.0.1')).rejects.toThrow(
-        'Floor not found',
+        'Floor not found'
       );
     });
 
@@ -553,7 +553,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(floorService.deactivateFloor(1, 1, '127.0.0.1')).rejects.toThrow(
-        'Cannot deactivate floor: 3 department(s) still assigned',
+        'Cannot deactivate floor: 3 department(s) still assigned'
       );
       expect(Floor.deactivate).not.toHaveBeenCalled();
     });
@@ -625,7 +625,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(floorService.deactivateFloor(1, 1, '127.0.0.1')).rejects.toThrow(
-        'Failed to deactivate floor',
+        'Failed to deactivate floor'
       );
     });
   });
@@ -663,7 +663,7 @@ describe('FloorService', () => {
 
       // Act & Assert
       await expect(floorService.reactivateFloor(1, 999, '127.0.0.1')).rejects.toThrow(
-        'Floor not found',
+        'Floor not found'
       );
     });
 

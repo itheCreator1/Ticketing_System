@@ -5,7 +5,7 @@
  * and produce expected results for migrations 012, 015, and 020.
  */
 
-const pool = require('../../../config/database');
+const _pool = require('../../../config/database');
 const {
   setupTestDatabase,
   teardownTestDatabase,
@@ -35,7 +35,7 @@ describe('Data Migration Correctness', () => {
       // Act
       const result = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department, reporter_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING reporter_id',
-        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal', null],
+        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal', null]
       );
 
       // Assert
@@ -51,7 +51,7 @@ describe('Data Migration Correctness', () => {
       // Act
       const result = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department, reporter_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING reporter_id',
-        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal', userId],
+        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal', userId]
       );
 
       // Assert
@@ -76,7 +76,7 @@ describe('Data Migration Correctness', () => {
       // Act
       const result = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6) RETURNING is_admin_created',
-        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal'],
+        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal']
       );
 
       // Assert
@@ -87,7 +87,7 @@ describe('Data Migration Correctness', () => {
       // Act
       const result = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department, is_admin_created) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING is_admin_created',
-        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal', true],
+        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal', true]
       );
 
       // Assert
@@ -103,23 +103,23 @@ describe('Data Migration Correctness', () => {
       // Create a user-created ticket
       await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department, reporter_id, is_admin_created) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
-        ['User Ticket', 'Description', 'open', 'unset', 'Reporter', 'Internal', userId, false],
+        ['User Ticket', 'Description', 'open', 'unset', 'Reporter', 'Internal', userId, false]
       );
 
       // Create an admin-created ticket
       await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department, is_admin_created) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-        ['Admin Ticket', 'Description', 'open', 'unset', 'Admin', 'Internal', true],
+        ['Admin Ticket', 'Description', 'open', 'unset', 'Admin', 'Internal', true]
       );
 
       // Act
       const userTicket = await getTestClient().query(
         'SELECT is_admin_created FROM tickets WHERE title = $1',
-        ['User Ticket'],
+        ['User Ticket']
       );
       const adminTicket = await getTestClient().query(
         'SELECT is_admin_created FROM tickets WHERE title = $1',
-        ['Admin Ticket'],
+        ['Admin Ticket']
       );
 
       // Assert
@@ -146,8 +146,8 @@ describe('Data Migration Correctness', () => {
       await expect(
         getTestClient().query(
           'INSERT INTO departments (name, description, is_system, active) VALUES ($1, $2, $3, $4)',
-          ['Test Dept', 'Description', false, true],
-        ),
+          ['Test Dept', 'Description', false, true]
+        )
       ).rejects.toThrow();
     });
 
@@ -169,7 +169,7 @@ describe('Data Migration Correctness', () => {
       for (const floor of validFloors) {
         const result = await getTestClient().query(
           'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5) RETURNING floor',
-          [`Dept-${floor}-${timestamp}`, 'Description', floor, false, true],
+          [`Dept-${floor}-${timestamp}`, 'Description', floor, false, true]
         );
         expect(result.rows[0].floor).toBe(floor);
       }
@@ -180,8 +180,8 @@ describe('Data Migration Correctness', () => {
       await expect(
         getTestClient().query(
           'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5)',
-          [`Invalid Floor Dept ${Date.now()}`, 'Description', 'Invalid Floor', false, true],
-        ),
+          [`Invalid Floor Dept ${Date.now()}`, 'Description', 'Invalid Floor', false, true]
+        )
       ).rejects.toThrow();
     });
 
@@ -190,7 +190,7 @@ describe('Data Migration Correctness', () => {
       const uniqueName = `Floor Test Dept ${Date.now()}`;
       const deptResult = await getTestClient().query(
         'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5) RETURNING id, floor',
-        [uniqueName, 'Description', '2nd Floor', false, true],
+        [uniqueName, 'Description', '2nd Floor', false, true]
       );
       const deptId = deptResult.rows[0].id;
       const originalFloor = deptResult.rows[0].floor;
@@ -214,7 +214,7 @@ describe('Data Migration Correctness', () => {
       const uniqueName = `Changeable Floor Dept ${Date.now()}`;
       const deptResult = await getTestClient().query(
         'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        [uniqueName, 'Description', 'Ground Floor', false, true],
+        [uniqueName, 'Description', 'Ground Floor', false, true]
       );
       const deptId = deptResult.rows[0].id;
 
@@ -242,14 +242,14 @@ describe('Data Migration Correctness', () => {
       // Act - Insert same ticket twice should fail on second attempt due to constraints
       const firstInsert = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department, reporter_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
-        ['Unique Test', 'Description', 'open', 'unset', 'Reporter', 'Internal', userId],
+        ['Unique Test', 'Description', 'open', 'unset', 'Reporter', 'Internal', userId]
       );
       const ticketId = firstInsert.rows[0].id;
 
       // Assert - Verify only one record exists
       const count = await getTestClient().query(
         'SELECT COUNT(*) as count FROM tickets WHERE id = $1',
-        [ticketId],
+        [ticketId]
       );
       expect(parseInt(count.rows[0].count)).toBe(1);
     });
@@ -258,12 +258,12 @@ describe('Data Migration Correctness', () => {
       // Arrange & Act - Insert multiple tickets with NULL reporter_id
       const ticket1 = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-        ['Null Reporter 1', 'Description', 'open', 'unset', 'Reporter', 'Internal'],
+        ['Null Reporter 1', 'Description', 'open', 'unset', 'Reporter', 'Internal']
       );
 
       const ticket2 = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-        ['Null Reporter 2', 'Description', 'open', 'unset', 'Reporter', 'Internal'],
+        ['Null Reporter 2', 'Description', 'open', 'unset', 'Reporter', 'Internal']
       );
 
       // Assert - Both should have NULL reporter_id
@@ -288,25 +288,25 @@ describe('Data Migration Correctness', () => {
 
       const ticket = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department, reporter_id, is_admin_created) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
-        ['Consistency Test', 'Description', 'open', 'unset', 'Reporter', 'Internal', userId, false],
+        ['Consistency Test', 'Description', 'open', 'unset', 'Reporter', 'Internal', userId, false]
       );
       const ticketId = ticket.rows[0].id;
 
       // Act - Create comments
       await getTestClient().query(
         'INSERT INTO comments (ticket_id, user_id, content, visibility_type) VALUES ($1, $2, $3, $4)',
-        [ticketId, userId, 'Comment 1', 'public'],
+        [ticketId, userId, 'Comment 1', 'public']
       );
 
       await getTestClient().query(
         'INSERT INTO comments (ticket_id, user_id, content, visibility_type) VALUES ($1, $2, $3, $4)',
-        [ticketId, userId, 'Comment 2', 'internal'],
+        [ticketId, userId, 'Comment 2', 'internal']
       );
 
       // Assert - Verify relationships are intact
       const comments = await getTestClient().query(
         'SELECT user_id, visibility_type FROM comments WHERE ticket_id = $1',
-        [ticketId],
+        [ticketId]
       );
       expect(comments.rows).toHaveLength(2);
       expect(comments.rows.every((c) => c.user_id === userId)).toBe(true);

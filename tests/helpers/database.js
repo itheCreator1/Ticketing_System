@@ -47,7 +47,7 @@ async function setupTestDatabase() {
       `INSERT INTO floors (name, sort_order, is_system, active)
        VALUES ($1, $2, false, true)
        ON CONFLICT (name) DO NOTHING`,
-      [floor.name, floor.sort_order],
+      [floor.name, floor.sort_order]
     );
   }
 
@@ -95,7 +95,7 @@ async function setupTestDatabase() {
       `INSERT INTO departments (name, description, floor, is_system, active)
        VALUES ($1, $2, $3, $4, true)
        ON CONFLICT (name) DO NOTHING`,
-      [dept.name, dept.description, dept.floor, dept.is_system || false],
+      [dept.name, dept.description, dept.floor, dept.is_system || false]
     );
   }
 }
@@ -168,7 +168,7 @@ function getTestClient() {
     throw new Error(
       'getTestClient() called outside test transaction. ' +
         'Did you forget to call setupTestDatabase() in beforeEach()? ' +
-        'All database operations in tests must use getTestClient() to maintain transaction isolation.',
+        'All database operations in tests must use getTestClient() to maintain transaction isolation.'
     );
   }
   return testClient;
@@ -208,7 +208,7 @@ async function setupIntegrationTest() {
       `INSERT INTO floors (name, sort_order, is_system, active)
        VALUES ($1, $2, false, true)
        ON CONFLICT (name) DO NOTHING`,
-      [floor.name, floor.sort_order],
+      [floor.name, floor.sort_order]
     );
   }
 
@@ -255,7 +255,7 @@ async function setupIntegrationTest() {
       `INSERT INTO departments (name, description, floor, is_system, active)
        VALUES ($1, $2, $3, $4, true)
        ON CONFLICT (name) DO NOTHING`,
-      [dept.name, dept.description, dept.floor, dept.is_system || false],
+      [dept.name, dept.description, dept.floor, dept.is_system || false]
     );
   }
 }

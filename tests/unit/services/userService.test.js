@@ -167,7 +167,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(userService.createUser(userData)).rejects.toThrow(
-        'Department is required for department role users',
+        'Department is required for department role users'
       );
       expect(User.create).not.toHaveBeenCalled();
     });
@@ -178,7 +178,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(userService.createUser(userData)).rejects.toThrow(
-        'Department can only be set for department role users',
+        'Department can only be set for department role users'
       );
       expect(User.create).not.toHaveBeenCalled();
     });
@@ -229,7 +229,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(userService.changePassword(999, 'OldPass123!', 'NewPass456!')).rejects.toThrow(
-        'User not found',
+        'User not found'
       );
     });
 
@@ -247,7 +247,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(
-        userService.changePassword(1, 'WrongPassword123!', 'NewPassword456!'),
+        userService.changePassword(1, 'WrongPassword123!', 'NewPassword456!')
       ).rejects.toThrow('Current password is incorrect');
       expect(User.updatePassword).not.toHaveBeenCalled();
     });
@@ -270,7 +270,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(userService.changePassword(1, 'OldPass123!', 'short')).rejects.toThrow(
-        'Password must be at least 8 characters',
+        'Password must be at least 8 characters'
       );
       expect(User.updatePassword).not.toHaveBeenCalled();
     });
@@ -296,7 +296,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(userService.changePassword(1, 'OldPass123!', 'lowercase123')).rejects.toThrow(
-        'Password must contain uppercase letter, Password must contain special character',
+        'Password must contain uppercase letter, Password must contain special character'
       );
     });
   });
@@ -338,7 +338,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(
-        userService.updateUser(1, 999, { email: 'new@test.com' }, '127.0.0.1'),
+        userService.updateUser(1, 999, { email: 'new@test.com' }, '127.0.0.1')
       ).rejects.toThrow('User not found');
       expect(User.update).not.toHaveBeenCalled();
     });
@@ -356,7 +356,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(userService.updateUser(2, 1, { role: 'admin' }, '127.0.0.1')).rejects.toThrow(
-        'Cannot downgrade the last super admin',
+        'Cannot downgrade the last super admin'
       );
       expect(User.update).not.toHaveBeenCalled();
     });
@@ -392,7 +392,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(
-        userService.updateUser(2, 1, { status: 'inactive' }, '127.0.0.1'),
+        userService.updateUser(2, 1, { status: 'inactive' }, '127.0.0.1')
       ).rejects.toThrow('Cannot deactivate the last super admin');
     });
 
@@ -520,7 +520,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(
-        userService.updateUser(1, 5, { role: 'department' }, '127.0.0.1'),
+        userService.updateUser(1, 5, { role: 'department' }, '127.0.0.1')
       ).rejects.toThrow('Department is required for department role users');
       expect(User.update).not.toHaveBeenCalled();
     });
@@ -545,7 +545,7 @@ describe('UserService', () => {
         1,
         5,
         { role: 'department', department: 'IT Support' },
-        '127.0.0.1',
+        '127.0.0.1'
       );
 
       // Assert
@@ -570,7 +570,7 @@ describe('UserService', () => {
       AuditLog.create.mockResolvedValue({});
 
       // Act
-      const result = await userService.updateUser(1, 5, { role: 'admin' }, '127.0.0.1');
+      const _result = await userService.updateUser(1, 5, { role: 'admin' }, '127.0.0.1');
 
       // Assert
       expect(User.update).toHaveBeenCalledWith(5, { role: 'admin', department: null });
@@ -626,21 +626,26 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(userService.deleteUser(actorId, targetId, '127.0.0.1')).rejects.toThrow(
-        'Cannot delete yourself',
+        'Cannot delete yourself'
       );
       expect(User.softDelete).not.toHaveBeenCalled();
     });
 
     it('should prevent deleting last super_admin', async () => {
       // Arrange
-      const mockSuperAdmin = { id: 1, username: 'lastadmin', role: 'super_admin', status: 'active' };
+      const mockSuperAdmin = {
+        id: 1,
+        username: 'lastadmin',
+        role: 'super_admin',
+        status: 'active',
+      };
 
       User.findById.mockResolvedValue(mockSuperAdmin);
       User.countActiveSuperAdmins.mockResolvedValue(1);
 
       // Act & Assert
       await expect(userService.deleteUser(2, 1, '127.0.0.1')).rejects.toThrow(
-        'Cannot delete the last super admin',
+        'Cannot delete the last super admin'
       );
       expect(User.softDelete).not.toHaveBeenCalled();
     });
@@ -723,7 +728,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(
-        userService.resetUserPassword(1, 999, 'NewPass123!', '127.0.0.1'),
+        userService.resetUserPassword(1, 999, 'NewPass123!', '127.0.0.1')
       ).rejects.toThrow('User not found');
       expect(User.updatePassword).not.toHaveBeenCalled();
     });
@@ -743,7 +748,7 @@ describe('UserService', () => {
 
       // Act & Assert
       await expect(userService.resetUserPassword(1, 5, 'weak', '127.0.0.1')).rejects.toThrow(
-        'Password must be at least 8 characters, Password must contain special character',
+        'Password must be at least 8 characters, Password must contain special character'
       );
       expect(User.updatePassword).not.toHaveBeenCalled();
     });
@@ -777,7 +782,7 @@ describe('UserService', () => {
           targetId,
           action: 'USER_UPDATED',
           details: { changes: { status: newStatus } },
-        }),
+        })
       );
     });
 

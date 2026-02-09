@@ -23,10 +23,10 @@ const User = require('../../../models/User');
 const Floor = require('../../../models/Floor');
 
 describe('Floor Management Routes Integration Tests', () => {
-  let superAdminUser;
+  let _superAdminUser;
   let superAdminCookies;
   let superAdminCsrfToken;
-  let adminUser;
+  let _adminUser;
   let adminCookies;
   let adminCsrfToken;
 
@@ -35,7 +35,7 @@ describe('Floor Management Routes Integration Tests', () => {
 
     // Create super_admin user and login
     const superAdminData = createUserData({ role: 'super_admin', status: 'active' });
-    superAdminUser = await User.create(superAdminData);
+    _superAdminUser = await User.create(superAdminData);
 
     const { cookies: saCookies, csrfToken: saCsrfToken } = await authenticateUser(app, {
       username: superAdminData.username,
@@ -46,7 +46,7 @@ describe('Floor Management Routes Integration Tests', () => {
 
     // Create regular admin user for permission tests
     const adminData = createUserData({ role: 'admin', status: 'active' });
-    adminUser = await User.create(adminData);
+    _adminUser = await User.create(adminData);
 
     const { cookies: aCookies, csrfToken: aCsrfToken } = await authenticateUser(app, {
       username: adminData.username,
@@ -87,7 +87,7 @@ describe('Floor Management Routes Integration Tests', () => {
 
     it('should display floor status (active/inactive)', async () => {
       // Arrange
-      const floor1 = await Floor.create({ name: 'Active Floor', sort_order: 1 });
+      const _floor1 = await Floor.create({ name: 'Active Floor', sort_order: 1 });
       const floor2 = await Floor.create({ name: 'Inactive Floor', sort_order: 2 });
       await Floor.deactivate(floor2.id);
 
@@ -163,14 +163,11 @@ describe('Floor Management Routes Integration Tests', () => {
 
     it('should log floor creation to audit log', async () => {
       // Act
-      await request(app)
-        .post('/admin/floors')
-        .set('Cookie', superAdminCookies)
-        .send({
-          name: 'Audit Test Floor',
-          sort_order: 3,
-          _csrf: superAdminCsrfToken,
-        });
+      await request(app).post('/admin/floors').set('Cookie', superAdminCookies).send({
+        name: 'Audit Test Floor',
+        sort_order: 3,
+        _csrf: superAdminCsrfToken,
+      });
 
       // Assert - Floor should be created
       const floor = await Floor.findByName('Audit Test Floor');
@@ -228,14 +225,11 @@ describe('Floor Management Routes Integration Tests', () => {
 
     it('should require super_admin role', async () => {
       // Act
-      const response = await request(app)
-        .post('/admin/floors')
-        .set('Cookie', adminCookies)
-        .send({
-          name: 'New Floor',
-          sort_order: 1,
-          _csrf: adminCsrfToken,
-        });
+      const response = await request(app).post('/admin/floors').set('Cookie', adminCookies).send({
+        name: 'New Floor',
+        sort_order: 1,
+        _csrf: adminCsrfToken,
+      });
 
       // Assert
       expect(response.status).toBe(302);
@@ -368,7 +362,7 @@ describe('Floor Management Routes Integration Tests', () => {
 
     it('should reject duplicate floor name', async () => {
       // Arrange
-      const floor1 = await Floor.create({ name: 'Floor One', sort_order: 1 });
+      const _floor1 = await Floor.create({ name: 'Floor One', sort_order: 1 });
       const floor2 = await Floor.create({ name: 'Floor Two', sort_order: 2 });
 
       // Act
@@ -575,10 +569,7 @@ describe('Floor Management Routes Integration Tests', () => {
         if (endpoint.method === 'POST') {
           // POST requests need CSRF token+cookies to reach auth middleware
           const { csrfToken, cookies } = await fetchCsrfToken(app);
-          req = request(app)
-            .post(endpoint.path)
-            .set('Cookie', cookies)
-            .send({ _csrf: csrfToken });
+          req = request(app).post(endpoint.path).set('Cookie', cookies).send({ _csrf: csrfToken });
         } else {
           req = request(app)[endpoint.method.toLowerCase()](endpoint.path);
         }
@@ -611,7 +602,9 @@ describe('Floor Management Routes Integration Tests', () => {
             .set('Cookie', adminCookies)
             .send({ _csrf: adminCsrfToken });
         } else {
-          req = request(app)[endpoint.method.toLowerCase()](endpoint.path).set('Cookie', adminCookies);
+          req = request(app)
+            [endpoint.method.toLowerCase()](endpoint.path)
+            .set('Cookie', adminCookies);
         }
         const response = await req;
 

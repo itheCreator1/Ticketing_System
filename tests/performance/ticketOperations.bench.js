@@ -14,8 +14,8 @@ const pool = require('../../config/database');
 const {
   runBenchmark,
   printResults,
-  createTestUser,
-  createTestDepartment,
+  _createTestUser,
+  _createTestDepartment,
   createTestTicket,
   seedBenchmarkData,
   cleanupBenchmarkData,
@@ -39,7 +39,7 @@ async function startServer() {
   app.get('/admin/dashboard', async (req, res) => {
     try {
       const result = await pool.query(
-        'SELECT id, title, status, priority FROM tickets ORDER BY created_at DESC LIMIT 50',
+        'SELECT id, title, status, priority FROM tickets ORDER BY created_at DESC LIMIT 50'
       );
       res.status(200).json({ tickets: result.rows });
     } catch (error) {
@@ -52,7 +52,7 @@ async function startServer() {
     try {
       const result = await pool.query(
         'SELECT id, title, status, priority FROM tickets WHERE reporter_department = $1 AND is_admin_created = false ORDER BY created_at DESC LIMIT 50',
-        ['BenchmarkDept'],
+        ['BenchmarkDept']
       );
       res.status(200).json({ tickets: result.rows });
     } catch (error) {
@@ -77,7 +77,7 @@ async function startServer() {
     try {
       const result = await pool.query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-        ['Benchmark Ticket', 'Description', 'open', 'unset', 'Reporter', 'BenchmarkDept'],
+        ['Benchmark Ticket', 'Description', 'open', 'unset', 'Reporter', 'BenchmarkDept']
       );
       res.status(201).json({ id: result.rows[0].id });
     } catch (error) {

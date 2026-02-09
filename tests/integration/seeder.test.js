@@ -11,7 +11,9 @@ describe('Seeder Integration Tests', () => {
 
   beforeAll(async () => {
     // Ensure config files exist
+    // eslint-disable-next-line no-sync
     expect(fs.existsSync(path.join(testConfigDir, 'floors.json'))).toBe(true);
+    // eslint-disable-next-line no-sync
     expect(fs.existsSync(path.join(testConfigDir, 'departments.json'))).toBe(true);
   });
 
@@ -22,7 +24,9 @@ describe('Seeder Integration Tests', () => {
     const floorsPath = path.join(testConfigDir, 'floors.json');
     const departmentsPath = path.join(testConfigDir, 'departments.json');
 
+    // eslint-disable-next-line no-sync
     const floorsData = JSON.parse(fs.readFileSync(floorsPath, 'utf8'));
+    // eslint-disable-next-line no-sync
     const departmentsData = JSON.parse(fs.readFileSync(departmentsPath, 'utf8'));
 
     return { floorsData, departmentsData };
@@ -84,7 +88,7 @@ describe('Seeder Integration Tests', () => {
       if (!existing) {
         const floor = await Floor.create(
           { name: floorConfig.name, sort_order: floorConfig.sort_order },
-          db,
+          db
         );
         createdFloors.push(floor);
       }
@@ -97,7 +101,7 @@ describe('Seeder Integration Tests', () => {
    * Helper: Create super admin
    */
   async function createSuperAdmin(superAdminConfig, client = null) {
-    const db = client || pool;
+    const _db = client || pool;
     const existing = await User.findByUsername(superAdminConfig.username);
     if (existing) {
       return existing;
@@ -128,7 +132,7 @@ describe('Seeder Integration Tests', () => {
             description: deptConfig.description,
             floor: deptConfig.floor,
           },
-          db,
+          db
         );
 
         // If Internal department, manually set is_system=true
@@ -242,7 +246,7 @@ describe('Seeder Integration Tests', () => {
     it('should be idempotent - second run skips existing floors', async () => {
       const { floorsData } = loadConfig();
 
-      const created1 = await createFloors(floorsData.floors);
+      const _created1 = await createFloors(floorsData.floors);
       const created2 = await createFloors(floorsData.floors);
 
       expect(created2.length).toBe(0); // Nothing new created
@@ -321,7 +325,7 @@ describe('Seeder Integration Tests', () => {
     it('should be idempotent - second run skips existing departments', async () => {
       const { departmentsData } = loadConfig();
 
-      const created1 = await createDepartments(departmentsData.departments);
+      const _created1 = await createDepartments(departmentsData.departments);
       const created2 = await createDepartments(departmentsData.departments);
 
       expect(created2.length).toBe(0); // Nothing new created
@@ -365,7 +369,7 @@ describe('Seeder Integration Tests', () => {
 
     it('should skip departments without users (Internal)', async () => {
       const { departmentsData } = loadConfig();
-      const created = await createDepartmentUsers(departmentsData.departments);
+      const _created = await createDepartmentUsers(departmentsData.departments);
 
       // Internal department should not create a user
       const internalUser = await User.findByUsername('internal');
@@ -385,7 +389,7 @@ describe('Seeder Integration Tests', () => {
     it('should be idempotent - second run skips existing users', async () => {
       const { departmentsData } = loadConfig();
 
-      const created1 = await createDepartmentUsers(departmentsData.departments);
+      const _created1 = await createDepartmentUsers(departmentsData.departments);
       const created2 = await createDepartmentUsers(departmentsData.departments);
 
       expect(created2.length).toBe(0); // Nothing new created
@@ -440,7 +444,7 @@ describe('Seeder Integration Tests', () => {
 
       // First run
       await createFloors(floorsData.floors);
-      const superAdmin = await createSuperAdmin(departmentsData.super_admin);
+      const _superAdmin = await createSuperAdmin(departmentsData.super_admin);
       await createDepartments(departmentsData.departments);
       const users1 = await createDepartmentUsers(departmentsData.departments);
       const userCount1 = users1.length;

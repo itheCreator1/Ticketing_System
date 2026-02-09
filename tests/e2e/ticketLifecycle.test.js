@@ -40,7 +40,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
       });
       const departmentUser = await User.create(departmentData);
 
-      const { cookies: deptCookies } = await authenticateUser(app, {
+      const { cookies: _deptCookies } = await authenticateUser(app, {
         username: departmentData.username,
         password: departmentData.password,
       });
@@ -103,7 +103,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
       // Verify audit log entry created
       const auditLogs1 = await AuditLog.findByTarget('ticket', ticket.id);
       const statusUpdateLog = auditLogs1.find(
-        (log) => log.action === 'TICKET_UPDATED' && log.details.status === 'in_progress',
+        (log) => log.action === 'TICKET_UPDATED' && log.details.status === 'in_progress'
       );
       expect(statusUpdateLog).toBeDefined();
 
@@ -208,7 +208,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
     it('should track all status transitions in audit log', async () => {
       // Arrange - Create admin and ticket
       const adminData = createUserData({ role: 'admin', status: 'active' });
-      const admin = await User.create(adminData);
+      const _admin = await User.create(adminData);
 
       const { cookies: adminCookies, csrfToken: adminCsrfToken } = await authenticateUser(app, {
         username: adminData.username,
@@ -230,7 +230,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
       // Assert - Verify all transitions logged
       const auditLogs = await AuditLog.findByTarget('ticket', ticket.id);
       const statusUpdateLogs = auditLogs.filter(
-        (log) => log.action === 'TICKET_UPDATED' && log.details.status,
+        (log) => log.action === 'TICKET_UPDATED' && log.details.status
       );
 
       expect(statusUpdateLogs.length).toBeGreaterThanOrEqual(statuses.length);
@@ -275,7 +275,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
       expect(detailResponse.status).toBe(200);
 
       // Step 7: Unassign ticket (set to null)
-      const unassignResponse = await request(app)
+      const _unassignResponse = await request(app)
         .post(`/admin/tickets/${ticket.id}/update`)
         .set('Cookie', adminCookies)
         .send({ assigned_to: '', _csrf: adminCsrfToken });
@@ -355,7 +355,7 @@ describe('Ticket Lifecycle E2E Tests', () => {
       // Step 6: Verify audit trail shows all escalations
       const auditLogs = await AuditLog.findByTarget('ticket', ticket.id);
       const priorityLogs = auditLogs.filter(
-        (log) => log.action === 'TICKET_UPDATED' && log.details.priority,
+        (log) => log.action === 'TICKET_UPDATED' && log.details.priority
       );
 
       expect(priorityLogs.length).toBeGreaterThanOrEqual(3);
@@ -384,31 +384,22 @@ describe('Ticket Lifecycle E2E Tests', () => {
       });
 
       // Act - Admin 1 adds comment
-      await request(app)
-        .post(`/admin/tickets/${ticket.id}/comments`)
-        .set('Cookie', cookies1)
-        .send({
-          content: 'I will investigate this issue.',
-          _csrf: csrfToken1,
-        });
+      await request(app).post(`/admin/tickets/${ticket.id}/comments`).set('Cookie', cookies1).send({
+        content: 'I will investigate this issue.',
+        _csrf: csrfToken1,
+      });
 
       // Admin 2 adds comment
-      await request(app)
-        .post(`/admin/tickets/${ticket.id}/comments`)
-        .set('Cookie', cookies2)
-        .send({
-          content: 'I can help with the database side.',
-          _csrf: csrfToken2,
-        });
+      await request(app).post(`/admin/tickets/${ticket.id}/comments`).set('Cookie', cookies2).send({
+        content: 'I can help with the database side.',
+        _csrf: csrfToken2,
+      });
 
       // Admin 1 adds another comment
-      await request(app)
-        .post(`/admin/tickets/${ticket.id}/comments`)
-        .set('Cookie', cookies1)
-        .send({
-          content: 'Issue has been resolved.',
-          _csrf: csrfToken1,
-        });
+      await request(app).post(`/admin/tickets/${ticket.id}/comments`).set('Cookie', cookies1).send({
+        content: 'Issue has been resolved.',
+        _csrf: csrfToken1,
+      });
 
       // Assert
       const comments = await Comment.findByTicketId(ticket.id);

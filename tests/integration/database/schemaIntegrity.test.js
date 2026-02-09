@@ -5,15 +5,15 @@
  * exist with correct properties after migrations are applied.
  */
 
-const pool = require('../../../config/database');
+const _pool = require('../../../config/database');
 const {
   getTableNames,
-  getTableColumns,
-  columnExists,
+  getTableColumns: _getTableColumns,
+  columnExists: _columnExists,
   getTableIndexes,
   getUniqueConstraints,
   getPrimaryKeyColumns,
-  getCheckConstraints,
+  getCheckConstraints: _getCheckConstraints,
   verifyCheckConstraint,
   verifyTableColumns,
   getColumnDataType,
@@ -391,7 +391,7 @@ describe('Database Schema Integrity', () => {
         `INSERT INTO floors (name, sort_order, is_system, active)
          VALUES ($1, $2, $3, $4)
          RETURNING *`,
-        ['Test Floor', 5, false, true],
+        ['Test Floor', 5, false, true]
       );
 
       // Assert

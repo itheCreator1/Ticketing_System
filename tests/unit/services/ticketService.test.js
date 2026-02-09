@@ -67,7 +67,7 @@ describe('TicketService', () => {
           reporter_department: 'IT Support',
           reporter_phone: '555-1234',
           priority: 'critical',
-        }),
+        })
       );
     });
 
@@ -79,7 +79,7 @@ describe('TicketService', () => {
 
       // Act & Assert
       await expect(ticketService.createTicket(ticketData)).rejects.toThrow(
-        'Database insert failed',
+        'Database insert failed'
       );
       expect(Ticket.create).toHaveBeenCalledWith(ticketData);
     });
@@ -335,7 +335,7 @@ describe('TicketService', () => {
 
       // Act & Assert
       await expect(ticketService.updateTicket(6, { assigned_to: 999 })).rejects.toThrow(
-        'Cannot assign to inactive or non-existent user',
+        'Cannot assign to inactive or non-existent user'
       );
       expect(User.findById).toHaveBeenCalledWith(999);
       expect(Ticket.update).not.toHaveBeenCalled();
@@ -348,7 +348,7 @@ describe('TicketService', () => {
 
       // Act & Assert
       await expect(ticketService.updateTicket(7, { assigned_to: 7 })).rejects.toThrow(
-        'Cannot assign to inactive or non-existent user',
+        'Cannot assign to inactive or non-existent user'
       );
       expect(User.findById).toHaveBeenCalledWith(7);
       expect(Ticket.update).not.toHaveBeenCalled();
@@ -361,7 +361,7 @@ describe('TicketService', () => {
 
       // Act & Assert
       await expect(ticketService.updateTicket(8, { assigned_to: 8 })).rejects.toThrow(
-        'Cannot assign to inactive or non-existent user',
+        'Cannot assign to inactive or non-existent user'
       );
       expect(User.findById).toHaveBeenCalledWith(8);
       expect(Ticket.update).not.toHaveBeenCalled();
@@ -419,7 +419,7 @@ describe('TicketService', () => {
 
       // Act & Assert
       await expect(ticketService.updateTicket(11, { status: 'closed' })).rejects.toThrow(
-        'Database update failed',
+        'Database update failed'
       );
       expect(Ticket.update).toHaveBeenCalledWith(11, { status: 'closed' });
     });

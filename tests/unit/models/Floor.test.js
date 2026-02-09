@@ -67,7 +67,7 @@ describe('Floor Model', () => {
       expect(result[0]).toBeValidFloor();
       expect(result[0].name).toBe('Ground Floor');
       expect(pool.query).toHaveBeenCalledWith(
-        expect.stringContaining('WHERE active = true AND is_system = false'),
+        expect.stringContaining('WHERE active = true AND is_system = false')
       );
     });
 
@@ -273,7 +273,7 @@ describe('Floor Model', () => {
 
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
-        expect.stringContaining('ORDER BY is_system DESC, active DESC, sort_order, name'),
+        expect.stringContaining('ORDER BY is_system DESC, active DESC, sort_order, name')
       );
     });
 
@@ -520,7 +520,7 @@ describe('Floor Model', () => {
       expect(result.is_system).toBe(false);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('is_system'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -558,7 +558,7 @@ describe('Floor Model', () => {
       pool.query.mockResolvedValue({ rows: [mockFloor] });
 
       // Act
-      const result = await Floor.create({ name: 'Test Floor' });
+      const _result = await Floor.create({ name: 'Test Floor' });
 
       // Assert
       expect(pool.query).toHaveBeenCalledWith(expect.any(String), ['Test Floor', 0]);
@@ -572,7 +572,7 @@ describe('Floor Model', () => {
 
       // Act & Assert
       await expect(Floor.create({ name: 'Ground Floor', sort_order: 0 })).rejects.toThrow(
-        'duplicate key value',
+        'duplicate key value'
       );
     });
 
@@ -615,7 +615,7 @@ describe('Floor Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('RETURNING *'),
-        expect.any(Array),
+        expect.any(Array)
       );
       expect(result).toBeDefined();
     });
@@ -641,7 +641,7 @@ describe('Floor Model', () => {
       expect(result).toBeValidFloor();
       expect(mockClient.query).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO floors'),
-        expect.any(Array),
+        expect.any(Array)
       );
       expect(pool.query).not.toHaveBeenCalled();
     });
@@ -653,7 +653,7 @@ describe('Floor Model', () => {
 
       // Act & Assert
       await expect(Floor.create({ name: 'Test Floor', sort_order: 0 })).rejects.toThrow(
-        'Database error',
+        'Database error'
       );
     });
   });
@@ -680,7 +680,7 @@ describe('Floor Model', () => {
       expect(result.name).toBe('Updated Floor');
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('WHERE id = $'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -735,7 +735,7 @@ describe('Floor Model', () => {
       expect(result).toBeUndefined();
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('is_system = false'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -759,7 +759,7 @@ describe('Floor Model', () => {
       expect(result).toBeDefined();
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('RETURNING *'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -822,7 +822,7 @@ describe('Floor Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('updated_at = NOW()'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -858,7 +858,7 @@ describe('Floor Model', () => {
       expect(result).toBeValidFloor();
       expect(mockClient.query).toHaveBeenCalledWith(
         expect.stringContaining('UPDATE floors'),
-        expect.any(Array),
+        expect.any(Array)
       );
       expect(pool.query).not.toHaveBeenCalled();
     });
@@ -928,7 +928,7 @@ describe('Floor Model', () => {
       expect(result).toBeValidFloor();
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('RETURNING *'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -962,7 +962,7 @@ describe('Floor Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('updated_at = NOW()'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -1019,7 +1019,7 @@ describe('Floor Model', () => {
       expect(result).toBeValidFloor();
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('RETURNING *'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -1054,7 +1054,7 @@ describe('Floor Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('updated_at = NOW()'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -1080,7 +1080,7 @@ describe('Floor Model', () => {
       expect(result).toBe(5);
       expect(pool.query).toHaveBeenCalledWith(
         'SELECT COUNT(*) as count FROM departments WHERE floor = $1',
-        ['Ground Floor'],
+        ['Ground Floor']
       );
     });
 

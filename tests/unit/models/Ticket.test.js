@@ -53,7 +53,7 @@ describe('Ticket Model', () => {
           ticketData.reporter_department,
           ticketData.reporter_phone,
           ticketData.priority,
-        ]),
+        ])
       );
     });
 
@@ -76,7 +76,7 @@ describe('Ticket Model', () => {
       expect(result.priority).toBe('unset');
       expect(pool.query).toHaveBeenCalledWith(
         expect.any(String),
-        expect.arrayContaining(['unset']),
+        expect.arrayContaining(['unset'])
       );
     });
 
@@ -141,7 +141,7 @@ describe('Ticket Model', () => {
           'high',
           'open',
           false,
-        ],
+        ]
       );
     });
 
@@ -201,7 +201,7 @@ describe('Ticket Model', () => {
       expect(pool.query).toHaveBeenCalledWith(expect.stringContaining('LEFT JOIN users'), [2]);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('u.username as assigned_to_username'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -283,7 +283,7 @@ describe('Ticket Model', () => {
       expect(result).toEqual(mockTickets);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('t.title ILIKE $1 OR t.description ILIKE $1'),
-        ['%login%'],
+        ['%login%']
       );
     });
 
@@ -334,7 +334,7 @@ describe('Ticket Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('ORDER BY t.created_at DESC'),
-        [],
+        []
       );
     });
 
@@ -481,7 +481,7 @@ describe('Ticket Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('updated_at = CURRENT_TIMESTAMP'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 

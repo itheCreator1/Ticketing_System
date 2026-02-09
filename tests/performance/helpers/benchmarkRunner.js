@@ -76,7 +76,7 @@ async function createTestUser(overrides = {}) {
     const userData = createUserData({ role: 'admin', ...overrides });
     const result = await pool.query(
       'INSERT INTO users (username, email, password_hash, role, status) VALUES ($1, $2, $3, $4, $5) RETURNING id, username',
-      [userData.username, userData.email, userData.password_hash, userData.role, userData.status],
+      [userData.username, userData.email, userData.password_hash, userData.role, userData.status]
     );
     return {
       id: result.rows[0].id,
@@ -97,7 +97,7 @@ async function createTestDepartment(name = 'BenchmarkDept') {
   try {
     const result = await pool.query(
       'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5) RETURNING name',
-      [name, 'Benchmark Department', 'Ground Floor', false, true],
+      [name, 'Benchmark Department', 'Ground Floor', false, true]
     );
     return result.rows[0].name;
   } catch (error) {
@@ -121,7 +121,7 @@ async function createTestTicket(overrides = {}) {
         overrides.priority || 'unset',
         overrides.reporter_name || 'BenchmarkUser',
         overrides.reporter_department || 'Internal',
-      ],
+      ]
     );
     return result.rows[0].id;
   } catch (error) {

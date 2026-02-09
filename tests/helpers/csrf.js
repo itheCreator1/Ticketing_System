@@ -31,8 +31,12 @@ function extractCsrfToken(html) {
  * @returns {string[]} Merged cookie array
  */
 function mergeCookies(existing, newer) {
-  if (!existing) return newer || [];
-  if (!newer) return existing;
+  if (!existing) {
+    return newer || [];
+  }
+  if (!newer) {
+    return existing;
+  }
 
   const cookieMap = new Map();
 

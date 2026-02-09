@@ -13,10 +13,7 @@ const request = require('supertest');
 const app = require('../../../app');
 const { setupIntegrationTest, teardownIntegrationTest } = require('../../helpers/database');
 const { createUserData } = require('../../helpers/factories');
-const {
-  fetchCsrfToken,
-  authenticateUser,
-} = require('../../helpers/csrf');
+const { fetchCsrfToken, authenticateUser } = require('../../helpers/csrf');
 const User = require('../../../models/User');
 
 describe('Auth Middleware Integration Tests', () => {
@@ -32,7 +29,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should allow access when user session exists and user is active', async () => {
       // Arrange - Create active user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const _user = await User.create(userData);
 
       const { cookies } = await authenticateUser(app, {
         username: userData.username,
@@ -179,7 +176,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should allow access for role = admin', async () => {
       // Arrange - Create admin user and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const _user = await User.create(userData);
 
       const { cookies, csrfToken } = await authenticateUser(app, {
         username: userData.username,
@@ -212,7 +209,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should allow access for role = super_admin', async () => {
       // Arrange - Create super_admin user and login
       const userData = createUserData({ role: 'super_admin', status: 'active' });
-      const user = await User.create(userData);
+      const _user = await User.create(userData);
 
       const { cookies, csrfToken } = await authenticateUser(app, {
         username: userData.username,
@@ -295,7 +292,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should allow access for role = super_admin only', async () => {
       // Arrange - Create super_admin and login
       const userData = createUserData({ role: 'super_admin', status: 'active' });
-      const user = await User.create(userData);
+      const _user = await User.create(userData);
 
       const { cookies } = await authenticateUser(app, {
         username: userData.username,
@@ -313,7 +310,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should return 403 for role = admin (not super_admin)', async () => {
       // Arrange - Create regular admin and login
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const _user = await User.create(userData);
 
       const { cookies } = await authenticateUser(app, {
         username: userData.username,
@@ -349,7 +346,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should set specific error message for super_admin requirement', async () => {
       // Arrange - Create regular admin
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const _user = await User.create(userData);
 
       const { cookies } = await authenticateUser(app, {
         username: userData.username,
@@ -367,7 +364,7 @@ describe('Auth Middleware Integration Tests', () => {
     it('should reject access for user management operations', async () => {
       // Arrange - Create regular admin
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const _user = await User.create(userData);
 
       const { cookies, csrfToken } = await authenticateUser(app, {
         username: userData.username,
@@ -426,7 +423,7 @@ describe('Auth Middleware Integration Tests', () => {
 
       // Create a valid session but we'll rely on the error handling
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const _user = await User.create(userData);
 
       const { cookies } = await authenticateUser(app, {
         username: userData.username,

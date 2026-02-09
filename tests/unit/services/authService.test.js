@@ -83,7 +83,7 @@ describe('AuthService', () => {
         expect(result).toBeNull();
         expect(bcrypt.compare).toHaveBeenCalledWith(
           'password123',
-          expect.stringContaining('$2a$10$invalidhash'),
+          expect.stringContaining('$2a$10$invalidhash')
         );
       });
 
@@ -316,7 +316,7 @@ describe('AuthService', () => {
 
         // Act & Assert
         await expect(authService.authenticate('testuser', 'password')).rejects.toThrow(
-          'Database connection failed',
+          'Database connection failed'
         );
       });
 

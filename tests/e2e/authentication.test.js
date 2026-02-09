@@ -36,14 +36,11 @@ describe('Authentication E2E Tests', () => {
       // Step 2: Attempt login with wrong password 5 times
       const { csrfToken, cookies } = await fetchCsrfToken(app);
       for (let i = 1; i <= 5; i++) {
-        const response = await request(app)
-          .post('/auth/login')
-          .set('Cookie', cookies)
-          .send({
-            username: userData.username,
-            password: 'WrongPassword123!',
-            _csrf: csrfToken,
-          });
+        const response = await request(app).post('/auth/login').set('Cookie', cookies).send({
+          username: userData.username,
+          password: 'WrongPassword123!',
+          _csrf: csrfToken,
+        });
 
         // Should redirect back to login
         expect(response.status).toBe(302);
@@ -77,14 +74,11 @@ describe('Authentication E2E Tests', () => {
 
       // Step 6: Verify successful login works after unlock
       const { csrfToken: csrfToken3, cookies: cookies3 } = await fetchCsrfToken(app);
-      const successResponse = await request(app)
-        .post('/auth/login')
-        .set('Cookie', cookies3)
-        .send({
-          username: userData.username,
-          password: userData.password,
-          _csrf: csrfToken3,
-        });
+      const successResponse = await request(app).post('/auth/login').set('Cookie', cookies3).send({
+        username: userData.username,
+        password: userData.password,
+        _csrf: csrfToken3,
+      });
 
       expect(successResponse.status).toBe(302);
       expect(successResponse.headers.location).toBe('/admin/dashboard');
@@ -104,19 +98,16 @@ describe('Authentication E2E Tests', () => {
     it('should increment login_attempts on each failed attempt', async () => {
       // Arrange
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const _user = await User.create(userData);
 
       // Act & Assert - Test incremental locking
       const { csrfToken, cookies } = await fetchCsrfToken(app);
       for (let attempt = 1; attempt <= 5; attempt++) {
-        await request(app)
-          .post('/auth/login')
-          .set('Cookie', cookies)
-          .send({
-            username: userData.username,
-            password: 'WrongPassword!',
-            _csrf: csrfToken,
-          });
+        await request(app).post('/auth/login').set('Cookie', cookies).send({
+          username: userData.username,
+          password: 'WrongPassword!',
+          _csrf: csrfToken,
+        });
 
         const userCheck = await User.findByUsernameWithPassword(userData.username);
         expect(userCheck.login_attempts).toBe(attempt);
@@ -133,14 +124,11 @@ describe('Authentication E2E Tests', () => {
 
       // Act - Try to login with correct password
       const { csrfToken, cookies } = await fetchCsrfToken(app);
-      const response = await request(app)
-        .post('/auth/login')
-        .set('Cookie', cookies)
-        .send({
-          username: userData.username,
-          password: userData.password,
-          _csrf: csrfToken,
-        });
+      const response = await request(app).post('/auth/login').set('Cookie', cookies).send({
+        username: userData.username,
+        password: userData.password,
+        _csrf: csrfToken,
+      });
 
       // Assert - Should be rejected (redirect to login, not dashboard)
       expect(response.status).toBe(302);
@@ -167,14 +155,11 @@ describe('Authentication E2E Tests', () => {
 
       // Act - Successful login
       const { csrfToken, cookies } = await fetchCsrfToken(app);
-      await request(app)
-        .post('/auth/login')
-        .set('Cookie', cookies)
-        .send({
-          username: userData.username,
-          password: userData.password,
-          _csrf: csrfToken,
-        });
+      await request(app).post('/auth/login').set('Cookie', cookies).send({
+        username: userData.username,
+        password: userData.password,
+        _csrf: csrfToken,
+      });
 
       // Assert
       const userAfter = await User.findByUsernameWithPassword(userData.username);
@@ -186,7 +171,7 @@ describe('Authentication E2E Tests', () => {
     it('should complete full session lifecycle', async () => {
       // Step 1: Create user
       const userData = createUserData({ role: 'admin', status: 'active' });
-      const user = await User.create(userData);
+      const _user = await User.create(userData);
 
       // Step 2: Login - Session created
       const { cookies, csrfToken } = await authenticateUser(app, {
@@ -197,15 +182,11 @@ describe('Authentication E2E Tests', () => {
       expect(cookies).toBeDefined();
 
       // Step 3: Session persists across requests
-      const dashboardResponse1 = await request(app)
-        .get('/admin/dashboard')
-        .set('Cookie', cookies);
+      const dashboardResponse1 = await request(app).get('/admin/dashboard').set('Cookie', cookies);
 
       expect(dashboardResponse1.status).toBe(200);
 
-      const dashboardResponse2 = await request(app)
-        .get('/admin/dashboard')
-        .set('Cookie', cookies);
+      const dashboardResponse2 = await request(app).get('/admin/dashboard').set('Cookie', cookies);
 
       expect(dashboardResponse2.status).toBe(200);
 
@@ -219,9 +200,7 @@ describe('Authentication E2E Tests', () => {
       expect(logoutResponse.headers.location).toBe('/auth/login');
 
       // Step 5: Access protected route without session - Redirects to login
-      const afterLogoutResponse = await request(app)
-        .get('/admin/dashboard')
-        .set('Cookie', cookies);
+      const afterLogoutResponse = await request(app).get('/admin/dashboard').set('Cookie', cookies);
 
       expect(afterLogoutResponse.status).toBe(302);
       expect(afterLogoutResponse.headers.location).toBe('/auth/login');
@@ -263,10 +242,7 @@ describe('Authentication E2E Tests', () => {
       });
 
       // Act - Logout
-      await request(app)
-        .post('/auth/logout')
-        .set('Cookie', cookies)
-        .send({ _csrf: csrfToken });
+      await request(app).post('/auth/logout').set('Cookie', cookies).send({ _csrf: csrfToken });
 
       // Assert - Try to use old session
       const response = await request(app).get('/admin/dashboard').set('Cookie', cookies);
@@ -300,8 +276,8 @@ describe('Authentication E2E Tests', () => {
       const user1Data = createUserData({ role: 'admin', status: 'active' });
       const user2Data = createUserData({ role: 'super_admin', status: 'active' });
 
-      const user1 = await User.create(user1Data);
-      const user2 = await User.create(user2Data);
+      const _user1 = await User.create(user1Data);
+      const _user2 = await User.create(user2Data);
 
       // Step 2: Login both users
       const { cookies: cookies1 } = await authenticateUser(app, {
@@ -315,15 +291,11 @@ describe('Authentication E2E Tests', () => {
       });
 
       // Step 3: Both should access their respective routes
-      const user1Dashboard = await request(app)
-        .get('/admin/dashboard')
-        .set('Cookie', cookies1);
+      const user1Dashboard = await request(app).get('/admin/dashboard').set('Cookie', cookies1);
 
       expect(user1Dashboard.status).toBe(200);
 
-      const user2Dashboard = await request(app)
-        .get('/admin/dashboard')
-        .set('Cookie', cookies2);
+      const user2Dashboard = await request(app).get('/admin/dashboard').set('Cookie', cookies2);
 
       expect(user2Dashboard.status).toBe(200);
 
@@ -379,14 +351,11 @@ describe('Authentication E2E Tests', () => {
 
       // Step 2: Attempt login
       const { csrfToken, cookies } = await fetchCsrfToken(app);
-      const response = await request(app)
-        .post('/auth/login')
-        .set('Cookie', cookies)
-        .send({
-          username: userData.username,
-          password: userData.password,
-          _csrf: csrfToken,
-        });
+      const response = await request(app).post('/auth/login').set('Cookie', cookies).send({
+        username: userData.username,
+        password: userData.password,
+        _csrf: csrfToken,
+      });
 
       // Step 3: Verify rejection (redirect to login, not dashboard)
       expect(response.status).toBe(302);
@@ -410,14 +379,11 @@ describe('Authentication E2E Tests', () => {
 
       // Act
       const { csrfToken, cookies } = await fetchCsrfToken(app);
-      const response = await request(app)
-        .post('/auth/login')
-        .set('Cookie', cookies)
-        .send({
-          username: userData.username,
-          password: userData.password,
-          _csrf: csrfToken,
-        });
+      const response = await request(app).post('/auth/login').set('Cookie', cookies).send({
+        username: userData.username,
+        password: userData.password,
+        _csrf: csrfToken,
+      });
 
       // Assert
       expect(response.status).toBe(302);
@@ -435,9 +401,7 @@ describe('Authentication E2E Tests', () => {
       });
 
       // Step 2: Verify access works
-      const beforeDeactivate = await request(app)
-        .get('/admin/dashboard')
-        .set('Cookie', cookies);
+      const beforeDeactivate = await request(app).get('/admin/dashboard').set('Cookie', cookies);
 
       expect(beforeDeactivate.status).toBe(200);
 
@@ -445,9 +409,7 @@ describe('Authentication E2E Tests', () => {
       await User.update(user.id, { status: 'inactive' });
 
       // Step 4: Try to access - should be redirected
-      const afterDeactivate = await request(app)
-        .get('/admin/dashboard')
-        .set('Cookie', cookies);
+      const afterDeactivate = await request(app).get('/admin/dashboard').set('Cookie', cookies);
 
       expect(afterDeactivate.status).toBe(302);
       expect(afterDeactivate.headers.location).toBe('/auth/login');
@@ -463,14 +425,11 @@ describe('Authentication E2E Tests', () => {
 
       // Act
       const { csrfToken, cookies } = await fetchCsrfToken(app);
-      await request(app)
-        .post('/auth/login')
-        .set('Cookie', cookies)
-        .send({
-          username: userData.username,
-          password: userData.password,
-          _csrf: csrfToken,
-        });
+      await request(app).post('/auth/login').set('Cookie', cookies).send({
+        username: userData.username,
+        password: userData.password,
+        _csrf: csrfToken,
+      });
 
       // Assert
       const userAfter = await User.findById(user.id);
@@ -488,26 +447,20 @@ describe('Authentication E2E Tests', () => {
 
       // Act - Test timing for existing user
       const start1 = Date.now();
-      await request(app)
-        .post('/auth/login')
-        .set('Cookie', cookies)
-        .send({
-          username: userData.username,
-          password: 'WrongPassword123!',
-          _csrf: csrfToken,
-        });
+      await request(app).post('/auth/login').set('Cookie', cookies).send({
+        username: userData.username,
+        password: 'WrongPassword123!',
+        _csrf: csrfToken,
+      });
       const duration1 = Date.now() - start1;
 
       // Act - Test timing for non-existent user
       const start2 = Date.now();
-      await request(app)
-        .post('/auth/login')
-        .set('Cookie', cookies)
-        .send({
-          username: 'nonexistentuser12345',
-          password: 'WrongPassword123!',
-          _csrf: csrfToken,
-        });
+      await request(app).post('/auth/login').set('Cookie', cookies).send({
+        username: 'nonexistentuser12345',
+        password: 'WrongPassword123!',
+        _csrf: csrfToken,
+      });
       const duration2 = Date.now() - start2;
 
       // Assert - Timing should be similar (within 200ms)

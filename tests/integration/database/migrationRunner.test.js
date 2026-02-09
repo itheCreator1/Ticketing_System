@@ -5,7 +5,7 @@
  * and produces the expected final schema state.
  */
 
-const pool = require('../../../config/database');
+const _pool = require('../../../config/database');
 const {
   setupTestDatabase,
   teardownTestDatabase,
@@ -15,7 +15,7 @@ const {
   getTableNames,
   getTableColumns,
   getPrimaryKeyColumns,
-  getCheckConstraints,
+  getCheckConstraints: _getCheckConstraints,
   verifyCheckConstraint,
   getTableIndexes,
   getForeignKeys,
@@ -142,7 +142,7 @@ describe('Migration Runner (init-db.js)', () => {
       // Arrange
       await getTestClient().query(
         'INSERT INTO tickets (title, description, status, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5)',
-        ['Test', 'Description', 'open', 'Reporter', 'Internal'],
+        ['Test', 'Description', 'open', 'Reporter', 'Internal']
       );
 
       // Act
@@ -227,7 +227,7 @@ describe('Migration Runner (init-db.js)', () => {
       // Act & Assert - Can create ticket with Internal department (Internal dept created by seed data)
       const ticketResult = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-        ['Internal Ticket', 'Admin only', 'open', 'unset', 'Admin', 'Internal'],
+        ['Internal Ticket', 'Admin only', 'open', 'unset', 'Admin', 'Internal']
       );
 
       expect(ticketResult.rows[0].id).toBeDefined();
@@ -381,35 +381,35 @@ describe('Migration Runner (init-db.js)', () => {
       // Department (required for tickets and users)
       const dept = await getTestClient().query(
         'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        ['Test Dept', 'Test', 'Ground Floor', false, true],
+        ['Test Dept', 'Test', 'Ground Floor', false, true]
       );
       expect(dept.rows[0].id).toBeDefined();
 
       // User
       const user = await getTestClient().query(
         'INSERT INTO users (username, email, password_hash, role, status) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        ['testuser', 'test@test.com', 'hash', 'admin', 'active'],
+        ['testuser', 'test@test.com', 'hash', 'admin', 'active']
       );
       expect(user.rows[0].id).toBeDefined();
 
       // Ticket
       const ticket = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-        ['Title', 'Desc', 'open', 'unset', 'Reporter', 'Test Dept'],
+        ['Title', 'Desc', 'open', 'unset', 'Reporter', 'Test Dept']
       );
       expect(ticket.rows[0].id).toBeDefined();
 
       // Comment
       const comment = await getTestClient().query(
         'INSERT INTO comments (ticket_id, user_id, content, visibility_type) VALUES ($1, $2, $3, $4) RETURNING id',
-        [ticket.rows[0].id, user.rows[0].id, 'Content', 'public'],
+        [ticket.rows[0].id, user.rows[0].id, 'Content', 'public']
       );
       expect(comment.rows[0].id).toBeDefined();
 
       // Audit Log
       const audit = await getTestClient().query(
         'INSERT INTO audit_logs (actor_id, action, target_type, target_id, ip_address) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        [user.rows[0].id, 'CREATE', 'ticket', ticket.rows[0].id, '127.0.0.1'],
+        [user.rows[0].id, 'CREATE', 'ticket', ticket.rows[0].id, '127.0.0.1']
       );
       expect(audit.rows[0].id).toBeDefined();
     });
@@ -457,7 +457,7 @@ describe('Migration Runner (init-db.js)', () => {
       // Act & Assert
       const result = await getTestClient().query(
         'INSERT INTO floors (name, sort_order, is_system, active) VALUES ($1, $2, $3, $4) RETURNING id',
-        ['Test Floor', 0, false, true],
+        ['Test Floor', 0, false, true]
       );
       expect(result.rows[0].id).toBeDefined();
     });
@@ -479,13 +479,13 @@ describe('Migration Runner (init-db.js)', () => {
       // Arrange - Create a valid floor first
       await getTestClient().query(
         'INSERT INTO floors (name, sort_order, is_system, active) VALUES ($1, $2, $3, $4)',
-        ['Valid Floor', 0, false, true],
+        ['Valid Floor', 0, false, true]
       );
 
       // Act & Assert - Valid floor should work
       const result = await getTestClient().query(
         'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5) RETURNING floor',
-        ['Test Dept', 'Test', 'Valid Floor', false, true],
+        ['Test Dept', 'Test', 'Valid Floor', false, true]
       );
       expect(result.rows[0].floor).toBe('Valid Floor');
 
@@ -493,8 +493,8 @@ describe('Migration Runner (init-db.js)', () => {
       await expect(
         getTestClient().query(
           'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5)',
-          ['Test Dept 2', 'Test', 'Non-Existent Floor', false, true],
-        ),
+          ['Test Dept 2', 'Test', 'Non-Existent Floor', false, true]
+        )
       ).rejects.toThrow();
     });
   });
@@ -503,7 +503,7 @@ describe('Migration Runner (init-db.js)', () => {
     it('should have removed hardcoded system floors from new installations', async () => {
       // Act - Query floors table
       const result = await getTestClient().query(
-        'SELECT COUNT(*) as count FROM floors WHERE is_system = true',
+        'SELECT COUNT(*) as count FROM floors WHERE is_system = true'
       );
 
       // Assert - Should be 0 after Migration 024
@@ -515,7 +515,7 @@ describe('Migration Runner (init-db.js)', () => {
       // Act - Create floors from config
       const result = await getTestClient().query(
         'INSERT INTO floors (name, sort_order, is_system, active) VALUES ($1, $2, $3, $4) RETURNING id',
-        ['Custom Floor', 0, false, true],
+        ['Custom Floor', 0, false, true]
       );
 
       // Assert
@@ -534,8 +534,8 @@ describe('Migration Runner (init-db.js)', () => {
       await expect(
         getTestClient().query(
           'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5)',
-          ['Test Dept', 'Test', 'Non-Existent Floor', false, true],
-        ),
+          ['Test Dept', 'Test', 'Non-Existent Floor', false, true]
+        )
       ).rejects.toThrow();
     });
   });
@@ -558,13 +558,13 @@ describe('Migration Runner (init-db.js)', () => {
       // Arrange - Create a floor first (since migration 024 removes hardcoded ones)
       await getTestClient().query(
         'INSERT INTO floors (name, sort_order, is_system, active) VALUES ($1, $2, $3, $4)',
-        ['Test Migration Floor', 0, false, true],
+        ['Test Migration Floor', 0, false, true]
       );
 
       // Act & Assert
       const result = await getTestClient().query(
         'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5) RETURNING floor',
-        ['Migration 020 Test', 'Test', 'Test Migration Floor', false, true],
+        ['Migration 020 Test', 'Test', 'Test Migration Floor', false, true]
       );
       expect(result.rows[0].floor).toBe('Test Migration Floor');
     });
@@ -612,7 +612,7 @@ describe('Migration Runner (init-db.js)', () => {
       // Verify Internal is marked as system
       const internal = await getTestClient().query(
         'SELECT is_system FROM departments WHERE name = $1',
-        ['Internal'],
+        ['Internal']
       );
       expect(internal.rows.length).toBeGreaterThan(0);
       expect(internal.rows[0].is_system).toBe(true);

@@ -61,7 +61,7 @@ describe('Error Handler Middleware', () => {
           errorCategory: 'NOT_FOUND',
           isDevelopment: true,
           stackTrace: expect.any(String),
-        }),
+        })
       );
       expect(logger.error).toHaveBeenCalledWith(
         'Error handler caught exception',
@@ -70,7 +70,7 @@ describe('Error Handler Middleware', () => {
           status: 404,
           url: '/not-found',
           method: 'GET',
-        }),
+        })
       );
     });
 
@@ -102,7 +102,7 @@ describe('Error Handler Middleware', () => {
           errorCategory: 'FORBIDDEN',
           isDevelopment: true,
           stackTrace: expect.any(String),
-        }),
+        })
       );
     });
 
@@ -134,7 +134,7 @@ describe('Error Handler Middleware', () => {
           errorCategory: 'SERVER_ERROR',
           isDevelopment: true,
           stackTrace: expect.any(String),
-        }),
+        })
       );
     });
 
@@ -166,7 +166,7 @@ describe('Error Handler Middleware', () => {
           errorCategory: 'CLIENT_ERROR',
           isDevelopment: true,
           stackTrace: expect.any(String),
-        }),
+        })
       );
     });
 
@@ -198,7 +198,7 @@ describe('Error Handler Middleware', () => {
           errorCategory: 'SERVER_ERROR',
           isDevelopment: false,
           stackTrace: null,
-        }),
+        })
       );
     });
 
@@ -230,7 +230,7 @@ describe('Error Handler Middleware', () => {
           errorCategory: 'CLIENT_ERROR',
           isDevelopment: false,
           stackTrace: null,
-        }),
+        })
       );
     });
 
@@ -262,7 +262,7 @@ describe('Error Handler Middleware', () => {
           errorCategory: 'SERVER_ERROR',
           isDevelopment: true,
           stackTrace: expect.any(String),
-        }),
+        })
       );
     });
 
@@ -356,7 +356,7 @@ describe('Error Handler Middleware', () => {
           headers: expect.any(Object),
           ip: '127.0.0.1',
           userAgent: undefined,
-        }),
+        })
       );
     });
 
@@ -380,7 +380,7 @@ describe('Error Handler Middleware', () => {
         'errors/500',
         expect.objectContaining({
           status: 500,
-        }),
+        })
       );
     });
 
@@ -404,7 +404,7 @@ describe('Error Handler Middleware', () => {
         'errors/500',
         expect.objectContaining({
           message: 'Something went wrong',
-        }),
+        })
       );
     });
 
@@ -429,7 +429,7 @@ describe('Error Handler Middleware', () => {
         'errors/404',
         expect.objectContaining({
           user: { id: 1, username: 'testuser', role: 'admin' },
-        }),
+        })
       );
     });
 
@@ -453,7 +453,7 @@ describe('Error Handler Middleware', () => {
         'Error handler caught exception',
         expect.objectContaining({
           stack: expect.any(String),
-        }),
+        })
       );
     });
   });

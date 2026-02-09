@@ -16,7 +16,7 @@ const {
   runBenchmark,
   printResults,
   createTestUser,
-  seedBenchmarkData,
+  _seedBenchmarkData,
   cleanupBenchmarkData,
   formatLatency,
   meetsLodgingSLA,
@@ -43,7 +43,7 @@ async function startServer() {
       resave: false,
       saveUninitialized: false,
       cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
-    }),
+    })
   );
 
   app.use(express.urlencoded({ extended: true }));

@@ -46,12 +46,14 @@ describe('User Model', () => {
       // Assert
       expect(result).toEqual(mockUser);
       expect(pool.query).toHaveBeenCalledWith(
-        expect.stringContaining('SELECT id, username, email, role, status, department, login_attempts, last_login_at, deleted_at, created_at, updated_at'),
-        [1],
+        expect.stringContaining(
+          'SELECT id, username, email, role, status, department, login_attempts, last_login_at, deleted_at, created_at, updated_at'
+        ),
+        [1]
       );
       expect(pool.query).toHaveBeenCalledWith(
         expect.not.stringContaining('password_hash'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -224,7 +226,7 @@ describe('User Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.any(String),
-        expect.arrayContaining(['admin']),
+        expect.arrayContaining(['admin'])
       );
     });
 
@@ -245,7 +247,7 @@ describe('User Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.any(String),
-        expect.arrayContaining(['super_admin']),
+        expect.arrayContaining(['super_admin'])
       );
     });
 
@@ -350,7 +352,7 @@ describe('User Model', () => {
       expect(result).toEqual(mockUpdatedUser);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('username = $1'),
-        expect.arrayContaining(['newusername', 1]),
+        expect.arrayContaining(['newusername', 1])
       );
     });
 
@@ -366,7 +368,7 @@ describe('User Model', () => {
       expect(result).toEqual(mockUpdatedUser);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('email = $1'),
-        expect.arrayContaining(['newemail@example.com', 1]),
+        expect.arrayContaining(['newemail@example.com', 1])
       );
     });
 
@@ -382,7 +384,7 @@ describe('User Model', () => {
       expect(result).toEqual(mockUpdatedUser);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('role = $1'),
-        expect.arrayContaining(['super_admin', 1]),
+        expect.arrayContaining(['super_admin', 1])
       );
     });
 
@@ -398,7 +400,7 @@ describe('User Model', () => {
       expect(result).toEqual(mockUpdatedUser);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('status = $1'),
-        expect.arrayContaining(['inactive', 1]),
+        expect.arrayContaining(['inactive', 1])
       );
     });
 
@@ -413,7 +415,7 @@ describe('User Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('deleted_at = CURRENT_TIMESTAMP'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -429,7 +431,7 @@ describe('User Model', () => {
       expect(result).toEqual(mockUpdatedUser);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('department = $1'),
-        expect.arrayContaining(['Finance', 1]),
+        expect.arrayContaining(['Finance', 1])
       );
     });
 
@@ -445,7 +447,7 @@ describe('User Model', () => {
       expect(result).toEqual(mockUpdatedUser);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('department = $1'),
-        expect.arrayContaining([null, 1]),
+        expect.arrayContaining([null, 1])
       );
     });
 
@@ -460,7 +462,7 @@ describe('User Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.not.stringContaining('email ='),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -474,7 +476,7 @@ describe('User Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('updated_at = CURRENT_TIMESTAMP'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
   });
@@ -494,7 +496,7 @@ describe('User Model', () => {
       expect(bcrypt.hash).toHaveBeenCalledWith(newPassword, 10);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('UPDATE users SET password_hash = $1'),
-        [hashedPassword, 1],
+        [hashedPassword, 1]
       );
     });
 
@@ -509,7 +511,7 @@ describe('User Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('password_changed_at = CURRENT_TIMESTAMP'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
   });
@@ -536,7 +538,7 @@ describe('User Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('deleted_at = CURRENT_TIMESTAMP'),
-        [1],
+        [1]
       );
     });
   });
@@ -552,7 +554,7 @@ describe('User Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('last_login_at = CURRENT_TIMESTAMP'),
-        [1],
+        [1]
       );
     });
 
@@ -579,7 +581,7 @@ describe('User Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('login_attempts = login_attempts + 1'),
-        ['testuser'],
+        ['testuser']
       );
     });
   });
@@ -595,7 +597,7 @@ describe('User Model', () => {
       // Assert
       expect(result).toBe(3);
       expect(pool.query).toHaveBeenCalledWith(
-        expect.stringContaining("role = 'super_admin' AND status = 'active'"),
+        expect.stringContaining("role = 'super_admin' AND status = 'active'")
       );
     });
 

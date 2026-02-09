@@ -295,7 +295,7 @@ describe('Auth Middleware', () => {
         req,
         res,
         expect.stringContaining('permission'),
-        expect.any(String),
+        expect.any(String)
       );
     });
   });
@@ -369,7 +369,7 @@ describe('Auth Middleware', () => {
         req,
         res,
         expect.stringContaining('Super admin'),
-        expect.any(String),
+        expect.any(String)
       );
     });
   });

@@ -33,7 +33,7 @@ async function getTableColumns(tableName) {
     WHERE table_name = $1 AND table_schema = 'public'
     ORDER BY ordinal_position
   `,
-    [tableName],
+    [tableName]
   );
   return result.rows;
 }
@@ -51,7 +51,7 @@ async function columnExists(tableName, columnName) {
     FROM information_schema.columns
     WHERE table_name = $1 AND column_name = $2 AND table_schema = 'public'
   `,
-    [tableName, columnName],
+    [tableName, columnName]
   );
   return result.rows.length > 0;
 }
@@ -69,7 +69,7 @@ async function getTableIndexes(tableName) {
     WHERE tablename = $1 AND schemaname = 'public'
     ORDER BY indexname
   `,
-    [tableName],
+    [tableName]
   );
   return result.rows;
 }
@@ -86,7 +86,7 @@ async function getUniqueConstraints(tableName) {
     FROM information_schema.table_constraints
     WHERE table_name = $1 AND constraint_type = 'UNIQUE' AND table_schema = 'public'
   `,
-    [tableName],
+    [tableName]
   );
   return result.rows.map((r) => r.constraint_name);
 }
@@ -106,7 +106,7 @@ async function getPrimaryKeyColumns(tableName) {
     WHERE t.relname = $1 AND c.contype = 'p'
     ORDER BY a.attnum
   `,
-    [tableName],
+    [tableName]
   );
   return result.rows.map((r) => r.attname);
 }
@@ -145,7 +145,7 @@ async function getForeignKeys(tableName) {
       AND rc.constraint_schema = kcu2.table_schema
     WHERE kcu.table_name = $1 AND kcu.table_schema = 'public'
   `,
-    [tableName],
+    [tableName]
   );
   return result.rows;
 }
@@ -164,7 +164,7 @@ async function getCheckConstraints(tableName) {
       ON cc.constraint_name = tc.constraint_name
     WHERE tc.table_name = $1 AND tc.table_schema = 'public'
   `,
-    [tableName],
+    [tableName]
   );
   return result.rows;
 }
@@ -179,7 +179,7 @@ async function getCheckConstraints(tableName) {
 async function verifyCheckConstraint(tableName, columnName, allowedValues) {
   const constraints = await getCheckConstraints(tableName);
   const checkConstraint = constraints.find(
-    (c) => c.check_clause && c.check_clause.includes(columnName),
+    (c) => c.check_clause && c.check_clause.includes(columnName)
   );
 
   if (!checkConstraint) {
@@ -218,7 +218,7 @@ async function getColumnDataType(tableName, columnName) {
     FROM information_schema.columns
     WHERE table_name = $1 AND column_name = $2 AND table_schema = 'public'
   `,
-    [tableName, columnName],
+    [tableName, columnName]
   );
 
   if (result.rows.length === 0) {
@@ -241,7 +241,7 @@ async function isColumnNullable(tableName, columnName) {
     FROM information_schema.columns
     WHERE table_name = $1 AND column_name = $2 AND table_schema = 'public'
   `,
-    [tableName, columnName],
+    [tableName, columnName]
   );
 
   if (result.rows.length === 0) {
@@ -264,7 +264,7 @@ async function getColumnMaxLength(tableName, columnName) {
     FROM information_schema.columns
     WHERE table_name = $1 AND column_name = $2 AND table_schema = 'public'
   `,
-    [tableName, columnName],
+    [tableName, columnName]
   );
 
   if (result.rows.length === 0) {
@@ -287,7 +287,7 @@ async function getColumnDefault(tableName, columnName) {
     FROM information_schema.columns
     WHERE table_name = $1 AND column_name = $2 AND table_schema = 'public'
   `,
-    [tableName, columnName],
+    [tableName, columnName]
   );
 
   if (result.rows.length === 0) {

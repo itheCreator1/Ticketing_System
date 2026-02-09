@@ -191,7 +191,7 @@ describe('Seed Validator', () => {
       ];
       const errors = seedValidator.validateDepartments(departments, validFloors);
       expect(errors.some((e) => e.includes('User is required for non-Internal departments'))).toBe(
-        true,
+        true
       );
     });
 

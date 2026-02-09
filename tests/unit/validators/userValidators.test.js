@@ -503,7 +503,7 @@ describe('User Validators', () => {
         expect(result.isEmpty()).toBe(false);
         const errors = result.array();
         expect(errors.some((e) => e.path === 'department' && e.msg.includes('required'))).toBe(
-          true,
+          true
         );
       });
 
@@ -529,7 +529,7 @@ describe('User Validators', () => {
         expect(result.isEmpty()).toBe(false);
         const errors = result.array();
         expect(errors.some((e) => e.path === 'department' && e.msg.includes('required'))).toBe(
-          true,
+          true
         );
       });
 

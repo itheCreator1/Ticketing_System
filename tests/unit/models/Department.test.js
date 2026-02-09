@@ -68,7 +68,7 @@ describe('Department Model', () => {
       expect(result).toHaveLength(2);
       expect(result[0]).toBeValidDepartment();
       expect(pool.query).toHaveBeenCalledWith(
-        expect.stringContaining('WHERE active = true AND is_system = false'),
+        expect.stringContaining('WHERE active = true AND is_system = false')
       );
     });
 
@@ -125,7 +125,7 @@ describe('Department Model', () => {
       // Assert
       expect(result).toHaveLength(2);
       expect(pool.query).toHaveBeenCalledWith(
-        expect.stringContaining('WHERE active = true ORDER BY name'),
+        expect.stringContaining('WHERE active = true ORDER BY name')
       );
       expect(pool.query).not.toHaveBeenCalledWith(expect.stringContaining('is_system = false'));
     });
@@ -327,7 +327,7 @@ describe('Department Model', () => {
 
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
-        expect.stringContaining('ORDER BY is_system DESC, active DESC, name'),
+        expect.stringContaining('ORDER BY is_system DESC, active DESC, name')
       );
     });
 
@@ -558,7 +558,7 @@ describe('Department Model', () => {
       expect(result.is_system).toBe(false);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('is_system, active'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -610,7 +610,7 @@ describe('Department Model', () => {
 
       // Act & Assert
       await expect(
-        Department.create({ name: 'Cardiology', description: 'Heart care' }),
+        Department.create({ name: 'Cardiology', description: 'Heart care' })
       ).rejects.toThrow('duplicate key value');
     });
 
@@ -641,7 +641,7 @@ describe('Department Model', () => {
 
       // Act & Assert
       await expect(Department.create({ name: longName, description: 'Test' })).rejects.toThrow(
-        'value too long',
+        'value too long'
       );
     });
 
@@ -652,7 +652,7 @@ describe('Department Model', () => {
 
       // Act & Assert
       await expect(
-        Department.create({ name: 'Neurology', description: 'Brain care' }),
+        Department.create({ name: 'Neurology', description: 'Brain care' })
       ).rejects.toThrow('Database error');
     });
   });
@@ -679,7 +679,7 @@ describe('Department Model', () => {
       expect(result.name).toBe('Updated Name');
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('WHERE id = $2 AND is_system = false'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -733,7 +733,7 @@ describe('Department Model', () => {
       expect(result).toBeUndefined();
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('is_system = false'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -756,7 +756,7 @@ describe('Department Model', () => {
       expect(result).toBeValidDepartment();
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('RETURNING *'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -808,7 +808,7 @@ describe('Department Model', () => {
 
       // Act & Assert
       await expect(Department.update(1, { name: 'Existing Name' })).rejects.toThrow(
-        'duplicate key value',
+        'duplicate key value'
       );
     });
 
@@ -886,7 +886,7 @@ describe('Department Model', () => {
       expect(result).toBeValidDepartment();
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('RETURNING *'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -919,7 +919,7 @@ describe('Department Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('updated_at = NOW()'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -945,7 +945,7 @@ describe('Department Model', () => {
       expect(result).toBe(5);
       expect(pool.query).toHaveBeenCalledWith(
         'SELECT COUNT(*) as count FROM users WHERE department = $1',
-        ['Cardiology'],
+        ['Cardiology']
       );
     });
 
@@ -971,7 +971,7 @@ describe('Department Model', () => {
       expect(result).toBe(10);
       expect(pool.query).not.toHaveBeenCalledWith(
         expect.stringContaining('status ='),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -997,7 +997,7 @@ describe('Department Model', () => {
       expect(result).toBe(15);
       expect(pool.query).toHaveBeenCalledWith(
         'SELECT COUNT(*) as count FROM tickets WHERE reporter_department = $1',
-        ['Cardiology'],
+        ['Cardiology']
       );
     });
 
@@ -1023,7 +1023,7 @@ describe('Department Model', () => {
       expect(result).toBe(25);
       expect(pool.query).not.toHaveBeenCalledWith(
         expect.stringContaining('status ='),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -1080,7 +1080,7 @@ describe('Department Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('ORDER BY username'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -1116,7 +1116,7 @@ describe('Department Model', () => {
       expect(result).toHaveLength(1);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('WHERE (department != $1 OR department IS NULL)'),
-        ['Cardiology'],
+        ['Cardiology']
       );
     });
 
@@ -1130,11 +1130,11 @@ describe('Department Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining("role = 'department'"),
-        expect.any(Array),
+        expect.any(Array)
       );
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining("status = 'active'"),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 

@@ -13,8 +13,8 @@ const pool = require('../../config/database');
 const {
   runBenchmark,
   printResults,
-  createTestUser,
-  createTestTicket,
+  _createTestUser,
+  _createTestTicket,
   seedBenchmarkData,
   cleanupBenchmarkData,
   formatLatency,
@@ -39,7 +39,7 @@ async function startServer() {
       const ticketId = parseInt(req.params.id);
       const result = await pool.query(
         'INSERT INTO comments (ticket_id, user_id, content, visibility_type) VALUES ($1, $2, $3, $4) RETURNING id',
-        [ticketId, testData.user.id, 'Benchmark comment', 'public'],
+        [ticketId, testData.user.id, 'Benchmark comment', 'public']
       );
 
       // Auto-update ticket status
@@ -59,7 +59,7 @@ async function startServer() {
     try {
       const result = await pool.query(
         'SELECT id, user_id, content, visibility_type, created_at FROM comments WHERE ticket_id = $1 ORDER BY created_at DESC',
-        [parseInt(req.params.id)],
+        [parseInt(req.params.id)]
       );
       res.status(200).json({ comments: result.rows });
     } catch (error) {
@@ -72,7 +72,7 @@ async function startServer() {
     try {
       const result = await pool.query(
         'SELECT id, user_id, content, created_at FROM comments WHERE ticket_id = $1 AND visibility_type = $2 ORDER BY created_at DESC',
-        [parseInt(req.params.id), 'public'],
+        [parseInt(req.params.id), 'public']
       );
       res.status(200).json({ comments: result.rows });
     } catch (error) {
@@ -125,7 +125,7 @@ async function runAllBenchmarks() {
       const visibility = i % 3 === 0 ? 'internal' : 'public';
       await pool.query(
         'INSERT INTO comments (ticket_id, user_id, content, visibility_type) VALUES ($1, $2, $3, $4)',
-        [testData.ticket, testData.user.id, `Comment ${i}`, visibility],
+        [testData.ticket, testData.user.id, `Comment ${i}`, visibility]
       );
     }
 

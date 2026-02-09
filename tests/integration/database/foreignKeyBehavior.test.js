@@ -5,7 +5,7 @@
  * CASCADE DELETE, SET NULL, and RESTRICT behaviors.
  */
 
-const pool = require('../../../config/database');
+const _pool = require('../../../config/database');
 const {
   setupTestDatabase,
   teardownTestDatabase,
@@ -27,7 +27,7 @@ describe('Foreign Key Behavior', () => {
 
       const ticketResult = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_id, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
-        ['Test', 'Description', 'open', 'unset', userId, 'Reporter', 'Internal'],
+        ['Test', 'Description', 'open', 'unset', userId, 'Reporter', 'Internal']
       );
       const ticketId = ticketResult.rows[0].id;
 
@@ -49,7 +49,7 @@ describe('Foreign Key Behavior', () => {
 
       const ticketResult = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, assigned_to, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
-        ['Test', 'Description', 'open', 'unset', adminId, 'Reporter', 'Internal'],
+        ['Test', 'Description', 'open', 'unset', adminId, 'Reporter', 'Internal']
       );
       const ticketId = ticketResult.rows[0].id;
 
@@ -69,7 +69,7 @@ describe('Foreign Key Behavior', () => {
       // Arrange
       const ticketResult = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal'],
+        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal']
       );
       const ticketId = ticketResult.rows[0].id;
 
@@ -79,7 +79,7 @@ describe('Foreign Key Behavior', () => {
 
       const commentResult = await getTestClient().query(
         'INSERT INTO comments (ticket_id, user_id, content, visibility_type) VALUES ($1, $2, $3, $4) RETURNING id',
-        [ticketId, userId, 'Comment content', 'public'],
+        [ticketId, userId, 'Comment content', 'public']
       );
       const commentId = commentResult.rows[0].id;
 
@@ -99,7 +99,7 @@ describe('Foreign Key Behavior', () => {
       // Arrange
       const ticketResult = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal'],
+        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal']
       );
       const ticketId = ticketResult.rows[0].id;
 
@@ -109,7 +109,7 @@ describe('Foreign Key Behavior', () => {
 
       const commentResult = await getTestClient().query(
         'INSERT INTO comments (ticket_id, user_id, content, visibility_type) VALUES ($1, $2, $3, $4) RETURNING id',
-        [ticketId, userId, 'Comment content', 'public'],
+        [ticketId, userId, 'Comment content', 'public']
       );
       const commentId = commentResult.rows[0].id;
 
@@ -129,19 +129,19 @@ describe('Foreign Key Behavior', () => {
       // Arrange
       const deptResult = await getTestClient().query(
         'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        ['Test Dept', 'Description', 'Ground Floor', false, true],
+        ['Test Dept', 'Description', 'Ground Floor', false, true]
       );
       const deptId = deptResult.rows[0].id;
 
       const deptName = 'Test Dept';
       await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6)',
-        ['Test', 'Description', 'open', 'unset', 'Reporter', deptName],
+        ['Test', 'Description', 'open', 'unset', 'Reporter', deptName]
       );
 
       // Act & Assert
       await expect(
-        getTestClient().query('DELETE FROM departments WHERE id = $1', [deptId]),
+        getTestClient().query('DELETE FROM departments WHERE id = $1', [deptId])
       ).rejects.toThrow();
     });
   });
@@ -151,7 +151,7 @@ describe('Foreign Key Behavior', () => {
       // Arrange
       const deptResult = await getTestClient().query(
         'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        ['Test Dept 2', 'Description', 'Ground Floor', false, true],
+        ['Test Dept 2', 'Description', 'Ground Floor', false, true]
       );
       const deptId = deptResult.rows[0].id;
 
@@ -161,7 +161,7 @@ describe('Foreign Key Behavior', () => {
 
       // Act & Assert
       await expect(
-        getTestClient().query('DELETE FROM departments WHERE id = $1', [deptId]),
+        getTestClient().query('DELETE FROM departments WHERE id = $1', [deptId])
       ).rejects.toThrow();
     });
   });
@@ -174,7 +174,7 @@ describe('Foreign Key Behavior', () => {
 
       const deptResult = await getTestClient().query(
         'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        [originalName, 'Description', 'Ground Floor', false, true],
+        [originalName, 'Description', 'Ground Floor', false, true]
       );
       const deptId = deptResult.rows[0].id;
 
@@ -191,7 +191,7 @@ describe('Foreign Key Behavior', () => {
       // Assert
       const updatedUser = await getTestClient().query(
         'SELECT department FROM users WHERE id = $1',
-        [userId],
+        [userId]
       );
       expect(updatedUser.rows[0].department).toBe(newName);
     });
@@ -203,13 +203,13 @@ describe('Foreign Key Behavior', () => {
 
       const deptResult = await getTestClient().query(
         'INSERT INTO departments (name, description, floor, is_system, active) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-        [originalName, 'Description', 'Ground Floor', false, true],
+        [originalName, 'Description', 'Ground Floor', false, true]
       );
       const deptId = deptResult.rows[0].id;
 
       const ticketResult = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-        ['Test', 'Description', 'open', 'unset', 'Reporter', originalName],
+        ['Test', 'Description', 'open', 'unset', 'Reporter', originalName]
       );
       const ticketId = ticketResult.rows[0].id;
 
@@ -222,7 +222,7 @@ describe('Foreign Key Behavior', () => {
       // Assert
       const updatedTicket = await getTestClient().query(
         'SELECT reporter_department FROM tickets WHERE id = $1',
-        [ticketId],
+        [ticketId]
       );
       expect(updatedTicket.rows[0].reporter_department).toBe(newName);
     });
@@ -234,8 +234,8 @@ describe('Foreign Key Behavior', () => {
       await expect(
         getTestClient().query(
           'INSERT INTO tickets (title, description, status, priority, reporter_id, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-          ['Test', 'Description', 'open', 'unset', 99999, 'Reporter', 'Internal'],
-        ),
+          ['Test', 'Description', 'open', 'unset', 99999, 'Reporter', 'Internal']
+        )
       ).rejects.toThrow();
     });
 
@@ -244,8 +244,8 @@ describe('Foreign Key Behavior', () => {
       await expect(
         getTestClient().query(
           'INSERT INTO tickets (title, description, status, priority, assigned_to, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-          ['Test', 'Description', 'open', 'unset', 99999, 'Reporter', 'Internal'],
-        ),
+          ['Test', 'Description', 'open', 'unset', 99999, 'Reporter', 'Internal']
+        )
       ).rejects.toThrow();
     });
 
@@ -259,8 +259,8 @@ describe('Foreign Key Behavior', () => {
       await expect(
         getTestClient().query(
           'INSERT INTO comments (ticket_id, user_id, content, visibility_type) VALUES ($1, $2, $3, $4)',
-          [99999, userId, 'Content', 'public'],
-        ),
+          [99999, userId, 'Content', 'public']
+        )
       ).rejects.toThrow();
     });
 
@@ -268,7 +268,7 @@ describe('Foreign Key Behavior', () => {
       // Arrange
       const ticketResult = await getTestClient().query(
         'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal'],
+        ['Test', 'Description', 'open', 'unset', 'Reporter', 'Internal']
       );
       const ticketId = ticketResult.rows[0].id;
 
@@ -276,8 +276,8 @@ describe('Foreign Key Behavior', () => {
       await expect(
         getTestClient().query(
           'INSERT INTO comments (ticket_id, user_id, content, visibility_type) VALUES ($1, $2, $3, $4)',
-          [ticketId, 99999, 'Content', 'public'],
-        ),
+          [ticketId, 99999, 'Content', 'public']
+        )
       ).rejects.toThrow();
     });
 
@@ -294,8 +294,8 @@ describe('Foreign Key Behavior', () => {
             userData.role,
             userData.department,
             userData.status,
-          ],
-        ),
+          ]
+        )
       ).rejects.toThrow();
     });
 
@@ -304,8 +304,8 @@ describe('Foreign Key Behavior', () => {
       await expect(
         getTestClient().query(
           'INSERT INTO tickets (title, description, status, priority, reporter_name, reporter_department) VALUES ($1, $2, $3, $4, $5, $6)',
-          ['Test', 'Description', 'open', 'unset', 'Reporter', 'NonexistentDept'],
-        ),
+          ['Test', 'Description', 'open', 'unset', 'Reporter', 'NonexistentDept']
+        )
       ).rejects.toThrow();
     });
   });

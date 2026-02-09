@@ -44,7 +44,7 @@ describe('Comment Model', () => {
       expect(result).toEqual(mockComment);
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('INSERT INTO comments'),
-        expect.arrayContaining([commentData.ticket_id, commentData.user_id, commentData.content]),
+        expect.arrayContaining([commentData.ticket_id, commentData.user_id, commentData.content])
       );
     });
 
@@ -88,7 +88,7 @@ describe('Comment Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('$1, $2, $3, $4'),
-        [5, 10, 'Test comment content', 'public'], // visibility_type defaults to 'public'
+        [5, 10, 'Test comment content', 'public'] // visibility_type defaults to 'public'
       );
     });
 
@@ -150,11 +150,11 @@ describe('Comment Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('JOIN users u ON c.user_id = u.id'),
-        [3],
+        [3]
       );
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('u.username'),
-        expect.any(Array),
+        expect.any(Array)
       );
     });
 
@@ -173,7 +173,7 @@ describe('Comment Model', () => {
       // Assert
       expect(pool.query).toHaveBeenCalledWith(
         expect.stringContaining('ORDER BY c.created_at ASC'),
-        [1],
+        [1]
       );
     });
 

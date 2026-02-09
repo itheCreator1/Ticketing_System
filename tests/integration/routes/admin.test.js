@@ -182,12 +182,12 @@ describe('Admin Routes Integration Tests', () => {
     it('should display comments for the ticket', async () => {
       // Arrange
       const ticket = await Ticket.create(createTicketData());
-      const comment = await Comment.create(
+      const _comment = await Comment.create(
         createCommentData({
           ticket_id: ticket.id,
           user_id: adminUser.id,
           content: 'Test comment content',
-        }),
+        })
       );
 
       // Act
@@ -266,8 +266,12 @@ describe('Admin Routes Integration Tests', () => {
 
     it('should require admin role', async () => {
       // Arrange - Create department user (not admin)
-      const deptUserData = createUserData({ role: 'department', status: 'active', department: 'IT Support' });
-      const deptUser = await User.create(deptUserData);
+      const deptUserData = createUserData({
+        role: 'department',
+        status: 'active',
+        department: 'IT Support',
+      });
+      const _deptUser = await User.create(deptUserData);
 
       // Login as department user to get their cookies
       const { cookies: deptCookies, csrfToken: deptCsrfToken } = await authenticateUser(app, {

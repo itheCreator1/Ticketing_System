@@ -6,7 +6,7 @@
  */
 
 const { validatePassword, getPasswordStrength } = require('../../../utils/passwordValidator');
-const { invalidPasswords, validPasswords } = require('../../fixtures/users');
+const { invalidPasswords: _invalidPasswords, validPasswords } = require('../../fixtures/users');
 
 describe('passwordValidator', () => {
   describe('validatePassword', () => {

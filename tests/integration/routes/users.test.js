@@ -19,7 +19,7 @@ const request = require('supertest');
 const app = require('../../../app');
 const { setupIntegrationTest, teardownIntegrationTest } = require('../../helpers/database');
 const { createUserData } = require('../../helpers/factories');
-const { fetchCsrfToken, authenticateUser } = require('../../helpers/csrf');
+const { fetchCsrfToken: _fetchCsrfToken, authenticateUser } = require('../../helpers/csrf');
 const User = require('../../../models/User');
 const AuditLog = require('../../../models/AuditLog');
 const bcrypt = require('bcryptjs');
@@ -28,7 +28,7 @@ describe('User Management Routes Integration Tests', () => {
   let superAdminUser;
   let superAdminCookies;
   let superAdminCsrfToken;
-  let adminUser;
+  let _adminUser;
   let adminCookies;
   let adminCsrfToken;
 
@@ -48,7 +48,7 @@ describe('User Management Routes Integration Tests', () => {
 
     // Create regular admin user for permission tests
     const adminData = createUserData({ role: 'admin', status: 'active' });
-    adminUser = await User.create(adminData);
+    _adminUser = await User.create(adminData);
 
     const { cookies: aCookies, csrfToken: aCsrfToken } = await authenticateUser(app, {
       username: adminData.username,
@@ -177,7 +177,7 @@ describe('User Management Routes Integration Tests', () => {
       expect(user.password_hash).toBeDefined();
       expect(user.password_hash).not.toBe(userData.password);
       expect(user.password_hash.startsWith('$2a$') || user.password_hash.startsWith('$2b$')).toBe(
-        true,
+        true
       );
 
       // Verify password can be verified
@@ -355,7 +355,7 @@ describe('User Management Routes Integration Tests', () => {
 
     it('should validate uniqueness when changing username', async () => {
       // Arrange
-      const user1 = await User.create(createUserData({ username: 'user1' }));
+      const _user1 = await User.create(createUserData({ username: 'user1' }));
       const user2 = await User.create(createUserData({ username: 'user2' }));
 
       // Act - Try to change user2's username to user1
@@ -454,7 +454,7 @@ describe('User Management Routes Integration Tests', () => {
       const updatedUser = await User.findByUsernameWithPassword(user.username);
       expect(updatedUser.password_hash).not.toBe(newPassword);
       expect(
-        updatedUser.password_hash.startsWith('$2a$') || updatedUser.password_hash.startsWith('$2b$'),
+        updatedUser.password_hash.startsWith('$2a$') || updatedUser.password_hash.startsWith('$2b$')
       ).toBe(true);
     });
 
