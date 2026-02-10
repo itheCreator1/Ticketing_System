@@ -34,25 +34,39 @@ ADMIN_EXISTS=$(PGPASSWORD=${POSTGRES_PASSWORD:-ticketing_pass} psql -h db -U ${P
 
 if [ "$ADMIN_EXISTS" = "f" ]; then
   echo "No admin user found. Creating default admin user..."
-  echo "Username: admin"
-  echo "Password: admin123"
-  echo "Email: admin@example.com"
-  echo ""
-  echo "⚠️  IMPORTANT: Change this password immediately after first login!"
   echo ""
 
-  # Create default admin user non-interactively
+  # Create default admin user with random secure password
   node -e "
+    const crypto = require('crypto');
     const User = require('./models/User');
+
+    function generateSecurePassword() {
+      const base = crypto.randomBytes(24).toString('base64url').slice(0, 16);
+      return base + 'A1a!';
+    }
+
     (async () => {
       try {
+        const password = generateSecurePassword();
         await User.create({
           username: 'admin',
           email: 'admin@example.com',
-          password: 'admin123',
+          password: password,
           role: 'super_admin'
         });
-        console.log('✓ Default admin user created');
+        console.log('');
+        console.log('==============================================================');
+        console.log('  DEFAULT ADMIN ACCOUNT CREATED');
+        console.log('==============================================================');
+        console.log('  Username: admin');
+        console.log('  Password: ' + password);
+        console.log('  Email:    admin@example.com');
+        console.log('==============================================================');
+        console.log('  WARNING: SAVE THIS PASSWORD NOW - it will NOT be shown again!');
+        console.log('  Change it immediately after first login.');
+        console.log('==============================================================');
+        console.log('');
       } catch (error) {
         console.error('Error creating admin user:', error.message);
       } finally {

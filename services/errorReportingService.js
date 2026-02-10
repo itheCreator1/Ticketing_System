@@ -1,8 +1,21 @@
 const logger = require('../utils/logger');
 
 class ErrorReportingService {
-  constructor() {
-    this.reports = new Map(); // In production, this would be a database
+  constructor(maxSize = 500) {
+    this.reports = new Map();
+    this.maxSize = maxSize;
+  }
+
+  /**
+   * Evict the oldest entry when the map is at capacity.
+   * Map preserves insertion order, so the first key is the oldest.
+   */
+  _evictOldest() {
+    if (this.reports.size >= this.maxSize) {
+      const oldestKey = this.reports.keys().next().value;
+      this.reports.delete(oldestKey);
+      logger.debug('Error report evicted due to size limit', { evictedId: oldestKey });
+    }
   }
 
   /**
@@ -36,7 +49,8 @@ class ErrorReportingService {
         status: 'reported',
       };
 
-      // Store the report (in production, save to database)
+      // Evict oldest entry if at capacity
+      this._evictOldest();
       this.reports.set(correlationId, report);
 
       // Log the error report
@@ -140,3 +154,4 @@ class ErrorReportingService {
 }
 
 module.exports = new ErrorReportingService();
+module.exports.ErrorReportingService = ErrorReportingService;

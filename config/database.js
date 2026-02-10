@@ -9,8 +9,11 @@ const pool = new Pool({
 });
 
 pool.on('error', (err) => {
-  logger.error('Unexpected database error', { error: err.message, stack: err.stack });
-  process.exit(-1);
+  logger.error('Unexpected database pool error on idle client', {
+    error: err.message,
+    stack: err.stack,
+    code: err.code,
+  });
 });
 
 module.exports = pool;

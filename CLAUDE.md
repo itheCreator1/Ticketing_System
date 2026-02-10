@@ -581,7 +581,7 @@ docker-compose exec db psql -U ticketing_user -d ticketing_db -c "\dt"
 docker-compose exec web npm test
 ```
 
-**Default admin credentials**: admin / admin123
+**Default admin credentials**: admin / (randomly generated at first boot — check Docker logs)
 
 **IMPORTANT**: Always run tests inside the Docker container (`docker-compose exec web npm test`). Never run `npm test` or `npx jest` directly on the host machine - tests require the PostgreSQL database running in the `db` container.
 
