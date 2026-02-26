@@ -30,6 +30,9 @@ async function initDatabase() {
     '023_convert_floor_to_fk.sql',
     '024_remove_hardcoded_system_floors.sql',
     '025_add_composite_indexes.sql',
+    '026_enhance_audit_logs.sql',
+    '027_backfill_audit_logs.sql',
+    '028_audit_logs_indexes.sql',
   ];
 
   try {
