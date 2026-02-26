@@ -1,0 +1,27 @@
+<!--
+  Action Badge Component - Color-coded audit action badge
+
+  Required Parameters:
+  - action: string - Action type (e.g., 'USER_LOGIN', 'TICKET_UPDATED')
+
+  Optional Parameters:
+  - actionColorFn: function - Function to resolve badge color from action
+  - actionLabelFn: function - Function to resolve label from action
+  - size: string - Badge size (sm, md) [default: 'sm']
+  - cssClass: string - Additional CSS classes [default: '']
+
+  Colors: success=create, warning=update, danger=delete/deactivate, info=auth/assign, secondary=system
+-->
+
+<%
+  // Resolve color and label
+  const color = typeof actionColorFn === 'function' ? actionColorFn(action) : 'light';
+  const label = typeof actionLabelFn === 'function' ? actionLabelFn(action) : action;
+  const badgeSize = typeof size !== 'undefined' ? size : 'sm';
+  const additionalClass = typeof cssClass !== 'undefined' ? cssClass : '';
+  const sizeClass = badgeSize === 'sm' ? 'badge-sm' : '';
+%>
+
+<span class="badge badge-<%= color %> <%= sizeClass %> <%= additionalClass %>">
+  <%= label %>
+</span>

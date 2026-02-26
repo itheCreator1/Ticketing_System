@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="<%= language %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - <%= t('common:app.name') %></title>
+  <%- include('../../partials/head') %>
+</head>
+<body class="bg-gray-50">
+  <%- include('../../partials/header') %>
+
+  <main class="container-fluid px-4 py-6">
+    <!-- Breadcrumb -->
+    <nav class="text-sm text-gray-500 mb-4">
+      <a href="/admin/dashboard" class="hover:text-gray-700">Dashboard</a>
+      <span class="mx-1">/</span>
+      <a href="/admin/audit-logs" class="hover:text-gray-700"><%= t('audit:title') %></a>
+      <span class="mx-1">/</span>
+      <span class="text-gray-900"><%= targetUser.username %></span>
+    </nav>
+
+    <%- include('../../partials/flash') %>
+
+    <!-- Tabs -->
+    <%- include('../../partials/audit-tabs', { activeTab: 'timeline', timelineUser: targetUser }) %>
+
+    <!-- User Info Card -->
+    <div class="card mb-6">
+      <div class="card-body">
+        <div class="flex items-start justify-between">
+          <div class="flex items-center gap-4">
+            <!-- Avatar initial -->
+            <div class="w-14 h-14 rounded-full bg-blue-500 text-white flex items-center justify-center text-xl font-bold flex-shrink-0">
+              <%= targetUser.username.charAt(0).toUpperCase() %>
+            </div>
+            <div>
+              <h2 class="text-xl font-bold">
+                <%= targetUser.username %>
+                <%- include('../../partials/badges/role-badge', { role: targetUser.role, withIcon: false, size: 'sm', cssClass: 'ml-2' }) %>
+              </h2>
+              <p class="text-gray-500 text-sm"><%= targetUser.email %></p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <% if (targetUser.role !== 'department') { %>
+              <a href="/admin/users/<%= targetUser.id %>/edit" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-person"></i> <%= t('audit:timeline.viewProfile') %>
+              </a>
+            <% } %>
+            <a href="/admin/audit-logs" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-arrow-left"></i> <%= t('audit:timeline.backToExplorer') %>
+            </a>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-4 mt-4 pt-4 border-t">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-gray-900"><%= stats.totalActions %></div>
+            <div class="text-xs text-gray-500"><%= t('audit:timeline.stats.totalActions') %></div>
+          </div>
+          <div class="text-center">
+            <div class="text-sm font-medium text-gray-900">
+              <%= stats.firstActivity ? new Date(stats.firstActivity).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-' %>
+            </div>
+            <div class="text-xs text-gray-500"><%= t('audit:timeline.stats.firstActivity') %></div>
+          </div>
+          <div class="text-center">
+            <div class="text-sm font-medium text-gray-900">
+              <%= stats.lastActivity ? new Date(stats.lastActivity).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-' %>
+            </div>
+            <div class="text-xs text-gray-500"><%= t('audit:timeline.stats.lastActivity') %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Navigator -->
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-2">
+        <a href="/admin/audit-logs/user/<%= targetUser.id %>?range=today"
+           class="btn btn-sm <%= range === 'today' ? 'btn-primary' : 'btn-outline-secondary' %>">
+          <%= t('audit:timeline.navigation.today') %>
+        </a>
+        <a href="/admin/audit-logs/user/<%= targetUser.id %>?range=week"
+           class="btn btn-sm <%= range === 'week' ? 'btn-primary' : 'btn-outline-secondary' %>">
+          <%= t('audit:timeline.navigation.thisWeek') %>
+        </a>
+        <a href="/admin/audit-logs/user/<%= targetUser.id %>?range=all"
+           class="btn btn-sm <%= range === 'all' ? 'btn-primary' : 'btn-outline-secondary' %>">
+          <%= t('audit:timeline.navigation.all') %>
+        </a>
+      </div>
+      <form action="/admin/audit-logs/user/<%= targetUser.id %>" method="GET" class="flex items-center gap-2">
+        <input type="date" name="date" class="form-control form-control-sm" value="<%= currentDate || '' %>">
+        <button type="submit" class="btn btn-sm btn-outline-primary">
+          <%= t('audit:timeline.navigation.jumpTo') %>
+        </button>
+      </form>
+    </div>
+
+    <!-- Timeline -->
+    <% if (logs.length === 0) { %>
+      <div class="text-center py-12 text-gray-500">
+        <i class="bi bi-clock-history text-4xl mb-3 block"></i>
+        <p class="text-lg font-medium"><%= t('audit:timeline.noEvents') %></p>
+      </div>
+    <% } else { %>
+      <div class="relative">
+        <% Object.entries(groupedEvents).forEach(([date, events]) => { %>
+          <!-- Day header -->
+          <div class="flex items-center gap-3 mb-4 mt-6 first:mt-0">
+            <div class="bg-gray-900 text-white text-sm font-medium px-3 py-1 rounded-full">
+              <%= new Date(date).toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' }) %>
+            </div>
+            <div class="flex-1 border-t border-gray-300"></div>
+            <span class="text-xs text-gray-400"><%= events.length %> events</span>
+          </div>
+
+          <!-- Events for this day -->
+          <div class="relative ml-6 border-l-2 border-gray-200 pl-6 space-y-4">
+            <% events.forEach((event) => { %>
+              <div class="relative">
+                <!-- Timeline dot -->
+                <%
+                  const dotColorMap = {
+                    success: 'bg-green-500',
+                    warning: 'bg-yellow-500',
+                    danger: 'bg-red-500',
+                    info: 'bg-blue-500',
+                    secondary: 'bg-gray-400',
+                    light: 'bg-gray-300',
+                  };
+                  const dotColor = dotColorMap[actionColor(event.action)] || 'bg-gray-400';
+                %>
+                <div class="absolute -left-[31px] top-2 w-3 h-3 rounded-full border-2 border-white <%= dotColor %>"></div>
+
+                <!-- Event card -->
+                <div class="bg-white border rounded-lg p-4 hover:shadow-sm transition" data-toggle-detail="timeline-detail-<%= event.id %>">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <span class="font-mono text-xs text-gray-400">
+                        <%= new Date(event.created_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) %>
+                      </span>
+                      <%- include('../../partials/badges/action-badge', { action: event.action, actionColorFn: actionColor, actionLabelFn: actionLabel, size: 'sm' }) %>
+                      <span class="text-sm text-gray-700"><%= eventSummary(event) %></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <% if (event.ip_address) { %>
+                        <span class="font-mono text-xs text-gray-400"><%= event.ip_address %></span>
+                      <% } %>
+                      <i class="bi bi-chevron-right text-xs text-gray-400"></i>
+                    </div>
+                  </div>
+
+                  <!-- Expandable details -->
+                  <div id="timeline-detail-<%= event.id %>" class="hidden mt-3 pt-3 border-t">
+                    <% if (event.details) { %>
+                      <%
+                        const safeDetails = sanitizeDetailsForDisplay(typeof event.details === 'string' ? JSON.parse(event.details) : event.details);
+                      %>
+                      <div class="bg-gray-50 rounded p-3 text-sm font-mono">
+                        <% Object.entries(safeDetails).forEach(([key, value]) => { %>
+                          <div class="flex py-0.5">
+                            <span class="text-gray-500 min-w-[120px]"><%= key %>:</span>
+                            <span class="text-gray-900"><%= typeof value === 'object' ? JSON.stringify(value) : value %></span>
+                          </div>
+                        <% }); %>
+                      </div>
+                    <% } %>
+                    <div class="flex gap-2 mt-2">
+                      <% if (event.target_type === 'ticket' && event.target_id) { %>
+                        <a href="/admin/tickets/<%= event.target_id %>" class="text-xs text-blue-600 hover:underline">
+                          <i class="bi bi-ticket-detailed"></i> View Ticket #<%= event.target_id %>
+                        </a>
+                      <% } %>
+                      <% if (event.target_type === 'user' && event.target_id) { %>
+                        <a href="/admin/users/<%= event.target_id %>/edit" class="text-xs text-blue-600 hover:underline">
+                          <i class="bi bi-person"></i> View User #<%= event.target_id %>
+                        </a>
+                      <% } %>
+                      <% if (event.session_hash) { %>
+                        <span class="text-xs text-gray-400">Session: <span class="font-mono"><%= event.session_hash %></span></span>
+                      <% } %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </main>
+
+  <%- include('../../partials/footer') %>
+  <script src="/js/audit-logs.js"></script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="<%= language %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= t('audit:title') %> - <%= t('common:app.name') %></title>
+  <%- include('../../partials/head') %>
+</head>
+<body class="bg-gray-50">
+  <%- include('../../partials/header') %>
+
+  <main class="container-fluid px-4 py-6">
+    <!-- Breadcrumb + Title -->
+    <div class="flex justify-between items-center mb-4">
+      <div>
+        <nav class="text-sm text-gray-500 mb-1">
+          <a href="/admin/dashboard" class="hover:text-gray-700">Dashboard</a>
+          <span class="mx-1">/</span>
+          <span class="text-gray-900"><%= t('audit:title') %></span>
+        </nav>
+        <h2 class="text-2xl font-bold"><%= t('audit:logExplorer') %></h2>
+      </div>
+      <a href="/admin/audit-logs/export?<%= Object.entries(filters).filter(([k,v]) => v && k !== 'cursor').map(([k,v]) => `${k}=${encodeURIComponent(v)}`).join('&') %>"
+         class="btn btn-outline-secondary">
+        <i class="bi bi-download"></i> <%= t('audit:export') %>
+      </a>
+    </div>
+
+    <%- include('../../partials/flash') %>
+
+    <!-- Tabs -->
+    <%- include('../../partials/audit-tabs', { activeTab: 'explorer', timelineUser: null }) %>
+
+    <!-- Filters -->
+    <div class="card mb-6">
+      <div class="card-header-enhanced">
+        <h3 class="card-title-icon">
+          <i class="bi bi-funnel"></i>
+          <%= t('audit:filters.title') %>
+        </h3>
+      </div>
+      <div class="card-body">
+        <form action="/admin/audit-logs" method="GET">
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <!-- Action Filter -->
+            <div>
+              <label for="action" class="form-label"><%= t('audit:filters.action') %></label>
+              <select name="action" id="action" class="form-select">
+                <option value=""><%= t('audit:filters.allActions') %></option>
+                <% Object.entries(actionGroups).forEach(([category, actions]) => { %>
+                  <optgroup label="<%= t('audit:actionGroups.' + category) %>">
+                    <% actions.forEach((a) => { %>
+                      <option value="<%= a.value %>" <%= filters.action === a.value ? 'selected' : '' %>><%= a.label %></option>
+                    <% }); %>
+                  </optgroup>
+                <% }); %>
+              </select>
+            </div>
+
+            <!-- User Filter -->
+            <div>
+              <label for="actorId" class="form-label"><%= t('audit:filters.user') %></label>
+              <select name="actorId" id="actorId" class="form-select">
+                <option value=""><%= t('audit:filters.allUsers') %></option>
+                <% users.forEach((u) => { %>
+                  <option value="<%= u.id %>" <%= filters.actorId == u.id ? 'selected' : '' %>><%= u.username %> (<%= u.role %>)</option>
+                <% }); %>
+              </select>
+            </div>
+
+            <!-- Target Type Filter -->
+            <div>
+              <label for="targetType" class="form-label"><%= t('audit:filters.targetType') %></label>
+              <select name="targetType" id="targetType" class="form-select">
+                <option value=""><%= t('audit:filters.allTargets') %></option>
+                <% ['user', 'ticket', 'comment', 'department', 'floor', 'system', 'audit_log'].forEach((tt) => { %>
+                  <option value="<%= tt %>" <%= filters.targetType === tt ? 'selected' : '' %>><%= t('audit:targetTypes.' + tt) %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <!-- Date Range -->
+            <div>
+              <label for="dateRange" class="form-label"><%= t('audit:filters.dateRange') %></label>
+              <select name="dateRange" id="dateRange" class="form-select">
+                <% ['today', '24h', '7d', '30d', '90d', 'custom'].forEach((dr) => { %>
+                  <option value="<%= dr %>" <%= dateRange === dr ? 'selected' : '' %>>
+                    <%= dr === 'today' ? t('audit:filters.today') :
+                       dr === '24h' ? t('audit:filters.last24h') :
+                       dr === '7d' ? t('audit:filters.last7d') :
+                       dr === '30d' ? t('audit:filters.last30d') :
+                       dr === '90d' ? t('audit:filters.last90d') :
+                       t('audit:filters.custom') %>
+                  </option>
+                <% }); %>
+              </select>
+            </div>
+
+            <!-- Severity -->
+            <div>
+              <label for="severity" class="form-label"><%= t('audit:filters.severity') %></label>
+              <select name="severity" id="severity" class="form-select">
+                <option value=""><%= t('audit:filters.allSeverities') %></option>
+                <% ['info', 'warning', 'critical'].forEach((s) => { %>
+                  <option value="<%= s %>" <%= filters.severity === s ? 'selected' : '' %>><%= t('audit:severityLabels.' + s) %></option>
+                <% }); %>
+              </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex items-end gap-2">
+              <button type="submit" class="btn btn-primary flex-1">
+                <i class="bi bi-search"></i> <%= t('audit:filters.apply') %>
+              </button>
+              <a href="/admin/audit-logs" class="btn btn-outline-secondary">
+                <%= t('audit:filters.clear') %>
+              </a>
+            </div>
+          </div>
+
+          <!-- Second row: Search + Custom dates -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div>
+              <label for="search" class="form-label"><%= t('audit:filters.search') %></label>
+              <input type="text" name="search" id="search" class="form-control"
+                     placeholder="<%= t('audit:filters.searchPlaceholder') %>"
+                     value="<%= filters.search || '' %>"
+                     maxlength="100">
+            </div>
+            <div id="customDateFields" class="<%= dateRange !== 'custom' ? 'hidden' : '' %> col-span-2">
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label for="dateFrom" class="form-label"><%= t('audit:filters.from') %></label>
+                  <input type="datetime-local" name="dateFrom" id="dateFrom" class="form-control"
+                         value="<%= filters.dateFrom || '' %>">
+                </div>
+                <div>
+                  <label for="dateTo" class="form-label"><%= t('audit:filters.to') %></label>
+                  <input type="datetime-local" name="dateTo" id="dateTo" class="form-control"
+                         value="<%= filters.dateTo || '' %>">
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Active Filter Chips -->
+    <% if (activeFilters.length > 0) { %>
+      <div class="flex flex-wrap gap-2 mb-4">
+        <% activeFilters.forEach((f) => { %>
+          <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-sm">
+            <%= f.label %>
+            <a href="/admin/audit-logs<%= f.removeUrl %>" class="text-blue-600 hover:text-blue-900 ml-1" title="Remove filter">
+              <i class="bi bi-x-circle-fill"></i>
+            </a>
+          </span>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <!-- Results Table -->
+    <div class="card">
+      <div class="card-body p-0">
+        <% if (logs.length === 0) { %>
+          <div class="text-center py-12 text-gray-500">
+            <i class="bi bi-journal-x text-4xl mb-3 block"></i>
+            <% if (activeFilters.length > 0 || filters.search) { %>
+              <p class="text-lg font-medium"><%= t('audit:empty.noResults') %></p>
+              <p class="mt-1"><%= t('audit:empty.adjustFilters') %></p>
+            <% } else { %>
+              <p class="text-lg font-medium"><%= t('audit:empty.noLogs') %></p>
+            <% } %>
+          </div>
+        <% } else { %>
+          <div class="overflow-x-auto">
+            <table class="table table-hover w-full">
+              <thead>
+                <tr>
+                  <th class="w-8"></th>
+                  <th class="text-left"><%= t('audit:columns.id') %></th>
+                  <th class="text-left"><%= t('audit:columns.timestamp') %></th>
+                  <th class="text-left"><%= t('audit:columns.user') %></th>
+                  <th class="text-left"><%= t('audit:columns.action') %></th>
+                  <th class="text-left"><%= t('audit:columns.target') %></th>
+                  <th class="text-left"><%= t('audit:columns.ip') %></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% logs.forEach((log, index) => { %>
+                  <!-- Main row -->
+                  <tr class="cursor-pointer hover:bg-gray-50 border-b" data-toggle-detail="detail-<%= log.id %>">
+                    <td class="text-center text-gray-400 px-2">
+                      <i class="bi bi-chevron-right text-xs"></i>
+                    </td>
+                    <td class="font-mono text-sm text-gray-500"><%= log.id %></td>
+                    <td class="text-sm whitespace-nowrap">
+                      <span title="<%= new Date(log.created_at).toISOString() %>">
+                        <%= new Date(log.created_at).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) %>
+                      </span>
+                    </td>
+                    <td>
+                      <% if (log.actor_id) { %>
+                        <a href="/admin/audit-logs/user/<%= log.actor_id %>" class="text-blue-600 hover:underline font-medium">
+                          <%= log.actor_username || 'User #' + log.actor_id %>
+                        </a>
+                        <% if (log.actor_role) { %>
+                          <%- include('../../partials/badges/role-badge', { role: log.actor_role, withIcon: false, size: 'sm', cssClass: 'ml-1' }) %>
+                        <% } %>
+                      <% } else { %>
+                        <span class="text-gray-400">System</span>
+                      <% } %>
+                    </td>
+                    <td>
+                      <%- include('../../partials/badges/action-badge', { action: log.action, actionColorFn: actionColor, actionLabelFn: actionLabel, size: 'sm' }) %>
+                    </td>
+                    <td class="text-sm">
+                      <% if (log.target_type && log.target_id) { %>
+                        <span class="text-gray-600"><%= log.target_type %></span>
+                        <span class="font-mono text-gray-500">#<%= log.target_id %></span>
+                      <% } else if (log.target_type) { %>
+                        <span class="text-gray-600"><%= log.target_type %></span>
+                      <% } else { %>
+                        <span class="text-gray-400">-</span>
+                      <% } %>
+                    </td>
+                    <td class="font-mono text-sm text-gray-500"><%= log.ip_address || '-' %></td>
+                  </tr>
+                  <!-- Detail row (hidden by default) -->
+                  <tr id="detail-<%= log.id %>" class="hidden bg-gray-50 border-b">
+                    <td colspan="7" class="px-6 py-4">
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left: Event details -->
+                        <div>
+                          <h4 class="text-sm font-semibold text-gray-700 mb-2"><%= t('audit:columns.details') %></h4>
+                          <p class="text-sm text-gray-600 mb-3"><%= eventSummary(log) %></p>
+                          <% if (log.details) { %>
+                            <%
+                              const safeDetails = sanitizeDetailsForDisplay(typeof log.details === 'string' ? JSON.parse(log.details) : log.details);
+                            %>
+                            <div class="bg-white rounded p-3 border text-sm font-mono">
+                              <% Object.entries(safeDetails).forEach(([key, value]) => { %>
+                                <div class="flex py-1">
+                                  <span class="text-gray-500 min-w-[120px]"><%= key %>:</span>
+                                  <span class="text-gray-900"><%= typeof value === 'object' ? JSON.stringify(value) : value %></span>
+                                </div>
+                              <% }); %>
+                            </div>
+                          <% } else { %>
+                            <p class="text-gray-400 text-sm italic">No additional details</p>
+                          <% } %>
+                        </div>
+                        <!-- Right: Metadata + quick actions -->
+                        <div>
+                          <h4 class="text-sm font-semibold text-gray-700 mb-2"><%= t('audit:detail.metadata') %></h4>
+                          <div class="space-y-2 text-sm">
+                            <div>
+                              <span class="text-gray-500"><%= t('audit:detail.category') %>:</span>
+                              <span class="ml-2"><%= log.action_category || '-' %></span>
+                            </div>
+                            <div>
+                              <span class="text-gray-500"><%= t('audit:detail.severity') %>:</span>
+                              <span class="ml-2">
+                                <% if (log.severity === 'critical') { %>
+                                  <span class="badge badge-danger badge-sm"><%= t('audit:severityLabels.critical') %></span>
+                                <% } else if (log.severity === 'warning') { %>
+                                  <span class="badge badge-warning badge-sm"><%= t('audit:severityLabels.warning') %></span>
+                                <% } else { %>
+                                  <span class="badge badge-info badge-sm"><%= t('audit:severityLabels.info') %></span>
+                                <% } %>
+                              </span>
+                            </div>
+                            <% if (log.session_hash) { %>
+                              <div>
+                                <span class="text-gray-500"><%= t('audit:detail.sessionHash') %>:</span>
+                                <span class="ml-2 font-mono text-xs"><%= log.session_hash %></span>
+                              </div>
+                            <% } %>
+                          </div>
+
+                          <!-- Quick actions -->
+                          <div class="mt-4 flex flex-wrap gap-2">
+                            <% if (log.actor_id) { %>
+                              <a href="/admin/audit-logs/user/<%= log.actor_id %>" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-clock-history"></i> <%= t('audit:detail.viewTimeline') %>
+                              </a>
+                            <% } %>
+                            <% if (log.target_type === 'ticket' && log.target_id) { %>
+                              <a href="/admin/tickets/<%= log.target_id %>" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-ticket-detailed"></i> <%= t('audit:detail.viewTicket') %>
+                              </a>
+                            <% } %>
+                            <% if (log.target_type === 'user' && log.target_id) { %>
+                              <a href="/admin/users/<%= log.target_id %>/edit" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-person"></i> <%= t('audit:detail.viewUser') %>
+                              </a>
+                            <% } %>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div class="px-6 py-4 border-t flex justify-between items-center">
+            <span class="text-sm text-gray-500">
+              <%= t('audit:pagination.showing', { count: logCount }) %>
+            </span>
+            <% if (hasMore && nextCursorUrl) { %>
+              <button id="loadMoreBtn" data-url="<%= nextCursorUrl %>" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-down-circle"></i> <%= t('audit:pagination.loadMore') %>
+              </button>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </main>
+
+  <%- include('../../partials/footer') %>
+  <script src="/js/audit-logs.js"></script>
+</body>
+</html>
