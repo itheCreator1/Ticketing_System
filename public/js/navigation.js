@@ -1,11 +1,13 @@
 /**
  * Mobile navigation toggle functionality
- * Called from HTML onclick attributes
+ * Uses event listener instead of inline onclick (blocked by CSP).
  */
-// eslint-disable-next-line no-unused-vars
-function toggleNav() {
-  const mobileNav = document.getElementById('mobileNav');
-  if (mobileNav) {
-    mobileNav.classList.toggle('hidden');
+document.addEventListener('DOMContentLoaded', function () {
+  var btn = document.getElementById('navToggleBtn');
+  var mobileNav = document.getElementById('mobileNav');
+  if (btn && mobileNav) {
+    btn.addEventListener('click', function () {
+      mobileNav.classList.toggle('hidden');
+    });
   }
-}
+});
