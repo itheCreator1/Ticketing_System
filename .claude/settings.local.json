@@ -37,7 +37,9 @@
       "Bash(test:*)",
       "Bash(docker-compose stop:*)",
       "Bash(docker-compose start:*)",
-      "Bash(docker-compose build:*)"
+      "Bash(docker-compose build:*)",
+      "Bash(npx eslint:*)",
+      "Bash(timeout:*)"
     ]
   }
 }
