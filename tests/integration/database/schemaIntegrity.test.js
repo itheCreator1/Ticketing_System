@@ -423,6 +423,13 @@ describe('Database Schema Integrity', () => {
         'details',
         'ip_address',
         'created_at',
+        'actor_username',
+        'actor_role',
+        'action_category',
+        'severity',
+        'target_label',
+        'session_hash',
+        'search_text',
       ];
 
       // Act

@@ -150,7 +150,8 @@ async function cleanAllTables() {
   // Must delete children before parents to avoid FK violations
   await pool.query('DELETE FROM comments');
   await pool.query('DELETE FROM tickets');
-  await pool.query('DELETE FROM audit_logs');
+  // TRUNCATE bypasses the immutability trigger (which blocks DELETE on audit_logs)
+  await pool.query('TRUNCATE audit_logs RESTART IDENTITY CASCADE');
   await pool.query('DELETE FROM session');
   await pool.query('DELETE FROM users');
   await pool.query('DELETE FROM departments');

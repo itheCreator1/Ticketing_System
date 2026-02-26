@@ -50,7 +50,7 @@ describe('Seeder Integration Tests', () => {
     try {
       await db.query('DELETE FROM comments');
       await db.query('DELETE FROM tickets');
-      await db.query('DELETE FROM audit_logs');
+      await db.query('TRUNCATE audit_logs RESTART IDENTITY CASCADE');
       await db.query("DELETE FROM users WHERE username NOT IN ('admin')");
       // Delete ALL departments (including system departments like Internal)
       await db.query('DELETE FROM departments WHERE name != $1', ['Internal']);
@@ -64,7 +64,7 @@ describe('Seeder Integration Tests', () => {
         // For stubborn FK issues, clear in smaller groups with error handling
         await db.query('DELETE FROM comments').catch(() => {});
         await db.query('DELETE FROM tickets').catch(() => {});
-        await db.query('DELETE FROM audit_logs').catch(() => {});
+        await db.query('TRUNCATE audit_logs RESTART IDENTITY CASCADE').catch(() => {});
         await db.query("DELETE FROM users WHERE username NOT IN ('admin')").catch(() => {});
         await db.query('DELETE FROM departments').catch(() => {});
         await db.query('DELETE FROM floors').catch(() => {});
