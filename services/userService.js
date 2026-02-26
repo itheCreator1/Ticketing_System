@@ -412,8 +412,8 @@ class UserService {
   }
 
   // NEW: Toggle user status
-  async toggleUserStatus(actorId, targetId, newStatus, ipAddress) {
-    return this.updateUser(actorId, targetId, { status: newStatus }, ipAddress);
+  async toggleUserStatus(actorId, targetId, newStatus, ipAddress, auditContext = {}) {
+    return this.updateUser(actorId, targetId, { status: newStatus }, ipAddress, auditContext);
   }
 }
 

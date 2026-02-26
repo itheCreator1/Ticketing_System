@@ -42,7 +42,7 @@ class FloorService {
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Created floor
    */
-  async createFloor(actorId, { name, sort_order }, ipAddress) {
+  async createFloor(actorId, { name, sort_order }, ipAddress, auditContext = {}) {
     // Validate name is not empty
     if (!name || name.trim() === '') {
       throw new Error('Floor name is required');
@@ -68,6 +68,9 @@ class FloorService {
       targetId: floor.id,
       details: { name: floor.name, sort_order: floor.sort_order },
       ipAddress,
+      actorUsername: auditContext.actorUsername,
+      actorRole: auditContext.actorRole,
+      sessionHash: auditContext.sessionHash,
     });
 
     return floor;
@@ -81,7 +84,7 @@ class FloorService {
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Updated floor
    */
-  async updateFloor(actorId, id, { name, sort_order, active }, ipAddress) {
+  async updateFloor(actorId, id, { name, sort_order, active }, ipAddress, auditContext = {}) {
     // Get current floor
     const current = await this.getFloorById(id);
 
@@ -120,6 +123,9 @@ class FloorService {
         new: { name: updated.name, sort_order: updated.sort_order, active: updated.active },
       },
       ipAddress,
+      actorUsername: auditContext.actorUsername,
+      actorRole: auditContext.actorRole,
+      sessionHash: auditContext.sessionHash,
     });
 
     return updated;
@@ -132,7 +138,7 @@ class FloorService {
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Deactivated floor
    */
-  async deactivateFloor(actorId, id, ipAddress) {
+  async deactivateFloor(actorId, id, ipAddress, auditContext = {}) {
     // Get current floor
     const floor = await this.getFloorById(id);
 
@@ -164,6 +170,9 @@ class FloorService {
       targetId: id,
       details: { name: floor.name },
       ipAddress,
+      actorUsername: auditContext.actorUsername,
+      actorRole: auditContext.actorRole,
+      sessionHash: auditContext.sessionHash,
     });
 
     return deactivated;
@@ -176,7 +185,7 @@ class FloorService {
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Reactivated floor
    */
-  async reactivateFloor(actorId, id, ipAddress) {
+  async reactivateFloor(actorId, id, ipAddress, auditContext = {}) {
     // Get current floor
     const floor = await this.getFloorById(id);
 
@@ -191,6 +200,9 @@ class FloorService {
       targetId: id,
       details: { name: floor.name },
       ipAddress,
+      actorUsername: auditContext.actorUsername,
+      actorRole: auditContext.actorRole,
+      sessionHash: auditContext.sessionHash,
     });
 
     return reactivated;

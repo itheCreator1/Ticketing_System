@@ -1,6 +1,7 @@
 const Ticket = require('../models/Ticket');
 const Comment = require('../models/Comment');
 const User = require('../models/User');
+const AuditLog = require('../models/AuditLog');
 const logger = require('../utils/logger');
 
 /**
@@ -12,7 +13,7 @@ class ClientTicketService {
    * Create a new ticket for a department user
    * Automatically sets reporter_id to link ticket to department account
    */
-  async createTicket(userId, ticketData) {
+  async createTicket(userId, ticketData, ipAddress = null, auditContext = {}) {
     const startTime = Date.now();
     try {
       logger.info('clientTicketService.createTicket: Creating ticket for department user', {
@@ -42,6 +43,23 @@ class ClientTicketService {
         reporter_id: userId, // Ownership enforcement
         priority: 'unset', // FORCED - department users cannot set priority
         status: 'waiting_on_admin', // Department-created tickets start as 'waiting_on_admin'
+      });
+
+      // Audit log for department user ticket creation
+      await AuditLog.create({
+        actorId: userId,
+        action: 'TICKET_CREATED',
+        targetType: 'ticket',
+        targetId: ticket.id,
+        details: {
+          title: ticket.title,
+          department: user.department,
+          status: ticket.status,
+        },
+        ipAddress,
+        actorUsername: auditContext.actorUsername,
+        actorRole: auditContext.actorRole,
+        sessionHash: auditContext.sessionHash,
       });
 
       const duration = Date.now() - startTime;
@@ -153,7 +171,7 @@ class ClientTicketService {
    * Add a public comment to a ticket
    * Department users can only add public comments (no internal notes)
    */
-  async addComment(ticketId, userId, content) {
+  async addComment(ticketId, userId, content, ipAddress = null, auditContext = {}) {
     const startTime = Date.now();
     try {
       logger.info('clientTicketService.addComment: Adding comment', {
@@ -174,6 +192,22 @@ class ClientTicketService {
         user_id: userId,
         content,
         visibility_type: 'public',
+      });
+
+      // Audit log for comment creation
+      await AuditLog.create({
+        actorId: userId,
+        action: 'COMMENT_CREATED',
+        targetType: 'comment',
+        targetId: comment.id,
+        details: {
+          ticketId: parseInt(ticketId, 10),
+          visibility: 'public',
+        },
+        ipAddress,
+        actorUsername: auditContext.actorUsername,
+        actorRole: auditContext.actorRole,
+        sessionHash: auditContext.sessionHash,
       });
 
       // AUTO-STATUS UPDATE: Department user adding public comment → "waiting_on_admin"

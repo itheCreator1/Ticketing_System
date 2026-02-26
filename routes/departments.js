@@ -12,6 +12,7 @@ const departmentService = require('../services/departmentService');
 const { successRedirect } = require('../utils/responseHelpers');
 const logger = require('../utils/logger');
 const Floor = require('../models/Floor');
+const { buildAuditContext } = require('../utils/auditHelpers');
 
 // All routes require super admin
 router.use(requireAuth, requireSuperAdmin);
@@ -56,7 +57,8 @@ router.post('/', validateDepartmentCreate, validateRequest, async (req, res, nex
     const department = await departmentService.createDepartment(
       req.session.user.id,
       { name: req.body.name, description: req.body.description, floor: req.body.floor },
-      req.ip
+      req.ip,
+      buildAuditContext(req)
     );
 
     logger.info('Department created', {
@@ -125,7 +127,8 @@ router.post('/:id', validateDepartmentUpdate, validateRequest, async (req, res, 
         floor: req.body.floor,
         active: req.body.active,
       },
-      req.ip
+      req.ip,
+      buildAuditContext(req)
     );
 
     successRedirect(req, res, 'Department updated successfully', '/admin/departments');
@@ -143,7 +146,8 @@ router.post('/:id/deactivate', validateDepartmentId, validateRequest, async (req
     await departmentService.deactivateDepartment(
       req.session.user.id,
       parseInt(req.params.id),
-      req.ip
+      req.ip,
+      buildAuditContext(req)
     );
 
     successRedirect(req, res, 'Department deactivated successfully', '/admin/departments');
@@ -161,7 +165,8 @@ router.post('/:id/reactivate', validateDepartmentId, validateRequest, async (req
     await departmentService.reactivateDepartment(
       req.session.user.id,
       parseInt(req.params.id),
-      req.ip
+      req.ip,
+      buildAuditContext(req)
     );
 
     successRedirect(req, res, 'Department reactivated successfully', '/admin/departments');
@@ -188,7 +193,8 @@ router.post(
         req.session.user.id,
         departmentId,
         userId,
-        req.ip
+        req.ip,
+        buildAuditContext(req)
       );
 
       logger.info('User assigned to department', {
@@ -230,7 +236,8 @@ router.post(
         req.session.user.id,
         departmentId,
         userId,
-        req.ip
+        req.ip,
+        buildAuditContext(req)
       );
 
       logger.info('User removed from department', {

@@ -36,19 +36,13 @@ if [ "$ADMIN_EXISTS" = "f" ]; then
   echo "No admin user found. Creating default admin user..."
   echo ""
 
-  # Create default admin user with random secure password
+  # Create default admin user with known default password
   node -e "
-    const crypto = require('crypto');
     const User = require('./models/User');
-
-    function generateSecurePassword() {
-      const base = crypto.randomBytes(24).toString('base64url').slice(0, 16);
-      return base + 'A1a!';
-    }
 
     (async () => {
       try {
-        const password = generateSecurePassword();
+        const password = 'Admin@123';
         await User.create({
           username: 'admin',
           email: 'admin@example.com',
@@ -63,8 +57,7 @@ if [ "$ADMIN_EXISTS" = "f" ]; then
         console.log('  Password: ' + password);
         console.log('  Email:    admin@example.com');
         console.log('==============================================================');
-        console.log('  WARNING: SAVE THIS PASSWORD NOW - it will NOT be shown again!');
-        console.log('  Change it immediately after first login.');
+        console.log('  Change this password after first login.');
         console.log('==============================================================');
         console.log('');
       } catch (error) {

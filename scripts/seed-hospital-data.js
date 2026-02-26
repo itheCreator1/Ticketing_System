@@ -24,7 +24,6 @@ const pool = require('../config/database');
 const User = require('../models/User');
 const Floor = require('../models/Floor');
 const Department = require('../models/Department');
-const AuditLog = require('../models/AuditLog');
 const seedValidator = require('../utils/seedValidator');
 const readline = require('readline');
 
@@ -306,24 +305,6 @@ async function createDepartmentUsers(departmentsConfig) {
 }
 
 /**
- * Create audit log entry for seeding operation
- */
-async function createAuditLog(superAdmin, stats) {
-  try {
-    await AuditLog.create({
-      actorId: superAdmin.id,
-      action: 'SEED_HOSPITAL_DATA',
-      targetType: 'system',
-      targetId: null,
-      details: stats,
-      ipAddress: '127.0.0.1',
-    });
-  } catch (error) {
-    console.error('   ⚠ Warning: Could not create audit log:', error.message);
-  }
-}
-
-/**
  * Display login credentials
  */
 function displayCredentials(superAdmin, users) {
@@ -386,8 +367,6 @@ async function seedDatabase() {
       departments: departments.length,
       superAdmin: 1,
     };
-    await createAuditLog(superAdmin, stats);
-
     // Display login credentials
     displayCredentials(departmentsData.super_admin, users);
 

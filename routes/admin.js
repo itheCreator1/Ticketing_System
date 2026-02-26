@@ -3,6 +3,7 @@ const router = express.Router();
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { adminMutationLimiter } = require('../middleware/rateLimiter');
 const Comment = require('../models/Comment');
+const AuditLog = require('../models/AuditLog');
 const { validateRequest } = require('../middleware/validation');
 const { TICKET_MESSAGES, COMMENT_MESSAGES } = require('../constants/messages');
 const ticketService = require('../services/ticketService');
@@ -21,6 +22,7 @@ const {
 const { validateCommentCreation } = require('../validators/commentValidators');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
 const logger = require('../utils/logger');
+const { buildAuditContext } = require('../utils/auditHelpers');
 
 router.use(requireAuth);
 
@@ -96,7 +98,7 @@ router.post(
   validateRequest,
   async (req, res, next) => {
     try {
-      await ticketService.updateTicket(req.params.id, req.body, req.session.user.id, req.ip);
+      await ticketService.updateTicket(req.params.id, req.body, req.session.user.id, req.ip, buildAuditContext(req));
       successRedirect(req, res, TICKET_MESSAGES.UPDATED, `/admin/tickets/${req.params.id}`);
     } catch (error) {
       next(error);
@@ -118,7 +120,8 @@ router.post(
         req.params.id,
         { status: req.body.status },
         req.session.user.id,
-        req.ip
+        req.ip,
+        buildAuditContext(req)
       );
       successRedirect(req, res, 'Status updated successfully', `/admin/tickets/${req.params.id}`);
     } catch (error) {
@@ -142,7 +145,8 @@ router.post(
         req.params.id,
         { priority: req.body.priority },
         req.session.user.id,
-        req.ip
+        req.ip,
+        buildAuditContext(req)
       );
       successRedirect(req, res, 'Priority updated successfully', `/admin/tickets/${req.params.id}`);
     } catch (error) {
@@ -170,11 +174,28 @@ router.post(
       }
 
       // Create comment
-      await Comment.create({
+      const comment = await Comment.create({
         ticket_id: ticketId,
         user_id: req.session.user.id,
         content: req.body.content,
         visibility_type,
+      });
+
+      // Audit log for admin comment creation
+      const auditCtx = buildAuditContext(req);
+      await AuditLog.create({
+        actorId: req.session.user.id,
+        action: 'COMMENT_CREATED',
+        targetType: 'comment',
+        targetId: comment.id,
+        details: {
+          ticketId: parseInt(ticketId, 10),
+          visibility: visibility_type,
+        },
+        ipAddress: req.ip,
+        actorUsername: auditCtx.actorUsername,
+        actorRole: auditCtx.actorRole,
+        sessionHash: auditCtx.sessionHash,
       });
 
       // AUTO-STATUS UPDATE: Admin adding PUBLIC comment → "waiting_on_department"
@@ -188,7 +209,8 @@ router.post(
           ticketId,
           { status: 'waiting_on_department' },
           req.session.user.id,
-          req.ip
+          req.ip,
+          buildAuditContext(req)
         );
         logger.info('Admin comment triggered status update', {
           ticketId,
@@ -231,7 +253,8 @@ router.post(
       const ticket = await adminTicketService.createAdminTicket(
         req.session.user.id,
         ticketData,
-        req.ip
+        req.ip,
+        buildAuditContext(req)
       );
 
       logger.info('Admin created admin ticket', {
@@ -273,7 +296,8 @@ router.post(
       const ticket = await adminTicketService.createDepartmentTicket(
         req.session.user.id,
         ticketData,
-        req.ip
+        req.ip,
+        buildAuditContext(req)
       );
 
       logger.info('Admin created department ticket', {

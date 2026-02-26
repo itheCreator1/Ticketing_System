@@ -72,7 +72,7 @@ describe('Validation Middleware', () => {
       expect(req.flash).toHaveBeenCalledWith('error_msg', 'Username is required');
       expect(req.flash).toHaveBeenCalledWith('error_msg', 'Email is invalid');
       expect(req.get).toHaveBeenCalledWith('Referer');
-      expect(res.redirect).toHaveBeenCalledWith('back');
+      expect(res.redirect).toHaveBeenCalledWith('/admin/users/new');
       expect(next).not.toHaveBeenCalled();
     });
 
@@ -104,7 +104,8 @@ describe('Validation Middleware', () => {
       // Arrange
       const req = createMockRequest({
         accepts: jest.fn().mockReturnValue(true),
-        get: jest.fn().mockReturnValue(undefined), // No Referer header - should default to '/'
+        get: jest.fn().mockReturnValue(undefined), // No Referer header - should fall back to originalUrl or '/'
+        originalUrl: '/admin/test?foo=bar',
       });
       const res = createMockResponse();
       const next = createMockNext();
@@ -126,7 +127,7 @@ describe('Validation Middleware', () => {
         expect(req.flash).toHaveBeenCalledWith('error_msg', error.msg);
       });
       expect(req.get).toHaveBeenCalledWith('Referer');
-      expect(res.redirect).toHaveBeenCalledWith('back');
+      expect(res.redirect).toHaveBeenCalledWith('/admin/test');
     });
 
     it('should extract error messages from validation result array', () => {

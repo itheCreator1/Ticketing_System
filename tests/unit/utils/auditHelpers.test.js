@@ -131,8 +131,8 @@ describe('auditHelpers', () => {
     });
 
     it('should handle events without target', () => {
-      const event = { action: 'SEED_HOSPITAL_DATA' };
-      expect(eventSummary(event)).toBe('Seeded hospital data');
+      const event = { action: 'AUDIT_LOG_VIEWED' };
+      expect(eventSummary(event)).toBe('Viewed audit logs');
     });
   });
 

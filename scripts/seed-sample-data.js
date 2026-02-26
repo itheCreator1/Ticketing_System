@@ -18,7 +18,7 @@ const User = require('../models/User');
 const Department = require('../models/Department');
 const Ticket = require('../models/Ticket');
 const Comment = require('../models/Comment');
-const AuditLog = require('../models/AuditLog');
+
 
 // Realistic hospital ticket data by department
 const ticketData = {
@@ -399,24 +399,6 @@ async function createComments(ticketData) {
 }
 
 /**
- * Create audit log entry for seeding operation
- */
-async function createAuditLog(superAdmin, stats) {
-  try {
-    await AuditLog.create({
-      actorId: superAdmin.id,
-      action: 'SEED_SAMPLE_DATA',
-      targetType: 'system',
-      targetId: null,
-      details: stats,
-      ipAddress: '127.0.0.1',
-    });
-  } catch (error) {
-    console.error('   ⚠ Warning: Could not create audit log:', error.message);
-  }
-}
-
-/**
  * Display login credentials
  */
 function displayCredentials(users) {
@@ -461,14 +443,6 @@ async function seedDatabase() {
 
     // Phase 5: Add comments
     await createComments(tickets);
-
-    // Create audit log
-    const stats = {
-      users: users.length + 1, // +1 for super admin
-      tickets: tickets.length,
-      departments: users.length,
-    };
-    await createAuditLog(superAdmin, stats);
 
     // Display login credentials
     displayCredentials(users);

@@ -282,7 +282,7 @@ describe('Auth Routes Integration Tests', () => {
 
       // Assert
       expect(response.status).toBe(302);
-      expect(response.headers.location).toBe('back');
+      expect(response.headers.location).toBe('/auth/login');
     });
 
     it('should prevent timing attacks for user enumeration', async () => {

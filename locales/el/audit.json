@@ -66,6 +66,8 @@
     "TICKET_UPDATED": "Ticket Updated",
     "CREATE_ADMIN_TICKET": "Admin Ticket Created",
     "CREATE_DEPARTMENT_TICKET": "Dept Ticket Created",
+    "TICKET_CREATED": "Ticket Created",
+    "COMMENT_CREATED": "Comment Added",
     "CREATE_DEPARTMENT": "Department Created",
     "UPDATE_DEPARTMENT": "Department Updated",
     "DEACTIVATE_DEPARTMENT": "Department Deactivated",

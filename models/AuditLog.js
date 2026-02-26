@@ -13,6 +13,8 @@ const ACTION_METADATA = {
   TICKET_UPDATED: { category: 'ticket_management', severity: 'info' },
   CREATE_ADMIN_TICKET: { category: 'ticket_management', severity: 'info' },
   CREATE_DEPARTMENT_TICKET: { category: 'ticket_management', severity: 'info' },
+  TICKET_CREATED: { category: 'ticket_management', severity: 'info' },
+  COMMENT_CREATED: { category: 'ticket_management', severity: 'info' },
   CREATE_DEPARTMENT: { category: 'department_management', severity: 'info' },
   UPDATE_DEPARTMENT: { category: 'department_management', severity: 'info' },
   DEACTIVATE_DEPARTMENT: { category: 'department_management', severity: 'critical' },
@@ -21,8 +23,6 @@ const ACTION_METADATA = {
   FLOOR_UPDATED: { category: 'floor_management', severity: 'info' },
   FLOOR_DEACTIVATED: { category: 'floor_management', severity: 'warning' },
   FLOOR_REACTIVATED: { category: 'floor_management', severity: 'info' },
-  SEED_HOSPITAL_DATA: { category: 'system', severity: 'info' },
-  SEED_SAMPLE_DATA: { category: 'system', severity: 'info' },
   AUDIT_LOG_VIEWED: { category: 'system', severity: 'info' },
   AUDIT_LOG_EXPORTED: { category: 'system', severity: 'warning' },
 };

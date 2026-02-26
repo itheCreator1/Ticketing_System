@@ -14,6 +14,8 @@ const ACTION_COLORS = {
   TICKET_UPDATED: 'warning',
   CREATE_ADMIN_TICKET: 'success',
   CREATE_DEPARTMENT_TICKET: 'success',
+  TICKET_CREATED: 'success',
+  COMMENT_CREATED: 'info',
   CREATE_DEPARTMENT: 'success',
   UPDATE_DEPARTMENT: 'warning',
   DEACTIVATE_DEPARTMENT: 'danger',
@@ -22,8 +24,6 @@ const ACTION_COLORS = {
   FLOOR_UPDATED: 'warning',
   FLOOR_DEACTIVATED: 'danger',
   FLOOR_REACTIVATED: 'success',
-  SEED_HOSPITAL_DATA: 'secondary',
-  SEED_SAMPLE_DATA: 'secondary',
   AUDIT_LOG_VIEWED: 'secondary',
   AUDIT_LOG_EXPORTED: 'secondary',
 };
@@ -40,6 +40,8 @@ const ACTION_LABELS = {
   TICKET_UPDATED: 'Ticket Updated',
   CREATE_ADMIN_TICKET: 'Admin Ticket Created',
   CREATE_DEPARTMENT_TICKET: 'Dept Ticket Created',
+  TICKET_CREATED: 'Ticket Created',
+  COMMENT_CREATED: 'Comment Added',
   CREATE_DEPARTMENT: 'Department Created',
   UPDATE_DEPARTMENT: 'Department Updated',
   DEACTIVATE_DEPARTMENT: 'Department Deactivated',
@@ -48,8 +50,6 @@ const ACTION_LABELS = {
   FLOOR_UPDATED: 'Floor Updated',
   FLOOR_DEACTIVATED: 'Floor Deactivated',
   FLOOR_REACTIVATED: 'Floor Reactivated',
-  SEED_HOSPITAL_DATA: 'Hospital Data Seeded',
-  SEED_SAMPLE_DATA: 'Sample Data Seeded',
   AUDIT_LOG_VIEWED: 'Audit Log Viewed',
   AUDIT_LOG_EXPORTED: 'Audit Log Exported',
 };
@@ -77,6 +77,8 @@ function eventSummary(event) {
     TICKET_UPDATED: `Updated ticket ${target}`,
     CREATE_ADMIN_TICKET: `Created internal admin ticket ${target}`,
     CREATE_DEPARTMENT_TICKET: `Created department ticket ${target}`,
+    TICKET_CREATED: `Created ticket ${target}`,
+    COMMENT_CREATED: `Added comment on ticket ${target}`,
     CREATE_DEPARTMENT: `Created department ${target}`,
     UPDATE_DEPARTMENT: `Updated department ${target}`,
     DEACTIVATE_DEPARTMENT: `Deactivated department ${target}`,
@@ -85,8 +87,6 @@ function eventSummary(event) {
     FLOOR_UPDATED: `Updated floor ${target}`,
     FLOOR_DEACTIVATED: `Deactivated floor ${target}`,
     FLOOR_REACTIVATED: `Reactivated floor ${target}`,
-    SEED_HOSPITAL_DATA: 'Seeded hospital data',
-    SEED_SAMPLE_DATA: 'Seeded sample data',
     AUDIT_LOG_VIEWED: 'Viewed audit logs',
     AUDIT_LOG_EXPORTED: 'Exported audit logs',
   };
@@ -231,6 +231,21 @@ function resolveDateRange(preset, customFrom, customTo) {
   }
 }
 
+/**
+ * Build auditContext from an Express request.
+ * Centralizes session hash computation so routes don't duplicate crypto calls.
+ */
+function buildAuditContext(req) {
+  const crypto = require('crypto');
+  return {
+    actorUsername: req.session.user.username,
+    actorRole: req.session.user.role,
+    sessionHash: req.sessionID
+      ? crypto.createHash('sha256').update(req.sessionID).digest('hex').substring(0, 16)
+      : null,
+  };
+}
+
 module.exports = {
   ACTION_METADATA,
   ACTION_COLORS,
@@ -246,4 +261,5 @@ module.exports = {
   buildCursorUrl,
   decodeCursor,
   resolveDateRange,
+  buildAuditContext,
 };

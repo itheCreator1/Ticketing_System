@@ -1,5 +1,4 @@
 const express = require('express');
-const crypto = require('crypto');
 const router = express.Router();
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const { auditLogLimiter } = require('../middleware/rateLimiter');
@@ -22,6 +21,7 @@ const {
   resolveDateRange,
   groupByDate,
   calculateDuration,
+  buildAuditContext,
 } = require('../utils/auditHelpers');
 
 // All audit log routes require super_admin
@@ -64,9 +64,7 @@ router.get('/', validateAuditFilters, validateRequest, async (req, res, next) =>
     const users = await User.findAllActive();
 
     // Log the dashboard access (audit-of-audit)
-    const sessionHash = req.sessionID
-      ? crypto.createHash('sha256').update(req.sessionID).digest('hex').substring(0, 16)
-      : null;
+    const auditCtx = buildAuditContext(req);
     await AuditLog.create({
       actorId: req.session.user.id,
       action: 'AUDIT_LOG_VIEWED',
@@ -74,9 +72,9 @@ router.get('/', validateAuditFilters, validateRequest, async (req, res, next) =>
       targetId: null,
       details: { filters: { dateRange, ...filters, dateFrom: undefined, dateTo: undefined } },
       ipAddress: req.ip,
-      actorUsername: req.session.user.username,
-      actorRole: req.session.user.role,
-      sessionHash,
+      actorUsername: auditCtx.actorUsername,
+      actorRole: auditCtx.actorRole,
+      sessionHash: auditCtx.sessionHash,
     });
 
     // Group actions by category for optgroup in filter dropdown
@@ -186,9 +184,7 @@ router.get('/export', validateAuditFilters, validateRequest, async (req, res, ne
     }
 
     // Log the export (audit-of-audit)
-    const sessionHash = req.sessionID
-      ? crypto.createHash('sha256').update(req.sessionID).digest('hex').substring(0, 16)
-      : null;
+    const exportAuditCtx = buildAuditContext(req);
     await AuditLog.create({
       actorId: req.session.user.id,
       action: 'AUDIT_LOG_EXPORTED',
@@ -196,9 +192,9 @@ router.get('/export', validateAuditFilters, validateRequest, async (req, res, ne
       targetId: null,
       details: { rowCount: logs.length, filters: { dateRange } },
       ipAddress: req.ip,
-      actorUsername: req.session.user.username,
-      actorRole: req.session.user.role,
-      sessionHash,
+      actorUsername: exportAuditCtx.actorUsername,
+      actorRole: exportAuditCtx.actorRole,
+      sessionHash: exportAuditCtx.sessionHash,
     });
 
     // Build CSV

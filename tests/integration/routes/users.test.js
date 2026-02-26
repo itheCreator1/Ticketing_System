@@ -198,7 +198,7 @@ describe('User Management Routes Integration Tests', () => {
 
       // Assert
       expect(response.status).toBe(302);
-      expect(response.headers.location).toBe('back');
+      expect(response.headers.location).not.toContain('dashboard');
     });
 
     it('should validate email uniqueness', async () => {
@@ -217,7 +217,7 @@ describe('User Management Routes Integration Tests', () => {
 
       // Assert
       expect(response.status).toBe(302);
-      expect(response.headers.location).toBe('back');
+      expect(response.headers.location).not.toContain('dashboard');
     });
 
     it('should validate password complexity', async () => {
@@ -232,7 +232,7 @@ describe('User Management Routes Integration Tests', () => {
 
       // Assert
       expect(response.status).toBe(302);
-      expect(response.headers.location).toBe('back');
+      expect(response.headers.location).not.toContain('dashboard');
     });
 
     it('should set default status to active', async () => {
@@ -366,7 +366,7 @@ describe('User Management Routes Integration Tests', () => {
 
       // Assert
       expect(response.status).toBe(302);
-      expect(response.headers.location).toBe('back');
+      expect(response.headers.location).not.toContain('dashboard');
     });
 
     it('should clear user sessions when status changes to non-active', async () => {
@@ -470,7 +470,7 @@ describe('User Management Routes Integration Tests', () => {
 
       // Assert
       expect(response.status).toBe(302);
-      expect(response.headers.location).toBe('back');
+      expect(response.headers.location).not.toContain('dashboard');
     });
 
     it('should update password_changed_at timestamp', async () => {

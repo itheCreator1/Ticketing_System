@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const express = require('express');
 const router = express.Router();
 const { requireAuth, requireDepartment } = require('../middleware/auth');
@@ -74,7 +75,21 @@ router.post('/tickets', validateClientTicketCreation, validateRequest, async (re
       reporter_phone: req.body.reporter_phone,
     };
 
-    const ticket = await clientTicketService.createTicket(req.session.user.id, ticketData);
+    const auditContext = {
+      actorUsername: req.session.user.username,
+      actorRole: req.session.user.role,
+      sessionHash: crypto
+        .createHash('sha256')
+        .update(req.sessionID)
+        .digest('hex')
+        .substring(0, 16),
+    };
+    const ticket = await clientTicketService.createTicket(
+      req.session.user.id,
+      ticketData,
+      req.ip,
+      auditContext
+    );
 
     logger.info('Department user created ticket', {
       ticketId: ticket.id,
@@ -192,7 +207,22 @@ router.post(
         return errorRedirect(req, res, TICKET_MESSAGES.UNAUTHORIZED_ACCESS, '/client/dashboard');
       }
 
-      await clientTicketService.addComment(ticketId, req.session.user.id, req.body.content);
+      const commentAuditContext = {
+        actorUsername: req.session.user.username,
+        actorRole: req.session.user.role,
+        sessionHash: crypto
+          .createHash('sha256')
+          .update(req.sessionID)
+          .digest('hex')
+          .substring(0, 16),
+      };
+      await clientTicketService.addComment(
+        ticketId,
+        req.session.user.id,
+        req.body.content,
+        req.ip,
+        commentAuditContext
+      );
 
       logger.info('Department user added comment', {
         ticketId,

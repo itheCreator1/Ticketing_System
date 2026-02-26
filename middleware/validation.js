@@ -16,10 +16,12 @@ function validateRequest(req, res, next) {
       errors.array().forEach((error) => {
         req.flash('error_msg', error.msg);
       });
-      // Use 'back' for redirect to return to previous page
-      // Express converts 'back' to req.get('Referer') || '/'
-      logger.debug('Redirecting after validation failure', { referer: req.get('Referer') });
-      return res.redirect('back');
+      // Redirect to referer, or current path (without query string), or root
+      const referer = req.get('Referer');
+      const currentPath = req.originalUrl ? req.originalUrl.split('?')[0] : null;
+      const redirectUrl = referer || currentPath || '/';
+      logger.debug('Redirecting after validation failure', { redirectUrl });
+      return res.redirect(redirectUrl);
     } else {
       return res.status(400).json({ errors: errors.array() });
     }

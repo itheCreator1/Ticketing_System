@@ -12,6 +12,7 @@ const departmentService = require('../services/departmentService');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
 const { adminMutationLimiter } = require('../middleware/rateLimiter');
 const logger = require('../utils/logger');
+const { buildAuditContext } = require('../utils/auditHelpers');
 
 // GET /admin/users - List all users
 router.get('/', requireAuth, requireSuperAdmin, async (req, res, next) => {
@@ -66,7 +67,8 @@ router.post(
           department: cleanDepartment,
         },
         req.session.user.id,
-        req.ip
+        req.ip,
+        buildAuditContext(req)
       );
 
       return successRedirect(req, res, 'User created successfully', '/admin/users');
@@ -133,7 +135,7 @@ router.post(
         updates.department = department || null;
       }
 
-      await userService.updateUser(req.session.user.id, userId, updates, req.ip);
+      await userService.updateUser(req.session.user.id, userId, updates, req.ip, buildAuditContext(req));
 
       return successRedirect(req, res, 'User updated successfully', '/admin/users');
     } catch (error) {
@@ -152,7 +154,7 @@ router.post(
   async (req, res, _next) => {
     try {
       const userId = parseInt(req.params.id);
-      await userService.deleteUser(req.session.user.id, userId, req.ip);
+      await userService.deleteUser(req.session.user.id, userId, req.ip, buildAuditContext(req));
 
       return successRedirect(req, res, 'User deleted successfully', '/admin/users');
     } catch (error) {
@@ -175,7 +177,7 @@ router.post(
       const userId = parseInt(req.params.id);
       const { password } = req.body;
 
-      await userService.resetUserPassword(req.session.user.id, userId, password, req.ip);
+      await userService.resetUserPassword(req.session.user.id, userId, password, req.ip, buildAuditContext(req));
 
       return successRedirect(req, res, 'Password reset successfully', '/admin/users');
     } catch (error) {
@@ -196,7 +198,7 @@ router.post(
       const userId = parseInt(req.params.id);
       const { status } = req.body;
 
-      await userService.toggleUserStatus(req.session.user.id, userId, status, req.ip);
+      await userService.toggleUserStatus(req.session.user.id, userId, status, req.ip, buildAuditContext(req));
 
       return successRedirect(req, res, 'User status updated', '/admin/users');
     } catch (error) {

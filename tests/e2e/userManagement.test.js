@@ -446,7 +446,7 @@ describe('User Management E2E Tests', () => {
 
       // Assert - Should be rejected
       expect(weakPasswordResponse.status).toBe(302);
-      expect(weakPasswordResponse.headers.location).toBe('back');
+      expect(weakPasswordResponse.headers.location).toBe('/admin/users');
 
       // Verify user not created
       const userCheck = await User.findByUsername('testuser');
@@ -526,7 +526,7 @@ describe('User Management E2E Tests', () => {
 
       // Assert - Should be rejected
       expect(duplicateResponse.status).toBe(302);
-      expect(duplicateResponse.headers.location).toBe('back');
+      expect(duplicateResponse.headers.location).toBe('/admin/users');
     });
 
     it('should enforce email uniqueness throughout workflow', async () => {
@@ -565,7 +565,7 @@ describe('User Management E2E Tests', () => {
 
       // Assert - Should be rejected
       expect(duplicateResponse.status).toBe(302);
-      expect(duplicateResponse.headers.location).toBe('back');
+      expect(duplicateResponse.headers.location).toBe('/admin/users');
     });
   });
 });

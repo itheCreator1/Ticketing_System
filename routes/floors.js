@@ -9,6 +9,7 @@ const {
 const { validateRequest } = require('../middleware/validation');
 const floorService = require('../services/floorService');
 const { successRedirect, errorRedirect } = require('../utils/responseHelpers');
+const { buildAuditContext } = require('../utils/auditHelpers');
 const logger = require('../utils/logger');
 const Floor = require('../models/Floor');
 
@@ -54,7 +55,8 @@ router.post('/', validateFloorCreate, validateRequest, async (req, res, _next) =
     const floor = await floorService.createFloor(
       req.session.user.id,
       { name: req.body.name, sort_order: req.body.sort_order },
-      req.ip
+      req.ip,
+      buildAuditContext(req)
     );
 
     logger.info('Floor created', {
@@ -108,7 +110,8 @@ router.post('/:id', validateFloorUpdate, validateRequest, async (req, res, _next
       req.session.user.id,
       floorId,
       { name: req.body.name, sort_order: req.body.sort_order, active: req.body.active },
-      req.ip
+      req.ip,
+      buildAuditContext(req)
     );
 
     logger.info('Floor updated', {
@@ -148,7 +151,7 @@ router.post('/:id/deactivate', validateFloorId, validateRequest, async (req, res
       return;
     }
 
-    await floorService.deactivateFloor(req.session.user.id, floorId, req.ip);
+    await floorService.deactivateFloor(req.session.user.id, floorId, req.ip, buildAuditContext(req));
 
     logger.info('Floor deactivated', {
       floorId,
@@ -169,7 +172,7 @@ router.post('/:id/reactivate', validateFloorId, validateRequest, async (req, res
   try {
     const floorId = parseInt(req.params.id);
 
-    await floorService.reactivateFloor(req.session.user.id, floorId, req.ip);
+    await floorService.reactivateFloor(req.session.user.id, floorId, req.ip, buildAuditContext(req));
 
     logger.info('Floor reactivated', {
       floorId,
