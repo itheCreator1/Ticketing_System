@@ -52,7 +52,7 @@ class TicketService {
     return Ticket.findAll(cleanFilters);
   }
 
-  async updateTicket(id, updates, actorId = null, ipAddress = null) {
+  async updateTicket(id, updates, actorId = null, ipAddress = null, auditContext = {}) {
     const startTime = Date.now();
     const changedFields = Object.keys(updates).filter((key) => updates[key] !== undefined);
 
@@ -113,6 +113,9 @@ class TicketService {
           targetId: parseInt(id),
           details: allowedUpdates,
           ipAddress,
+          actorUsername: auditContext.actorUsername,
+          actorRole: auditContext.actorRole,
+          sessionHash: auditContext.sessionHash,
         });
       }
 

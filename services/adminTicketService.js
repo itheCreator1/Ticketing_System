@@ -28,7 +28,7 @@ class AdminTicketService {
    * @returns {Promise<Object>} The created ticket
    * @throws {Error} If user is not found or not an admin
    */
-  async createAdminTicket(adminUserId, ticketData, ipAddress) {
+  async createAdminTicket(adminUserId, ticketData, ipAddress, auditContext = {}) {
     const startTime = Date.now();
     try {
       logger.info('adminTicketService.createAdminTicket: Creating admin ticket', {
@@ -83,6 +83,9 @@ class AdminTicketService {
           department: ticket.reporter_department,
         },
         ipAddress,
+        actorUsername: auditContext.actorUsername,
+        actorRole: auditContext.actorRole,
+        sessionHash: auditContext.sessionHash,
       });
 
       const duration = Date.now() - startTime;
@@ -133,7 +136,7 @@ class AdminTicketService {
    * @returns {Promise<Object>} The created ticket
    * @throws {Error} If user is not found, not an admin, or department is Internal
    */
-  async createDepartmentTicket(adminUserId, ticketData, ipAddress) {
+  async createDepartmentTicket(adminUserId, ticketData, ipAddress, auditContext = {}) {
     const startTime = Date.now();
     try {
       logger.info('adminTicketService.createDepartmentTicket: Creating department ticket', {
@@ -196,6 +199,9 @@ class AdminTicketService {
           createdBy: admin.username,
         },
         ipAddress,
+        actorUsername: auditContext.actorUsername,
+        actorRole: auditContext.actorRole,
+        sessionHash: auditContext.sessionHash,
       });
 
       const duration = Date.now() - startTime;

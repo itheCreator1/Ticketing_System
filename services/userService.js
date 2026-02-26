@@ -17,7 +17,7 @@ class UserService {
     return User.findAllActive();
   }
 
-  async createUser(userData, actorId = null, ipAddress = null) {
+  async createUser(userData, actorId = null, ipAddress = null, auditContext = {}) {
     const startTime = Date.now();
     const { username, email, role, department } = userData;
 
@@ -59,6 +59,9 @@ class UserService {
           targetId: user.id,
           details: { username: user.username, email: user.email, role: user.role },
           ipAddress,
+          actorUsername: auditContext.actorUsername,
+          actorRole: auditContext.actorRole,
+          sessionHash: auditContext.sessionHash,
         });
       }
 
@@ -138,7 +141,7 @@ class UserService {
   }
 
   // NEW: Update user (with business logic validation)
-  async updateUser(actorId, targetId, updates, ipAddress) {
+  async updateUser(actorId, targetId, updates, ipAddress, auditContext = {}) {
     const startTime = Date.now();
     const { role, status, department } = updates;
     const changedFields = Object.keys(updates).filter((key) => updates[key] !== undefined);
@@ -232,6 +235,9 @@ class UserService {
         targetId,
         details: { changes: updates },
         ipAddress,
+        actorUsername: auditContext.actorUsername,
+        actorRole: auditContext.actorRole,
+        sessionHash: auditContext.sessionHash,
       });
 
       const duration = Date.now() - startTime;
@@ -259,7 +265,7 @@ class UserService {
   }
 
   // NEW: Delete user (soft delete)
-  async deleteUser(actorId, targetId, ipAddress) {
+  async deleteUser(actorId, targetId, ipAddress, auditContext = {}) {
     const startTime = Date.now();
     try {
       logger.info('userService.deleteUser: User deletion initiated', {
@@ -314,6 +320,9 @@ class UserService {
           deletedUser: { username: target.username, email: target.email, role: target.role },
         },
         ipAddress,
+        actorUsername: auditContext.actorUsername,
+        actorRole: auditContext.actorRole,
+        sessionHash: auditContext.sessionHash,
       });
 
       const duration = Date.now() - startTime;
@@ -339,7 +348,7 @@ class UserService {
   }
 
   // NEW: Reset user password (admin function, no current password required)
-  async resetUserPassword(actorId, targetId, newPassword, ipAddress) {
+  async resetUserPassword(actorId, targetId, newPassword, ipAddress, auditContext = {}) {
     const startTime = Date.now();
     try {
       logger.info('userService.resetUserPassword: Password reset initiated', {
@@ -375,6 +384,9 @@ class UserService {
         targetId,
         details: { resetBy: 'admin' },
         ipAddress,
+        actorUsername: auditContext.actorUsername,
+        actorRole: auditContext.actorRole,
+        sessionHash: auditContext.sessionHash,
       });
 
       const duration = Date.now() - startTime;

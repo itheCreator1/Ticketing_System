@@ -43,7 +43,7 @@ class DepartmentService {
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Created department
    */
-  async createDepartment(actorId, { name, description, floor }, ipAddress) {
+  async createDepartment(actorId, { name, description, floor }, ipAddress, auditContext = {}) {
     // Validate name is not empty
     if (!name || name.trim() === '') {
       throw new Error('Department name is required');
@@ -79,6 +79,9 @@ class DepartmentService {
         floor: department.floor,
       },
       ipAddress,
+      actorUsername: auditContext.actorUsername,
+      actorRole: auditContext.actorRole,
+      sessionHash: auditContext.sessionHash,
     });
 
     return department;
@@ -92,7 +95,7 @@ class DepartmentService {
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Updated department
    */
-  async updateDepartment(actorId, id, { name, description, floor, active }, ipAddress) {
+  async updateDepartment(actorId, id, { name, description, floor, active }, ipAddress, auditContext = {}) {
     // Get current department
     const current = await this.getDepartmentById(id);
 
@@ -142,6 +145,9 @@ class DepartmentService {
         },
       },
       ipAddress,
+      actorUsername: auditContext.actorUsername,
+      actorRole: auditContext.actorRole,
+      sessionHash: auditContext.sessionHash,
     });
 
     return updated;
@@ -154,7 +160,7 @@ class DepartmentService {
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Deactivated department
    */
-  async deactivateDepartment(actorId, id, ipAddress) {
+  async deactivateDepartment(actorId, id, ipAddress, auditContext = {}) {
     // Get current department
     const department = await this.getDepartmentById(id);
 
@@ -184,6 +190,9 @@ class DepartmentService {
       targetId: id,
       details: { name: department.name },
       ipAddress,
+      actorUsername: auditContext.actorUsername,
+      actorRole: auditContext.actorRole,
+      sessionHash: auditContext.sessionHash,
     });
 
     return deactivated;
@@ -196,7 +205,7 @@ class DepartmentService {
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Reactivated department
    */
-  async reactivateDepartment(actorId, id, ipAddress) {
+  async reactivateDepartment(actorId, id, ipAddress, auditContext = {}) {
     const department = await this.getDepartmentById(id);
 
     const reactivated = await Department.update(id, { active: true });
@@ -209,6 +218,9 @@ class DepartmentService {
       targetId: id,
       details: { name: department.name },
       ipAddress,
+      actorUsername: auditContext.actorUsername,
+      actorRole: auditContext.actorRole,
+      sessionHash: auditContext.sessionHash,
     });
 
     return reactivated;
@@ -242,7 +254,7 @@ class DepartmentService {
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Updated user
    */
-  async assignUserToDepartment(actorId, departmentId, userId, ipAddress) {
+  async assignUserToDepartment(actorId, departmentId, userId, ipAddress, auditContext = {}) {
     const department = await this.getDepartmentById(departmentId);
 
     // Prevent assigning users to system department
@@ -277,6 +289,9 @@ class DepartmentService {
         oldDepartment: user.department,
       },
       ipAddress,
+      actorUsername: auditContext.actorUsername,
+      actorRole: auditContext.actorRole,
+      sessionHash: auditContext.sessionHash,
     });
 
     return updated;
@@ -290,7 +305,7 @@ class DepartmentService {
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Updated user
    */
-  async removeUserFromDepartment(actorId, departmentId, userId, ipAddress) {
+  async removeUserFromDepartment(actorId, departmentId, userId, ipAddress, auditContext = {}) {
     const department = await this.getDepartmentById(departmentId);
 
     // Get user
@@ -324,6 +339,9 @@ class DepartmentService {
         departmentName: department.name,
       },
       ipAddress,
+      actorUsername: auditContext.actorUsername,
+      actorRole: auditContext.actorRole,
+      sessionHash: auditContext.sessionHash,
     });
 
     return updated;
