@@ -14,7 +14,7 @@ i18next
     preload: ['el', 'en'],
 
     // Namespace configuration
-    ns: ['common', 'auth', 'tickets', 'users', 'departments', 'floors', 'validation', 'errors'],
+    ns: ['common', 'auth', 'tickets', 'users', 'departments', 'floors', 'validation', 'errors', 'audit'],
     defaultNS: 'common',
 
     // Backend options for loading translation files
