@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const router = express.Router();
 const { validateRequest } = require('../middleware/validation');
 // const { AUTH_MESSAGES } = require('../constants/messages'); // Not currently used
@@ -35,6 +36,9 @@ router.post('/login', loginLimiter, validateLogin, validateRequest, async (req, 
     req.session.user = authService.createSessionData(user);
 
     // Log successful login to audit trail
+    const sessionHash = req.sessionID
+      ? crypto.createHash('sha256').update(req.sessionID).digest('hex').substring(0, 16)
+      : null;
     await AuditLog.create({
       actorId: user.id,
       action: 'USER_LOGIN',
@@ -42,6 +46,9 @@ router.post('/login', loginLimiter, validateLogin, validateRequest, async (req, 
       targetId: user.id,
       details: { success: true },
       ipAddress: req.ip,
+      actorUsername: user.username,
+      actorRole: user.role,
+      sessionHash,
     });
 
     // Role-based redirect after login
