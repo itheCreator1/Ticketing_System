@@ -55,7 +55,30 @@ const adminMutationLimiter = rateLimit({
   },
 });
 
+/**
+ * Rate limiter for audit log dashboard
+ * Limits: 30 requests per minute per IP address
+ *
+ * Prevents query-based DoS attacks and slows data exfiltration
+ * on the audit log endpoints which can return large datasets.
+ */
+const auditLogLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute in milliseconds
+  max: 30, // Limit each IP to 30 requests per minute
+  message: 'Too many audit log requests from this IP, please slow down',
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: false,
+  skipFailedRequests: false,
+  skip: () => isTestEnvironment,
+  handler: (req, res) => {
+    req.flash('error_msg', 'Too many requests. Please wait a moment before trying again.');
+    res.redirect('back');
+  },
+});
+
 module.exports = {
   loginLimiter,
   adminMutationLimiter,
+  auditLogLimiter,
 };
