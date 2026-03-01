@@ -9,7 +9,7 @@ KNII Ticketing System - A professional support ticket management application wit
 **No ORM**: Raw SQL with pg driver
 **Code Quality**: 98% compliance with professional Node.js development standards
 **Security**: Zero SQL injection vulnerabilities, multi-layer defense with department-based access control, search input sanitization, admin mutation rate limiting
-**Testing**: 945 test cases passing (100%) - 38 test suites with comprehensive unit, integration, and E2E coverage
+**Testing**: 1004 test cases passing (100%) - 39 test suites with comprehensive unit, integration, and E2E coverage
 **CI/CD**: Docker-based testing + ESLint + Prettier + security audit via GitHub Actions
 **Version**: 2.4.0 (Professional CI/CD + Docker-Based Testing + Full Lint Compliance)
 
@@ -31,10 +31,10 @@ This file provides a quick reference for AI assistants. For comprehensive docume
   - Security debugging, performance optimization, common issues
   - Command reference for Docker, PostgreSQL, PM2
 - **[Testing Guidelines](docs/testing_rules.md)** - Testing patterns and practices (850+ lines)
-  - Test statistics: 945/945 passing (100% pass rate)
+  - Test statistics: 1004/1004 passing (100% pass rate)
   - Test infrastructure documentation (floor seeding, cleanup order)
   - Transaction-based isolation, FK-aware cleanup
-  - Migration testing (all 25 migrations validated)
+  - Migration testing (all 28 migrations validated)
 - **[CI/CD Guide](docs/ci-cd.md)** - GitHub Actions workflows and automation - UPDATED v2.4.0
   - Docker-based test execution (matches local dev workflow)
   - Lint workflow (ESLint + Prettier, zero conflicts)
@@ -46,7 +46,7 @@ This file provides a quick reference for AI assistants. For comprehensive docume
 
 ## Testing Infrastructure
 
-**945/945 tests passing (100%)** - 38 test suites (Unit: 23, Integration: 12, E2E: 3). Coverage threshold: 60%. Details in [docs/testing_rules.md](docs/testing_rules.md).
+**1004/1004 tests passing (100%)** - 39 test suites (Unit: 23, Integration: 12, E2E: 4). Coverage threshold: 60%. Details in [docs/testing_rules.md](docs/testing_rules.md).
 
 **IMPORTANT**: All tests MUST run inside Docker. Tests require `--runInBand` (sequential) to prevent cross-suite contamination.
 
@@ -60,8 +60,10 @@ docker-compose exec web npx jest tests/unit/models/User.test.js --no-coverage  #
 ```
 
 **Key infrastructure notes**:
-- CSRF protection disabled in test environment (`NODE_ENV=test`)
+- CSRF is **enabled globally** (real csrf-csrf double-submit cookie in all envs, including test)
+- CSRF test helpers: `tests/helpers/csrf.js` — `fetchCsrfToken()`, `authenticateUser()`, `extractCsrfToken()`, `mergeCookies()`
 - FK-aware cleanup order: comments -> tickets -> audit_logs -> session -> users -> departments -> floors
+- **audit_logs cleanup**: Use `TRUNCATE audit_logs CASCADE` (not DELETE) — immutability trigger blocks DELETE/UPDATE
 - Floor seeding runs before departments to satisfy FK constraints
 - Unit tests use transaction isolation with dedicated client (not `pool.query()`)
 - Benchmarks: `npm run bench` (auth, tickets, comments). Details in `docs/performance-baseline.md`
@@ -511,7 +513,7 @@ models/* → config/database.js (pool)
 3. Update relevant model to use new column
 4. Never modify existing migration files
 
-**Current migration number**: 025 (last: add_composite_indexes)
+**Current migration number**: 028 (last: audit_logs_indexes)
 
 **Migration 020**: add_department_floor - Added floor column to departments table with CHECK constraint
 **Migration 021**: fix_audit_log_fk_constraint - Fixed audit_logs FK to use ON DELETE SET NULL for audit trail preservation
@@ -519,6 +521,9 @@ models/* → config/database.js (pool)
 **Migration 023**: convert_floor_to_fk - Converted departments.floor from CHECK constraint to foreign key for dynamic floor management
 **Migration 024**: remove_hardcoded_system_floors - Removed seeded system floors to make floors fully dynamic and customizable
 **Migration 025**: add_composite_indexes - Added composite indexes for 50-80% performance improvement in dashboard queries
+**Migration 026**: audit_logs_extended_columns - Added 7 columns to audit_logs (actorUsername, actorRole, sessionHash, targetLabel, action_category, severity, search_text)
+**Migration 027**: audit_logs_backfill - Batched backfill of new audit_log columns
+**Migration 028**: audit_logs_indexes - CONCURRENTLY indexes + pg_trgm GIN index on search_text
 
 ### Add a new model method
 ```javascript
@@ -608,7 +613,7 @@ Scripts are for **development/testing only**. Never run in production.
 GitHub Actions runs two workflows on push/PR to `main`/`develop`. See [docs/ci-cd.md](docs/ci-cd.md) for details.
 
 **CI Workflow** (`.github/workflows/ci.yml`):
-- **Tests (Docker)**: `docker compose -f docker-compose.ci.yml up --build --exit-code-from web` — runs all 945 tests inside Docker with coverage, uploads report as artifact
+- **Tests (Docker)**: `docker compose -f docker-compose.ci.yml up --build --exit-code-from web` — runs all 1004 tests inside Docker with coverage, uploads report as artifact
 - **Security Audit**: `npm audit --omit=dev --audit-level=high` — production deps must be clean
 
 **Lint Workflow** (`.github/workflows/lint.yml`):
@@ -656,6 +661,7 @@ npm run format:check   # Check formatting without changes
 8. **Use synchronous bcrypt methods** - Use async versions
 9. **Forget to handle errors in async routes** - Wrap in try/catch
 10. **Return password_hash from User model public methods** - Security risk
+11. **Use DELETE to clean audit_logs in tests** - Immutability trigger blocks DELETE/UPDATE; use `TRUNCATE audit_logs CASCADE` instead
 
 ---
 
