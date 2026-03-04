@@ -3,7 +3,6 @@ const router = express.Router();
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { adminMutationLimiter } = require('../middleware/rateLimiter');
 const Comment = require('../models/Comment');
-const AuditLog = require('../models/AuditLog');
 const { validateRequest } = require('../middleware/validation');
 const { TICKET_MESSAGES, COMMENT_MESSAGES } = require('../constants/messages');
 const ticketService = require('../services/ticketService');
@@ -173,52 +172,14 @@ router.post(
         return errorRedirect(req, res, TICKET_MESSAGES.NOT_FOUND, '/admin/dashboard');
       }
 
-      // Create comment
-      const comment = await Comment.create({
-        ticket_id: ticketId,
-        user_id: req.session.user.id,
-        content: req.body.content,
+      await ticketService.addComment(
+        ticketId,
+        req.session.user.id,
+        req.body.content,
         visibility_type,
-      });
-
-      // Audit log for admin comment creation
-      const auditCtx = buildAuditContext(req);
-      await AuditLog.create({
-        actorId: req.session.user.id,
-        action: 'COMMENT_CREATED',
-        targetType: 'comment',
-        targetId: comment.id,
-        details: {
-          ticketId: parseInt(ticketId, 10),
-          visibility: visibility_type,
-        },
-        ipAddress: req.ip,
-        actorUsername: auditCtx.actorUsername,
-        actorRole: auditCtx.actorRole,
-        sessionHash: auditCtx.sessionHash,
-      });
-
-      // AUTO-STATUS UPDATE: Admin adding PUBLIC comment → "waiting_on_department"
-      // ONLY if: public comment AND ticket not closed AND has reporter_id (dept ticket)
-      if (
-        visibility_type === 'public' &&
-        ticket.status !== 'closed' &&
-        ticket.reporter_id !== null
-      ) {
-        await ticketService.updateTicket(
-          ticketId,
-          { status: 'waiting_on_department' },
-          req.session.user.id,
-          req.ip,
-          buildAuditContext(req)
-        );
-        logger.info('Admin comment triggered status update', {
-          ticketId,
-          oldStatus: ticket.status,
-          newStatus: 'waiting_on_department',
-          adminId: req.session.user.id,
-        });
-      }
+        req.ip,
+        buildAuditContext(req)
+      );
 
       successRedirect(req, res, COMMENT_MESSAGES.ADDED, `/admin/tickets/${ticketId}`);
     } catch (error) {

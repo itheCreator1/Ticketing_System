@@ -1,4 +1,5 @@
 const Ticket = require('../models/Ticket');
+const Comment = require('../models/Comment');
 const User = require('../models/User');
 const AuditLog = require('../models/AuditLog');
 const logger = require('../utils/logger');
@@ -136,6 +137,82 @@ class TicketService {
       logger.error('ticketService.updateTicket: Failed to update ticket', {
         ticketId: id,
         changedFields,
+        error: error.message,
+        stack: error.stack,
+        duration,
+      });
+      throw error;
+    }
+  }
+  async addComment(ticketId, userId, content, visibilityType, ipAddress = null, auditContext = {}) {
+    const startTime = Date.now();
+    try {
+      logger.info('ticketService.addComment: Adding comment', {
+        ticketId,
+        userId,
+        visibilityType,
+        contentLength: content?.length,
+      });
+
+      // Get current ticket to check status for auto-status update
+      const ticket = await Ticket.findById(ticketId);
+      if (!ticket) {
+        throw new Error('Ticket not found');
+      }
+
+      const comment = await Comment.create({
+        ticket_id: ticketId,
+        user_id: userId,
+        content,
+        visibility_type: visibilityType,
+      });
+
+      await AuditLog.create({
+        actorId: userId,
+        action: 'COMMENT_CREATED',
+        targetType: 'comment',
+        targetId: comment.id,
+        details: {
+          ticketId: parseInt(ticketId, 10),
+          visibility: visibilityType,
+        },
+        ipAddress,
+        actorUsername: auditContext.actorUsername,
+        actorRole: auditContext.actorRole,
+        sessionHash: auditContext.sessionHash,
+      });
+
+      // AUTO-STATUS UPDATE: Admin adding PUBLIC comment → "waiting_on_department"
+      // ONLY if: public comment AND ticket not closed AND has reporter_id (dept ticket)
+      if (visibilityType === 'public' && ticket.status !== 'closed' && ticket.reporter_id !== null) {
+        await this.updateTicket(
+          ticketId,
+          { status: 'waiting_on_department' },
+          userId,
+          ipAddress,
+          auditContext
+        );
+        logger.info('ticketService.addComment: Auto-updated status to waiting_on_department', {
+          ticketId,
+          oldStatus: ticket.status,
+        });
+      }
+
+      const duration = Date.now() - startTime;
+      logger.info('ticketService.addComment: Comment added successfully', {
+        commentId: comment.id,
+        ticketId,
+        userId,
+        visibilityType,
+        duration,
+      });
+
+      return comment;
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      logger.error('ticketService.addComment: Failed to add comment', {
+        ticketId,
+        userId,
         error: error.message,
         stack: error.stack,
         duration,

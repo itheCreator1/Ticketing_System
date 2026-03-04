@@ -1,4 +1,5 @@
 const AuditLog = require('../models/AuditLog');
+const crypto = require('crypto');
 
 const ACTION_METADATA = AuditLog.ACTION_METADATA;
 
@@ -236,7 +237,6 @@ function resolveDateRange(preset, customFrom, customTo) {
  * Centralizes session hash computation so routes don't duplicate crypto calls.
  */
 function buildAuditContext(req) {
-  const crypto = require('crypto');
   return {
     actorUsername: req.session.user.username,
     actorRole: req.session.user.role,
