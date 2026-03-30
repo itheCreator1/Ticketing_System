@@ -18,8 +18,10 @@ const TICKET_MESSAGES = {
   NOT_FOUND: 'Ticket not found',
   UNAUTHORIZED_ACCESS: 'You do not have permission to access this ticket',
   STATUS_CHANGED: 'Ticket status updated successfully',
+  PRIORITY_CHANGED: 'Ticket priority updated successfully',
   INTERNAL_CREATED: 'Internal ticket created successfully',
   ADMIN_CREATED: 'Admin ticket created successfully',
+  DEPARTMENT_TICKET_CREATED: 'Department ticket created successfully',
 };
 
 const COMMENT_MESSAGES = {
