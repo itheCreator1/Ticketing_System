@@ -185,7 +185,11 @@ class TicketService {
 
       // AUTO-STATUS UPDATE: Admin adding PUBLIC comment → "waiting_on_department"
       // ONLY if: public comment AND ticket not closed AND has reporter_id (dept ticket)
-      if (visibilityType === 'public' && ticket.status !== 'closed' && ticket.reporter_id !== null) {
+      if (
+        visibilityType === 'public' &&
+        ticket.status !== 'closed' &&
+        ticket.reporter_id !== null
+      ) {
         await this.updateTicket(
           ticketId,
           { status: 'waiting_on_department' },
@@ -229,26 +233,29 @@ class TicketService {
       const pageNum = parseInt(page) || 1;
       const pageLimit = parseInt(limit) || 50;
 
-      logger.debug('ticketService.getDashboardData: Fetching dashboard data', { filters, page: pageNum, limit: pageLimit });
+      logger.debug('ticketService.getDashboardData: Fetching dashboard data', {
+        filters,
+        page: pageNum,
+        limit: pageLimit,
+      });
 
       // Parallel queries for performance
       const [paginatedResult, statusCounts, priorityCounts] = await Promise.all([
         Ticket.findAllPaginated(filters, pageNum, pageLimit),
         Ticket.getCountsByStatus(),
-        Ticket.getCountsByPriority()
+        Ticket.getCountsByPriority(),
       ]);
 
       const { tickets, pagination } = paginatedResult;
 
       // Get last comments for displayed tickets
-      const ticketIds = tickets.map(t => t.id);
-      const lastComments = ticketIds.length > 0
-        ? await Comment.getLastCommentsByTicketIds(ticketIds)
-        : [];
+      const ticketIds = tickets.map((t) => t.id);
+      const lastComments =
+        ticketIds.length > 0 ? await Comment.getLastCommentsByTicketIds(ticketIds) : [];
 
       // Map comments to tickets
       const commentMap = {};
-      lastComments.forEach(comment => {
+      lastComments.forEach((comment) => {
         commentMap[comment.ticket_id] = comment;
       });
 
@@ -268,7 +275,7 @@ class TicketService {
         ticketCount: tickets.length,
         totalTickets: pagination.totalCount,
         page: pageNum,
-        duration
+        duration,
       });
 
       return {
@@ -276,7 +283,7 @@ class TicketService {
         pagination,
         statusCounts: statusCountMap,
         priorityCounts: priorityCountMap,
-        lastComments: commentMap
+        lastComments: commentMap,
       };
     } catch (error) {
       const duration = Date.now() - startTime;
@@ -285,7 +292,7 @@ class TicketService {
         page,
         error: error.message,
         stack: error.stack,
-        duration
+        duration,
       });
       throw error;
     }
@@ -297,7 +304,7 @@ class TicketService {
       logger.info('ticketService.bulkUpdateTickets: Bulk update initiated', {
         ticketCount: ticketIds.length,
         updates,
-        actorId
+        actorId,
       });
 
       // Validate inputs
@@ -332,7 +339,7 @@ class TicketService {
 
       // Create audit log entry for each ticket
       await Promise.all(
-        updatedTickets.map(ticket =>
+        updatedTickets.map((ticket) =>
           AuditLog.create({
             actorId,
             action: 'ticket_bulk_updated',
@@ -351,7 +358,7 @@ class TicketService {
       logger.info('ticketService.bulkUpdateTickets: Bulk update completed', {
         updatedCount: updatedTickets.length,
         updates,
-        duration
+        duration,
       });
 
       return updatedTickets;
@@ -362,7 +369,7 @@ class TicketService {
         updates,
         error: error.message,
         stack: error.stack,
-        duration
+        duration,
       });
       throw error;
     }

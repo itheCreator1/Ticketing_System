@@ -336,13 +336,16 @@ class Ticket {
       `);
       const duration = Date.now() - startTime;
 
-      logger.debug('Ticket.getCountsByStatus: Query completed', { duration, groups: result.rows.length });
+      logger.debug('Ticket.getCountsByStatus: Query completed', {
+        duration,
+        groups: result.rows.length,
+      });
       return result.rows;
     } catch (error) {
       logger.error('Ticket.getCountsByStatus: Database error', {
         error: error.message,
         stack: error.stack,
-        code: error.code
+        code: error.code,
       });
       throw error;
     }
@@ -359,13 +362,16 @@ class Ticket {
       `);
       const duration = Date.now() - startTime;
 
-      logger.debug('Ticket.getCountsByPriority: Query completed', { duration, groups: result.rows.length });
+      logger.debug('Ticket.getCountsByPriority: Query completed', {
+        duration,
+        groups: result.rows.length,
+      });
       return result.rows;
     } catch (error) {
       logger.error('Ticket.getCountsByPriority: Database error', {
         error: error.message,
         stack: error.stack,
-        code: error.code
+        code: error.code,
       });
       throw error;
     }
@@ -374,7 +380,10 @@ class Ticket {
   static async bulkUpdate(ticketIds, updates) {
     const startTime = Date.now();
     try {
-      logger.info('Ticket.bulkUpdate: Starting bulk update', { ticketCount: ticketIds.length, updates });
+      logger.info('Ticket.bulkUpdate: Starting bulk update', {
+        ticketCount: ticketIds.length,
+        updates,
+      });
 
       // Build dynamic UPDATE query
       const fields = [];
@@ -406,20 +415,29 @@ class Ticket {
       fields.push('updated_at = CURRENT_TIMESTAMP');
       values.push(ticketIds);
 
-      const result = await pool.query(`
+      const result = await pool.query(
+        `
         UPDATE tickets
         SET ${fields.join(', ')}
         WHERE id = ANY($${paramIndex}::int[])
         RETURNING *
-      `, values);
+      `,
+        values
+      );
 
       const duration = Date.now() - startTime;
 
       if (duration > 1000) {
-        logger.warn('Ticket.bulkUpdate: Slow query detected', { ticketCount: ticketIds.length, duration });
+        logger.warn('Ticket.bulkUpdate: Slow query detected', {
+          ticketCount: ticketIds.length,
+          duration,
+        });
       }
 
-      logger.info('Ticket.bulkUpdate: Bulk update completed', { ticketCount: result.rows.length, duration });
+      logger.info('Ticket.bulkUpdate: Bulk update completed', {
+        ticketCount: result.rows.length,
+        duration,
+      });
       return result.rows;
     } catch (error) {
       logger.error('Ticket.bulkUpdate: Database error', {
@@ -427,7 +445,7 @@ class Ticket {
         updates,
         error: error.message,
         stack: error.stack,
-        code: error.code
+        code: error.code,
       });
       throw error;
     }
@@ -465,11 +483,14 @@ class Ticket {
       const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
       // Get total count for pagination
-      const countResult = await pool.query(`
+      const countResult = await pool.query(
+        `
         SELECT COUNT(*) as total
         FROM tickets t
         ${whereClause}
-      `, params);
+      `,
+        params
+      );
 
       const totalCount = parseInt(countResult.rows[0].total);
       const totalPages = Math.ceil(totalCount / limit);
@@ -478,14 +499,17 @@ class Ticket {
       params.push(limit);
       params.push(offset);
 
-      const result = await pool.query(`
+      const result = await pool.query(
+        `
         SELECT t.*, u.username as assigned_to_username
         FROM tickets t
         LEFT JOIN users u ON t.assigned_to = u.id
         ${whereClause}
         ORDER BY t.created_at DESC
         LIMIT $${paramIndex} OFFSET $${paramIndex + 1}
-      `, params);
+      `,
+        params
+      );
 
       const duration = Date.now() - startTime;
 
@@ -493,7 +517,13 @@ class Ticket {
         logger.warn('Ticket.findAllPaginated: Slow query detected', { filters, page, duration });
       }
 
-      logger.debug('Ticket.findAllPaginated: Query completed', { filters, page, rowCount: result.rows.length, totalCount, duration });
+      logger.debug('Ticket.findAllPaginated: Query completed', {
+        filters,
+        page,
+        rowCount: result.rows.length,
+        totalCount,
+        duration,
+      });
 
       return {
         tickets: result.rows,
@@ -503,8 +533,8 @@ class Ticket {
           totalCount,
           limit,
           hasNextPage: page < totalPages,
-          hasPrevPage: page > 1
-        }
+          hasPrevPage: page > 1,
+        },
       };
     } catch (error) {
       logger.error('Ticket.findAllPaginated: Database error', {
@@ -513,7 +543,7 @@ class Ticket {
         limit,
         error: error.message,
         stack: error.stack,
-        code: error.code
+        code: error.code,
       });
       throw error;
     }

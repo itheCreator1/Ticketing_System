@@ -5,15 +5,17 @@
  * translated via the EJS template rather than being hardcoded here.
  */
 document.addEventListener('DOMContentLoaded', function () {
-  var selectAll = document.getElementById('selectAll');
-  var checkboxes = document.querySelectorAll('.ticket-checkbox');
-  var bulkBtn = document.getElementById('bulkUpdateBtn');
-  var selectedCount = document.getElementById('selectedCount');
-  var bulkForm = document.getElementById('bulkUpdateForm');
+  const selectAll = document.getElementById('selectAll');
+  const checkboxes = document.querySelectorAll('.ticket-checkbox');
+  const bulkBtn = document.getElementById('bulkUpdateBtn');
+  const selectedCount = document.getElementById('selectedCount');
+  const bulkForm = document.getElementById('bulkUpdateForm');
 
   function updateBulkButton() {
-    if (!bulkBtn || !selectedCount) return;
-    var checked = document.querySelectorAll('.ticket-checkbox:checked');
+    if (!bulkBtn || !selectedCount) {
+      return;
+    }
+    const checked = document.querySelectorAll('.ticket-checkbox:checked');
     selectedCount.textContent = checked.length;
     bulkBtn.disabled = checked.length === 0;
   }
@@ -33,16 +35,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (bulkForm) {
     bulkForm.addEventListener('submit', function (e) {
-      var checked = document.querySelectorAll('.ticket-checkbox:checked');
+      const checked = document.querySelectorAll('.ticket-checkbox:checked');
       if (checked.length === 0) {
         e.preventDefault();
         window.alert(bulkForm.dataset.selectAtLeastOneTicket);
         return;
       }
 
-      var status = bulkForm.querySelector('select[name="status"]').value;
-      var priority = bulkForm.querySelector('select[name="priority"]').value;
-      var assignedTo = bulkForm.querySelector('select[name="assigned_to"]').value;
+      const status = bulkForm.querySelector('select[name="status"]').value;
+      const priority = bulkForm.querySelector('select[name="priority"]').value;
+      const assignedTo = bulkForm.querySelector('select[name="assigned_to"]').value;
 
       if (!status && !priority && assignedTo === '') {
         e.preventDefault();
@@ -50,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      var confirmMessage = (bulkForm.dataset.confirmUpdateTemplate || '').replace(
+      const confirmMessage = (bulkForm.dataset.confirmUpdateTemplate || '').replace(
         '__COUNT__',
         checked.length
       );

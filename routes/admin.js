@@ -49,7 +49,7 @@ router.get('/dashboard', async (req, res, next) => {
   } catch (error) {
     logger.error('Error loading dashboard', {
       error: error.message,
-      stack: error.stack
+      stack: error.stack,
     });
     next(error);
   }
@@ -114,7 +114,13 @@ router.post(
   validateRequest,
   async (req, res, next) => {
     try {
-      await ticketService.updateTicket(req.params.id, req.body, req.session.user.id, req.ip, buildAuditContext(req));
+      await ticketService.updateTicket(
+        req.params.id,
+        req.body,
+        req.session.user.id,
+        req.ip,
+        buildAuditContext(req)
+      );
       successRedirect(req, res, TICKET_MESSAGES.UPDATED, `/admin/tickets/${req.params.id}`);
     } catch (error) {
       next(error);
@@ -303,7 +309,8 @@ router.post(
 );
 
 // Bulk update (status, priority, assignment)
-router.post('/tickets/bulk-update',
+router.post(
+  '/tickets/bulk-update',
   requireAdmin,
   adminMutationLimiter,
   validateBulkUpdate,
@@ -317,8 +324,12 @@ router.post('/tickets/bulk-update',
       // dedicated __unassign__ sentinel is the only way to null it out, so
       // the two blank-looking options in the form can't collide.
       const updates = {};
-      if (status) updates.status = status;
-      if (priority) updates.priority = priority;
+      if (status) {
+        updates.status = status;
+      }
+      if (priority) {
+        updates.priority = priority;
+      }
       if (assigned_to === '__unassign__') {
         updates.assigned_to = null;
       } else if (assigned_to) {
@@ -335,8 +346,12 @@ router.post('/tickets/bulk-update',
 
       // Build description of what was updated
       const updateParts = [];
-      if (status) updateParts.push(`status to ${status}`);
-      if (priority) updateParts.push(`priority to ${priority}`);
+      if (status) {
+        updateParts.push(`status to ${status}`);
+      }
+      if (priority) {
+        updateParts.push(`priority to ${priority}`);
+      }
       if ('assigned_to' in updates) {
         updateParts.push(updates.assigned_to ? 'assignment' : 'unassigned');
       }
@@ -351,7 +366,11 @@ router.post('/tickets/bulk-update',
       logger.error('Error in bulk update', {
         error: error.message,
         ticketIds: req.body.ticketIds,
-        updates: { status: req.body.status, priority: req.body.priority, assigned_to: req.body.assigned_to }
+        updates: {
+          status: req.body.status,
+          priority: req.body.priority,
+          assigned_to: req.body.assigned_to,
+        },
       });
       next(error);
     }
@@ -359,7 +378,8 @@ router.post('/tickets/bulk-update',
 );
 
 // Quick assign ticket
-router.post('/tickets/:id/quick-assign',
+router.post(
+  '/tickets/:id/quick-assign',
   requireAdmin,
   adminMutationLimiter,
   validateQuickAssign,
@@ -384,7 +404,7 @@ router.post('/tickets/:id/quick-assign',
       logger.error('Error in quick assign', {
         error: error.message,
         ticketId: req.params.id,
-        assignedTo: req.body.assigned_to
+        assignedTo: req.body.assigned_to,
       });
       next(error);
     }
@@ -394,10 +414,18 @@ router.post('/tickets/:id/quick-assign',
 // Helper function to preserve filters and pagination
 function buildQueryString(filters) {
   const params = new URLSearchParams();
-  if (filters.status) params.append('status', filters.status);
-  if (filters.priority) params.append('priority', filters.priority);
-  if (filters.search) params.append('search', filters.search);
-  if (filters.page) params.append('page', filters.page);
+  if (filters.status) {
+    params.append('status', filters.status);
+  }
+  if (filters.priority) {
+    params.append('priority', filters.priority);
+  }
+  if (filters.search) {
+    params.append('search', filters.search);
+  }
+  if (filters.page) {
+    params.append('page', filters.page);
+  }
   return params.toString() ? '?' + params.toString() : '';
 }
 
