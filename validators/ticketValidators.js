@@ -94,6 +94,38 @@ const validateTicketPriorityUpdate = [
     .withMessage(VALIDATION_MESSAGES.PRIORITY_INVALID),
 ];
 
+const validateBulkUpdate = [
+  body('ticketIds')
+    .isArray({ min: 1, max: 100 })
+    .withMessage('Must select between 1 and 100 tickets'),
+  body('ticketIds.*').isInt({ min: 1 }).withMessage('Invalid ticket ID'),
+  body('status')
+    .optional({ checkFalsy: true })
+    .isIn(Object.values(TICKET_STATUS))
+    .withMessage(VALIDATION_MESSAGES.STATUS_INVALID),
+  body('priority')
+    .optional({ checkFalsy: true })
+    .isIn(Object.values(TICKET_PRIORITY))
+    .withMessage(VALIDATION_MESSAGES.PRIORITY_INVALID),
+  body('assigned_to')
+    .optional({ checkFalsy: true })
+    .custom((value) => {
+      if (value === '__unassign__') {
+        return true;
+      } // Explicit unassignment sentinel
+      return Number.isInteger(parseInt(value)) && parseInt(value) > 0;
+    })
+    .withMessage('Invalid user ID'),
+];
+
+const validateQuickAssign = [
+  param('id').isInt({ min: 1 }).withMessage('Invalid ticket ID'),
+  body('assigned_to')
+    .optional({ checkFalsy: true })
+    .isInt({ min: 1 })
+    .withMessage('Invalid user ID'),
+];
+
 module.exports = {
   validateTicketCreation,
   validateTicketUpdate,
@@ -101,4 +133,6 @@ module.exports = {
   validateTicketAssignment,
   validateTicketStatusUpdate,
   validateTicketPriorityUpdate,
+  validateBulkUpdate,
+  validateQuickAssign,
 };

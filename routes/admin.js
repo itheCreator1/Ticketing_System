@@ -3,6 +3,7 @@ const router = express.Router();
 const { requireAuth, requireAdmin } = require('../middleware/auth');
 const { adminMutationLimiter } = require('../middleware/rateLimiter');
 const Comment = require('../models/Comment');
+const User = require('../models/User');
 const { validateRequest } = require('../middleware/validation');
 const { TICKET_MESSAGES, COMMENT_MESSAGES } = require('../constants/messages');
 const ticketService = require('../services/ticketService');
@@ -13,6 +14,8 @@ const {
   validateTicketId,
   validateTicketStatusUpdate,
   validateTicketPriorityUpdate,
+  validateBulkUpdate,
+  validateQuickAssign,
 } = require('../validators/ticketValidators');
 const {
   validateAdminTicketCreation,
@@ -27,13 +30,27 @@ router.use(requireAuth);
 
 router.get('/dashboard', async (req, res, next) => {
   try {
-    const tickets = await ticketService.getAllTickets(req.query);
+    const page = parseInt(req.query.page) || 1;
+    const dashboardData = await ticketService.getDashboardData(req.query, page);
+
+    // Get active users for quick assign dropdown
+    const users = await User.findAllActive();
+
     res.render('admin/dashboard', {
       title: 'Admin Dashboard',
-      tickets,
+      tickets: dashboardData.tickets,
+      pagination: dashboardData.pagination,
+      statusCounts: dashboardData.statusCounts,
+      priorityCounts: dashboardData.priorityCounts,
+      lastComments: dashboardData.lastComments,
+      users: users,
       filters: req.query,
     });
   } catch (error) {
+    logger.error('Error loading dashboard', {
+      error: error.message,
+      stack: error.stack,
+    });
     next(error);
   }
 });
@@ -97,7 +114,13 @@ router.post(
   validateRequest,
   async (req, res, next) => {
     try {
-      await ticketService.updateTicket(req.params.id, req.body, req.session.user.id, req.ip, buildAuditContext(req));
+      await ticketService.updateTicket(
+        req.params.id,
+        req.body,
+        req.session.user.id,
+        req.ip,
+        buildAuditContext(req)
+      );
       successRedirect(req, res, TICKET_MESSAGES.UPDATED, `/admin/tickets/${req.params.id}`);
     } catch (error) {
       next(error);
@@ -284,5 +307,126 @@ router.post(
     }
   }
 );
+
+// Bulk update (status, priority, assignment)
+router.post(
+  '/tickets/bulk-update',
+  requireAdmin,
+  adminMutationLimiter,
+  validateBulkUpdate,
+  validateRequest,
+  async (req, res, next) => {
+    try {
+      const { ticketIds, status, priority, assigned_to } = req.body;
+
+      // Build updates object (only include provided fields)
+      // assigned_to === '' means "no change" (default select option); the
+      // dedicated __unassign__ sentinel is the only way to null it out, so
+      // the two blank-looking options in the form can't collide.
+      const updates = {};
+      if (status) {
+        updates.status = status;
+      }
+      if (priority) {
+        updates.priority = priority;
+      }
+      if (assigned_to === '__unassign__') {
+        updates.assigned_to = null;
+      } else if (assigned_to) {
+        updates.assigned_to = parseInt(assigned_to, 10);
+      }
+
+      await ticketService.bulkUpdateTickets(
+        ticketIds,
+        updates,
+        req.session.user.id,
+        req.ip,
+        buildAuditContext(req)
+      );
+
+      // Build description of what was updated
+      const updateParts = [];
+      if (status) {
+        updateParts.push(`status to ${status}`);
+      }
+      if (priority) {
+        updateParts.push(`priority to ${priority}`);
+      }
+      if ('assigned_to' in updates) {
+        updateParts.push(updates.assigned_to ? 'assignment' : 'unassigned');
+      }
+
+      successRedirect(
+        req,
+        res,
+        `Successfully updated ${ticketIds.length} ticket(s): ${updateParts.join(', ')}`,
+        '/admin/dashboard' + buildQueryString(req.query)
+      );
+    } catch (error) {
+      logger.error('Error in bulk update', {
+        error: error.message,
+        ticketIds: req.body.ticketIds,
+        updates: {
+          status: req.body.status,
+          priority: req.body.priority,
+          assigned_to: req.body.assigned_to,
+        },
+      });
+      next(error);
+    }
+  }
+);
+
+// Quick assign ticket
+router.post(
+  '/tickets/:id/quick-assign',
+  requireAdmin,
+  adminMutationLimiter,
+  validateQuickAssign,
+  validateRequest,
+  async (req, res, next) => {
+    try {
+      await ticketService.updateTicket(
+        req.params.id,
+        { assigned_to: req.body.assigned_to || null },
+        req.session.user.id,
+        req.ip,
+        buildAuditContext(req)
+      );
+
+      successRedirect(
+        req,
+        res,
+        'Ticket assigned successfully',
+        '/admin/dashboard' + buildQueryString(req.query)
+      );
+    } catch (error) {
+      logger.error('Error in quick assign', {
+        error: error.message,
+        ticketId: req.params.id,
+        assignedTo: req.body.assigned_to,
+      });
+      next(error);
+    }
+  }
+);
+
+// Helper function to preserve filters and pagination
+function buildQueryString(filters) {
+  const params = new URLSearchParams();
+  if (filters.status) {
+    params.append('status', filters.status);
+  }
+  if (filters.priority) {
+    params.append('priority', filters.priority);
+  }
+  if (filters.search) {
+    params.append('search', filters.search);
+  }
+  if (filters.page) {
+    params.append('page', filters.page);
+  }
+  return params.toString() ? '?' + params.toString() : '';
+}
 
 module.exports = router;

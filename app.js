@@ -13,6 +13,7 @@ const { doubleCsrf } = require('csrf-csrf');
 const sessionConfig = require('./config/session');
 const errorHandler = require('./middleware/errorHandler');
 const { i18next, middleware: i18nMiddleware } = require('./config/i18n');
+const { calculateTicketAge } = require('./utils/dateHelpers');
 
 const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
@@ -92,7 +93,7 @@ app.use(flash());
 // Apply CSRF protection to all routes
 app.use(doubleCsrfProtection);
 
-// Make CSRF token, flash messages, and i18n available to all views
+// Make CSRF token, flash messages, i18n, and utilities available to all views
 app.use((req, res, next) => {
   res.locals.success_msg = req.flash('success_msg');
   res.locals.error_msg = req.flash('error_msg');
@@ -103,6 +104,9 @@ app.use((req, res, next) => {
   // i18n: Make translation function and current language available to views
   res.locals.t = req.t;
   res.locals.language = req.language || 'el';
+
+  // Make date helpers available for ticket age calculation
+  res.locals.calculateTicketAge = calculateTicketAge;
 
   // Add request timing for debugging
   req.startTime = new Date();

@@ -129,12 +129,37 @@
     "actions": "Actions",
     "anonymous": "Anonymous",
     "allTickets": "All Tickets",
-    "myTickets": "My Tickets"
+    "myTickets": "My Tickets",
+    "select": "Select",
+    "age": "Age",
+    "ageNew": "New",
+    "ageDays": "{{count}} day old",
+    "ageDays_plural": "{{count}} days old",
+    "ageWeeks": "{{count}} week old",
+    "ageWeeks_plural": "{{count}} weeks old",
+    "quickAssign": "Quick Assign"
   },
   "filters": {
     "title": "Filters"
   },
   "search": {
     "placeholder": "Search tickets..."
+  },
+  "bulkUpdate": {
+    "label": "Bulk update selected:",
+    "statusNoChange": "Status (no change)",
+    "priorityNoChange": "Priority (no change)",
+    "assignmentNoChange": "Assignment (no change)",
+    "unassign": "-- Unassign --",
+    "updateSelected": "Update Selected",
+    "selectAtLeastOneTicket": "Please select at least one ticket",
+    "selectAtLeastOneField": "Please select at least one field to update (status, priority, or assignment)",
+    "confirmUpdate": "Update {{count}} selected ticket(s)?"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "pageInfo": "Page {{current}} of {{total}}",
+    "showingOfTotal": "Showing {{count}} of {{total}} tickets"
   }
 }
