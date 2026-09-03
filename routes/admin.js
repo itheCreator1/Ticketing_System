@@ -122,7 +122,7 @@ router.post(
         req.ip,
         buildAuditContext(req)
       );
-      successRedirect(req, res, 'Status updated successfully', `/admin/tickets/${req.params.id}`);
+      successRedirect(req, res, TICKET_MESSAGES.STATUS_CHANGED, `/admin/tickets/${req.params.id}`);
     } catch (error) {
       logger.error('Status update error', { ticketId: req.params.id, error: error.message });
       next(error);
@@ -147,7 +147,7 @@ router.post(
         req.ip,
         buildAuditContext(req)
       );
-      successRedirect(req, res, 'Priority updated successfully', `/admin/tickets/${req.params.id}`);
+      successRedirect(req, res, TICKET_MESSAGES.PRIORITY_CHANGED, `/admin/tickets/${req.params.id}`);
     } catch (error) {
       logger.error('Priority update error', { ticketId: req.params.id, error: error.message });
       next(error);
@@ -268,12 +268,7 @@ router.post(
         department: ticket.reporter_department,
       });
 
-      successRedirect(
-        req,
-        res,
-        'Department ticket created successfully',
-        `/admin/tickets/${ticket.id}`
-      );
+      successRedirect(req, res, TICKET_MESSAGES.DEPARTMENT_TICKET_CREATED, `/admin/tickets/${ticket.id}`);
     } catch (error) {
       logger.error('Admin department ticket creation error', {
         adminId: req.session.user.id,
