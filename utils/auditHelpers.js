@@ -141,8 +141,12 @@ function calculateDuration(start, end) {
   const minutes = Math.floor(diffMs / 60000);
   const hours = Math.floor(minutes / 60);
 
-  if (hours > 0) return `${hours}h ${minutes % 60}m`;
-  if (minutes > 0) return `${minutes}m`;
+  if (hours > 0) {
+    return `${hours}h ${minutes % 60}m`;
+  }
+  if (minutes > 0) {
+    return `${minutes}m`;
+  }
   return '< 1m';
 }
 
@@ -150,7 +154,9 @@ function calculateDuration(start, end) {
  * Strip sensitive fields from details JSONB before rendering.
  */
 function sanitizeDetailsForDisplay(details) {
-  if (!details || typeof details !== 'object') return details;
+  if (!details || typeof details !== 'object') {
+    return details;
+  }
 
   const sanitized = {};
   for (const [key, value] of Object.entries(details)) {
@@ -195,7 +201,9 @@ function buildCursorUrl(query, cursor) {
  * Decode a cursor from base64url string.
  */
 function decodeCursor(cursorStr) {
-  if (!cursorStr) return null;
+  if (!cursorStr) {
+    return null;
+  }
   try {
     return JSON.parse(Buffer.from(cursorStr, 'base64url').toString());
   } catch {

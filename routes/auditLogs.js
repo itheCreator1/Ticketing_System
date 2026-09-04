@@ -244,89 +244,84 @@ router.get('/export', validateAuditFilters, validateRequest, async (req, res, ne
 /**
  * GET /user/:id — User Timeline
  */
-router.get(
-  '/user/:id',
-  validateUserIdParam,
-  validateRequest,
-  async (req, res, next) => {
-    try {
-      const userId = parseInt(req.params.id);
-      if (isNaN(userId) || userId < 1) {
-        const error = new Error('Invalid user ID');
-        error.status = 400;
-        return next(error);
-      }
-
-      // Fetch user info
-      const targetUser = await User.findById(userId);
-      if (!targetUser) {
-        const error = new Error('User not found');
-        error.status = 404;
-        return next(error);
-      }
-
-      // Resolve date range for timeline
-      let dateFrom, dateTo;
-      const range = req.query.range || 'week';
-
-      if (req.query.date) {
-        // Specific date: show that full day
-        const date = new Date(req.query.date);
-        dateFrom = new Date(date);
-        dateFrom.setHours(0, 0, 0, 0);
-        dateTo = new Date(date);
-        dateTo.setHours(23, 59, 59, 999);
-      } else if (range === 'today') {
-        dateFrom = new Date();
-        dateFrom.setHours(0, 0, 0, 0);
-        dateTo = new Date();
-      } else if (range === 'week') {
-        dateTo = new Date();
-        dateFrom = new Date(dateTo - 7 * 24 * 60 * 60 * 1000);
-      } else if (range === 'all') {
-        dateFrom = undefined;
-        dateTo = undefined;
-      }
-
-      // Fetch chronological logs
-      const logs = await AuditLog.findByActorChronological(userId, {
-        dateFrom,
-        dateTo,
-        limit: 200,
-      });
-
-      // Fetch actor stats
-      const stats = await AuditLog.getActorStats(userId);
-
-      // Group events by date for timeline display
-      const groupedEvents = groupByDate(logs);
-
-      res.render('admin/audit-logs/user-timeline', {
-        title: req.t('audit:timeline.title', { username: targetUser.username }),
-        t: req.t,
-        language: req.language || 'el',
-        targetUser,
-        logs,
-        stats,
-        groupedEvents,
-        range,
-        currentDate: req.query.date || null,
-        // Helpers
-        eventSummary,
-        actionColor,
-        actionLabel,
-        sanitizeDetailsForDisplay,
-        calculateDuration,
-      });
-    } catch (error) {
-      logger.error('User timeline error', {
-        error: error.message,
-        stack: error.stack,
-        userId: req.params.id,
-      });
-      next(error);
+router.get('/user/:id', validateUserIdParam, validateRequest, async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+    if (isNaN(userId) || userId < 1) {
+      const error = new Error('Invalid user ID');
+      error.status = 400;
+      return next(error);
     }
+
+    // Fetch user info
+    const targetUser = await User.findById(userId);
+    if (!targetUser) {
+      const error = new Error('User not found');
+      error.status = 404;
+      return next(error);
+    }
+
+    // Resolve date range for timeline
+    let dateFrom, dateTo;
+    const range = req.query.range || 'week';
+
+    if (req.query.date) {
+      // Specific date: show that full day
+      const date = new Date(req.query.date);
+      dateFrom = new Date(date);
+      dateFrom.setHours(0, 0, 0, 0);
+      dateTo = new Date(date);
+      dateTo.setHours(23, 59, 59, 999);
+    } else if (range === 'today') {
+      dateFrom = new Date();
+      dateFrom.setHours(0, 0, 0, 0);
+      dateTo = new Date();
+    } else if (range === 'week') {
+      dateTo = new Date();
+      dateFrom = new Date(dateTo - 7 * 24 * 60 * 60 * 1000);
+    } else if (range === 'all') {
+      dateFrom = undefined;
+      dateTo = undefined;
+    }
+
+    // Fetch chronological logs
+    const logs = await AuditLog.findByActorChronological(userId, {
+      dateFrom,
+      dateTo,
+      limit: 200,
+    });
+
+    // Fetch actor stats
+    const stats = await AuditLog.getActorStats(userId);
+
+    // Group events by date for timeline display
+    const groupedEvents = groupByDate(logs);
+
+    res.render('admin/audit-logs/user-timeline', {
+      title: req.t('audit:timeline.title', { username: targetUser.username }),
+      t: req.t,
+      language: req.language || 'el',
+      targetUser,
+      logs,
+      stats,
+      groupedEvents,
+      range,
+      currentDate: req.query.date || null,
+      // Helpers
+      eventSummary,
+      actionColor,
+      actionLabel,
+      sanitizeDetailsForDisplay,
+      calculateDuration,
+    });
+  } catch (error) {
+    logger.error('User timeline error', {
+      error: error.message,
+      stack: error.stack,
+      userId: req.params.id,
+    });
+    next(error);
   }
-);
+});
 
 module.exports = router;

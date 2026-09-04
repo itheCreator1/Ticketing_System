@@ -95,7 +95,13 @@ class DepartmentService {
    * @param {string} ipAddress - Request IP
    * @returns {Promise<Object>} Updated department
    */
-  async updateDepartment(actorId, id, { name, description, floor, active }, ipAddress, auditContext = {}) {
+  async updateDepartment(
+    actorId,
+    id,
+    { name, description, floor, active },
+    ipAddress,
+    auditContext = {}
+  ) {
     // Get current department
     const current = await this.getDepartmentById(id);
 

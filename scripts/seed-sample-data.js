@@ -19,7 +19,6 @@ const Department = require('../models/Department');
 const Ticket = require('../models/Ticket');
 const Comment = require('../models/Comment');
 
-
 // Realistic hospital ticket data by department
 const ticketData = {
   'Emergency Department': [
