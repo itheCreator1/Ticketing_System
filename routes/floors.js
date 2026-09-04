@@ -151,7 +151,12 @@ router.post('/:id/deactivate', validateFloorId, validateRequest, async (req, res
       return;
     }
 
-    await floorService.deactivateFloor(req.session.user.id, floorId, req.ip, buildAuditContext(req));
+    await floorService.deactivateFloor(
+      req.session.user.id,
+      floorId,
+      req.ip,
+      buildAuditContext(req)
+    );
 
     logger.info('Floor deactivated', {
       floorId,
@@ -172,7 +177,12 @@ router.post('/:id/reactivate', validateFloorId, validateRequest, async (req, res
   try {
     const floorId = parseInt(req.params.id);
 
-    await floorService.reactivateFloor(req.session.user.id, floorId, req.ip, buildAuditContext(req));
+    await floorService.reactivateFloor(
+      req.session.user.id,
+      floorId,
+      req.ip,
+      buildAuditContext(req)
+    );
 
     logger.info('Floor reactivated', {
       floorId,

@@ -349,24 +349,17 @@ async function seedDatabase() {
     validateConfiguration(floorsData, departmentsData);
 
     // Phase 1: Create floors
-    const floors = await createFloors(floorsData.floors);
+    await createFloors(floorsData.floors);
 
     // Phase 2: Create super admin
-    const superAdmin = await createSuperAdmin(departmentsData.super_admin);
+    await createSuperAdmin(departmentsData.super_admin);
 
     // Phase 3: Create hospital departments
-    const departments = await createDepartments(departmentsData.departments);
+    await createDepartments(departmentsData.departments);
 
     // Phase 4: Create department users
     const users = await createDepartmentUsers(departmentsData.departments);
 
-    // Create audit log
-    const stats = {
-      floors: floors.length,
-      users: users.length + 1, // +1 for super admin
-      departments: departments.length,
-      superAdmin: 1,
-    };
     // Display login credentials
     displayCredentials(departmentsData.super_admin, users);
 

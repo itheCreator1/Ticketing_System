@@ -29,7 +29,7 @@ describe('auditHelpers', () => {
     });
 
     it('should have category and severity for each action', () => {
-      Object.entries(ACTION_METADATA).forEach(([action, meta]) => {
+      Object.entries(ACTION_METADATA).forEach(([_action, meta]) => {
         expect(meta).toHaveProperty('category');
         expect(meta).toHaveProperty('severity');
         expect(['info', 'warning', 'critical']).toContain(meta.severity);

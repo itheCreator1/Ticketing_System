@@ -135,7 +135,13 @@ router.post(
         updates.department = department || null;
       }
 
-      await userService.updateUser(req.session.user.id, userId, updates, req.ip, buildAuditContext(req));
+      await userService.updateUser(
+        req.session.user.id,
+        userId,
+        updates,
+        req.ip,
+        buildAuditContext(req)
+      );
 
       return successRedirect(req, res, 'User updated successfully', '/admin/users');
     } catch (error) {
@@ -177,7 +183,13 @@ router.post(
       const userId = parseInt(req.params.id);
       const { password } = req.body;
 
-      await userService.resetUserPassword(req.session.user.id, userId, password, req.ip, buildAuditContext(req));
+      await userService.resetUserPassword(
+        req.session.user.id,
+        userId,
+        password,
+        req.ip,
+        buildAuditContext(req)
+      );
 
       return successRedirect(req, res, 'Password reset successfully', '/admin/users');
     } catch (error) {
@@ -198,7 +210,13 @@ router.post(
       const userId = parseInt(req.params.id);
       const { status } = req.body;
 
-      await userService.toggleUserStatus(req.session.user.id, userId, status, req.ip, buildAuditContext(req));
+      await userService.toggleUserStatus(
+        req.session.user.id,
+        userId,
+        status,
+        req.ip,
+        buildAuditContext(req)
+      );
 
       return successRedirect(req, res, 'User status updated', '/admin/users');
     } catch (error) {

@@ -53,10 +53,7 @@ const validateAuditFilters = [
 ];
 
 const validateUserIdParam = [
-  query('date')
-    .optional({ values: 'falsy' })
-    .isISO8601()
-    .withMessage('Invalid date format'),
+  query('date').optional({ values: 'falsy' }).isISO8601().withMessage('Invalid date format'),
   query('range')
     .optional({ values: 'falsy' })
     .isIn(['today', 'week', 'all'])

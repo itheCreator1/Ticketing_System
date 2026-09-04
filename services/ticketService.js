@@ -184,7 +184,11 @@ class TicketService {
 
       // AUTO-STATUS UPDATE: Admin adding PUBLIC comment → "waiting_on_department"
       // ONLY if: public comment AND ticket not closed AND has reporter_id (dept ticket)
-      if (visibilityType === 'public' && ticket.status !== 'closed' && ticket.reporter_id !== null) {
+      if (
+        visibilityType === 'public' &&
+        ticket.status !== 'closed' &&
+        ticket.reporter_id !== null
+      ) {
         await this.updateTicket(
           ticketId,
           { status: 'waiting_on_department' },

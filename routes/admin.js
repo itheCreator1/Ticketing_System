@@ -97,7 +97,13 @@ router.post(
   validateRequest,
   async (req, res, next) => {
     try {
-      await ticketService.updateTicket(req.params.id, req.body, req.session.user.id, req.ip, buildAuditContext(req));
+      await ticketService.updateTicket(
+        req.params.id,
+        req.body,
+        req.session.user.id,
+        req.ip,
+        buildAuditContext(req)
+      );
       successRedirect(req, res, TICKET_MESSAGES.UPDATED, `/admin/tickets/${req.params.id}`);
     } catch (error) {
       next(error);
