@@ -1,0 +1,2 @@
+# supercronic crontab. Jobs are Django management commands (docs/implementation-plan.md → Background jobs).
+0 * * * * python manage.py clearsessions

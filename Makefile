@@ -36,3 +36,13 @@ PNPM := mise exec -- pnpm
 .PHONY: test-frontend
 test-frontend: ## frontend unit tests with coverage gate; T=<file/pattern> for a single run
 	cd frontend && $(if $(T),$(PNPM) exec vitest run $(T),$(PNPM) test:coverage)
+
+.PHONY: up down migrate smoke
+up: ## full dev stack on http://127.0.0.1:8080
+	$(DEV) up -d --build --wait
+migrate:
+	$(DEV) exec -T backend python manage.py migrate --noinput
+down:
+	$(DEV) down
+smoke: ## smoke test against the running dev stack
+	deploy/smoke.sh http://127.0.0.1:8080
