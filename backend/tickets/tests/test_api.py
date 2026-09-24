@@ -63,3 +63,12 @@ def test_detail_shape(world, api):
     body = api(world.user("maria")).get("/api/v1/tickets/ACME-1/").json()
     assert set(body) == {"key", "subject", "status", "organization", "created_at", "events"}
     assert set(body["events"][0]) == {"id", "visibility", "body", "created_at"}
+
+
+def test_detail_query_count_is_fixed(world, api, django_assert_max_num_queries):
+    # session, user, ticket + organization, visible events: an extra query means a lost select_related
+    # or a per-event lookup.
+    client = api(world.user("sam"))
+    with django_assert_max_num_queries(4):
+        response = client.get("/api/v1/tickets/ACME-1/")
+    assert response.status_code == 200 and len(response.json()["events"]) == 3
