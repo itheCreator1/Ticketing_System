@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     "core",
     "organizations",
     "accounts",
+    "access",
+    "tickets",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
