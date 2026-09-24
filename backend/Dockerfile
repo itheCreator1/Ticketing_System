@@ -6,6 +6,8 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 COPY . .
 ENV PATH="/app/.venv/bin:$PATH"
+# uv installs everything; the base image's pip is unused at runtime and bundles vulnerable libraries.
+RUN rm -rf /usr/local/lib/python3.13/site-packages/pip /usr/local/lib/python3.13/site-packages/pip-*.dist-info /usr/local/bin/pip*
 RUN useradd --create-home --uid 10001 app && mkdir -p /app/media && chown app:app /app/media
 USER app
 EXPOSE 8000

@@ -13,6 +13,8 @@ RUN pnpm build
 
 FROM node:22-slim AS run
 ENV NODE_ENV=production PORT=3000 HOSTNAME=0.0.0.0
+# The standalone server needs only node; the bundled npm and corepack are unused and carry vulnerable libraries.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack
 WORKDIR /app
 COPY --from=build /app/public ./public
 COPY --from=build /app/.next/standalone ./
