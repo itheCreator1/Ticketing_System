@@ -16,10 +16,15 @@ def walk(suite, trail):
 
 
 def main(path: str) -> None:
-    with open(path) as fh:
-        report = json.load(fh)
-    flaky = [name for suite in report.get("suites", []) for name in walk(suite, [])]
-    lines = [f"FLAKY {name}" for name in flaky] or ["No flaky tests."]
+    try:
+        with open(path) as fh:
+            report = json.load(fh)
+    except FileNotFoundError:
+        # E2E failed before Playwright ran; that step already fails the job.
+        lines = ["No E2E results: the run stopped before Playwright started."]
+    else:
+        flaky = [name for suite in report.get("suites", []) for name in walk(suite, [])]
+        lines = [f"FLAKY {name}" for name in flaky] or ["No flaky tests."]
     print("\n".join(lines))
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary:
