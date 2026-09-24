@@ -4,185 +4,185 @@
  */
 
 export interface paths {
-  "/api/v1/health/": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/health/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["health_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["health_retrieve"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/tickets/": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/tickets/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["tickets_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["tickets_list"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/api/v1/tickets/{key}/": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
+    "/api/v1/tickets/{key}/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["tickets_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
     };
-    get: operations["tickets_retrieve"];
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-  schemas: {
-    Event: {
-      readonly id: number;
-      visibility: components["schemas"]["VisibilityEnum"];
-      body: string;
-      /** Format: date-time */
-      readonly created_at: string;
+    schemas: {
+        Event: {
+            readonly id: number;
+            visibility: components["schemas"]["VisibilityEnum"];
+            body: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        Health: {
+            status: string;
+        };
+        PaginatedTicketList: {
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?cursor=cD00ODY%3D"
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+             */
+            previous?: string | null;
+            results: components["schemas"]["Ticket"][];
+        };
+        /**
+         * @description * `open` - Open
+         *     * `in_progress` - In progress
+         *     * `waiting` - Waiting for client
+         *     * `resolved` - Resolved
+         *     * `closed` - Closed
+         * @enum {string}
+         */
+        StatusEnum: "open" | "in_progress" | "waiting" | "resolved" | "closed";
+        Ticket: {
+            readonly key: string;
+            subject: string;
+            status?: components["schemas"]["StatusEnum"];
+            readonly organization: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        TicketDetail: {
+            readonly key: string;
+            subject: string;
+            status?: components["schemas"]["StatusEnum"];
+            readonly organization: string;
+            /** Format: date-time */
+            readonly created_at: string;
+            readonly events: components["schemas"]["Event"][];
+        };
+        /**
+         * @description * `public` - Public
+         *     * `internal` - Internal
+         * @enum {string}
+         */
+        VisibilityEnum: "public" | "internal";
     };
-    Health: {
-      status: string;
-    };
-    PaginatedTicketList: {
-      /**
-       * Format: uri
-       * @example http://api.example.org/accounts/?cursor=cD00ODY%3D"
-       */
-      next?: string | null;
-      /**
-       * Format: uri
-       * @example http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
-       */
-      previous?: string | null;
-      results: components["schemas"]["Ticket"][];
-    };
-    /**
-     * @description * `open` - Open
-     *     * `in_progress` - In progress
-     *     * `waiting` - Waiting for client
-     *     * `resolved` - Resolved
-     *     * `closed` - Closed
-     * @enum {string}
-     */
-    StatusEnum: "open" | "in_progress" | "waiting" | "resolved" | "closed";
-    Ticket: {
-      readonly key: string;
-      subject: string;
-      status?: components["schemas"]["StatusEnum"];
-      readonly organization: string;
-      /** Format: date-time */
-      readonly created_at: string;
-    };
-    TicketDetail: {
-      readonly key: string;
-      subject: string;
-      status?: components["schemas"]["StatusEnum"];
-      readonly organization: string;
-      /** Format: date-time */
-      readonly created_at: string;
-      readonly events: components["schemas"]["Event"][];
-    };
-    /**
-     * @description * `public` - Public
-     *     * `internal` - Internal
-     * @enum {string}
-     */
-    VisibilityEnum: "public" | "internal";
-  };
-  responses: never;
-  parameters: never;
-  requestBodies: never;
-  headers: never;
-  pathItems: never;
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-  health_retrieve: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
+    health_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["Health"];
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Health"];
+                };
+            };
         };
-      };
     };
-  };
-  tickets_list: {
-    parameters: {
-      query?: {
-        /** @description The pagination cursor value. */
-        cursor?: string;
-        /** @description Number of results to return per page. */
-        page_size?: number;
-      };
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
+    tickets_list: {
+        parameters: {
+            query?: {
+                /** @description The pagination cursor value. */
+                cursor?: string;
+                /** @description Number of results to return per page. */
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["PaginatedTicketList"];
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedTicketList"];
+                };
+            };
         };
-      };
     };
-  };
-  tickets_retrieve: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        /** @description e.g. ACME-42 */
-        key: string;
-      };
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown;
+    tickets_retrieve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description e.g. ACME-42 */
+                key: string;
+            };
+            cookie?: never;
         };
-        content: {
-          "application/json": components["schemas"]["TicketDetail"];
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TicketDetail"];
+                };
+            };
         };
-      };
     };
-  };
 }
