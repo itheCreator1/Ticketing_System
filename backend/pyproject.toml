@@ -1,0 +1,44 @@
+[project]
+name = "servicedesk-backend"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "thodoris perros", email = "thodorhsperros@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "django~=5.2",
+    "djangorestframework>=3.18.1",
+    "drf-spectacular>=0.30.0",
+    "gunicorn>=26.2.0",
+    "psycopg[binary]>=3.3.6",
+]
+
+[tool.uv]
+package = false
+
+[dependency-groups]
+dev = [
+    "bandit>=1.9.4",
+    "django-stubs[compatible-mypy]~=5.2",
+    "djangorestframework-stubs>=3.16.9",
+    "factory-boy>=3.3.3",
+    "mypy>=1.19.1",
+    "pip-audit>=2.10.1",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "pytest-django>=4.14.0",
+    "pytest-xdist>=3.8.0",
+    "ruff>=0.16.8",
+    "time-machine>=3.5.1",
+]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings"
+pythonpath = ["."]
+python_files = ["test_*.py"]
+addopts = "--reuse-db --strict-markers -m 'not quarantine'"
+markers = [
+  "scope: scope-matrix test; must fail under `make scope-mutation-check`",
+  "quarantine(issue): known-flaky test; runs in a non-gating job; issue URL required",
+]
