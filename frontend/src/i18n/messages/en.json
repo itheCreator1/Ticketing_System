@@ -1,0 +1,4 @@
+{
+  "app": { "title": "Service Desk" },
+  "home": { "title": "Service Desk", "backendStatus": "Backend status: {status}" }
+}

@@ -31,3 +31,8 @@ openapi: ## regenerate backend/openapi.yaml (and frontend types once the fronten
 
 openapi-check: openapi ## fails if the committed schema/types drift from the code
 	git diff --exit-code -- backend/openapi.yaml frontend/src/lib/api/schema.d.ts
+
+PNPM := mise exec -- pnpm
+.PHONY: test-frontend
+test-frontend: ## frontend unit tests with coverage gate; T=<file/pattern> for a single run
+	cd frontend && $(if $(T),$(PNPM) exec vitest run $(T),$(PNPM) test:coverage)
