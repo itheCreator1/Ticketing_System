@@ -33,8 +33,13 @@ openapi-check: openapi ## fails if the committed schema/types drift from the cod
 	git diff --exit-code -- backend/openapi.yaml frontend/src/lib/api/schema.d.ts
 
 PNPM := mise exec -- pnpm
+
+# Install frontend dependencies from the lockfile when missing or outdated (clean clones, new worktrees).
+frontend/node_modules/.modules.yaml: frontend/package.json frontend/pnpm-lock.yaml
+	cd frontend && $(PNPM) install --frozen-lockfile
+
 .PHONY: test-frontend
-test-frontend: ## frontend unit tests with coverage gate; T=<file/pattern> for a single run
+test-frontend: frontend/node_modules/.modules.yaml ## frontend unit tests with coverage gate; T=<file/pattern> for a single run
 	cd frontend && $(if $(T),$(PNPM) exec vitest run $(T),$(PNPM) test:coverage)
 
 .PHONY: up down migrate smoke
@@ -48,15 +53,15 @@ smoke: ## smoke test against the running dev stack
 	deploy/smoke.sh http://127.0.0.1:8080
 
 .PHONY: test-e2e
-test-e2e: ## E2E on a per-worktree stack; T="e2e/smoke.spec.ts" or T="--project=quarantine"
+test-e2e: frontend/node_modules/.modules.yaml ## E2E on a per-worktree stack; T="e2e/smoke.spec.ts" or T="--project=quarantine"
 	scripts/run-e2e.sh $(if $(T),$(T),--project=gating)
 
 .PHONY: lint typecheck security coverage-backend test
-lint: ## ruff + eslint + prettier
+lint: frontend/node_modules/.modules.yaml ## ruff + eslint + prettier
 	cd backend && uv run ruff check . && uv run ruff format --check .
 	cd frontend && $(PNPM) lint && $(PNPM) format:check
 
-typecheck:
+typecheck: frontend/node_modules/.modules.yaml
 	cd backend && uv run mypy .
 	cd frontend && $(PNPM) typecheck
 
