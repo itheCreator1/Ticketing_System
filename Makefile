@@ -17,3 +17,9 @@ db: ## start the shared dev PostgreSQL (skipped when SD_EXTERNAL_DB=1, e.g. CI s
 
 test-backend: db ## backend tests; T=<path/-k expr> for a single RED/GREEN run
 	cd backend && uv run pytest $(if $(T),$(T),-n auto)
+
+.PHONY: scope-mutation-check
+scope-mutation-check: db ## scope tests must FAIL when scoping is removed
+	@cd backend && if uv run pytest -m scope --scope-mutation -q -n auto; then \
+	  echo "SCOPE MUTATION CHECK FAILED: scope tests still pass with scoping removed"; exit 1; \
+	else echo "Scope mutation check OK: scope tests fail without scoping"; fi
