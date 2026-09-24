@@ -6,3 +6,8 @@ __pycache__/
 deploy/.env
 .worktrees/
 .superpowers/
+
+# Local-only agent instructions and docs (never committed)
+CLAUDE.md
+AGENTS.md
+/docs/
