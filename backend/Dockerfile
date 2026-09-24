@@ -23,5 +23,9 @@ RUN curl -fsSLO "$SUPERCRONIC_URL" \
  && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
  && chmod +x "$SUPERCRONIC" && mv "$SUPERCRONIC" /usr/local/bin/supercronic
 USER app
-HEALTHCHECK NONE
+# Healthy = Django loads and the database answers, so jobs (manage.py commands) can run.
+# (`check --database` never connects on PostgreSQL.) Compose before v5 treats a service
+# without a healthcheck as a failure under `up --wait`.
+HEALTHCHECK --interval=30s --timeout=15s --start-period=60s --start-interval=2s --retries=3 \
+  CMD python manage.py shell -c "from django.db import connection; connection.ensure_connection()"
 CMD ["supercronic", "/app/crontab"]
