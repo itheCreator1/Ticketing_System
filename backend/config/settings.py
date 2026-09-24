@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.auth",
     "django.contrib.sessions",
+    "rest_framework",
+    "drf_spectacular",
     "core",
     "organizations",
     "accounts",
