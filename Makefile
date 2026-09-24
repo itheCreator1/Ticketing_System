@@ -23,3 +23,11 @@ scope-mutation-check: db ## scope tests must FAIL when scoping is removed
 	@cd backend && if uv run pytest -m scope --scope-mutation -q -n auto; then \
 	  echo "SCOPE MUTATION CHECK FAILED: scope tests still pass with scoping removed"; exit 1; \
 	else echo "Scope mutation check OK: scope tests fail without scoping"; fi
+
+.PHONY: openapi openapi-check
+openapi: ## regenerate backend/openapi.yaml (and frontend types once the frontend exists)
+	cd backend && uv run python manage.py spectacular --file openapi.yaml --validate --fail-on-warn
+	@if [ -f frontend/package.json ]; then cd frontend && mise exec -- pnpm gen:api; fi
+
+openapi-check: openapi ## fails if the committed schema/types drift from the code
+	git diff --exit-code -- backend/openapi.yaml frontend/src/lib/api/schema.d.ts

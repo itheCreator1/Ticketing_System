@@ -1,0 +1,193 @@
+openapi: 3.0.3
+info:
+  title: Service Desk API
+  version: 1.0.0
+paths:
+  /api/v1/health/:
+    get:
+      operationId: health_retrieve
+      tags:
+      - health
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+          description: ''
+  /api/v1/tickets/:
+    get:
+      operationId: tickets_list
+      parameters:
+      - name: cursor
+        required: false
+        in: query
+        description: The pagination cursor value.
+        schema:
+          type: string
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - tickets
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedTicketList'
+          description: ''
+  /api/v1/tickets/{key}/:
+    get:
+      operationId: tickets_retrieve
+      parameters:
+      - in: path
+        name: key
+        schema:
+          type: string
+        description: e.g. ACME-42
+        required: true
+      tags:
+      - tickets
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketDetail'
+          description: ''
+components:
+  schemas:
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        visibility:
+          $ref: '#/components/schemas/VisibilityEnum'
+        body:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - body
+      - created_at
+      - id
+      - visibility
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+      - status
+    PaginatedTicketList:
+      type: object
+      required:
+      - results
+      properties:
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cD00ODY%3D"
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?cursor=cj0xJnA9NDg3
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ticket'
+    StatusEnum:
+      enum:
+      - open
+      - in_progress
+      - waiting
+      - resolved
+      - closed
+      type: string
+      description: |-
+        * `open` - Open
+        * `in_progress` - In progress
+        * `waiting` - Waiting for client
+        * `resolved` - Resolved
+        * `closed` - Closed
+    Ticket:
+      type: object
+      properties:
+        key:
+          type: string
+          readOnly: true
+        subject:
+          type: string
+          maxLength: 200
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        organization:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - key
+      - organization
+      - subject
+    TicketDetail:
+      type: object
+      properties:
+        key:
+          type: string
+          readOnly: true
+        subject:
+          type: string
+          maxLength: 200
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        organization:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+          readOnly: true
+      required:
+      - created_at
+      - events
+      - key
+      - organization
+      - subject
+    VisibilityEnum:
+      enum:
+      - public
+      - internal
+      type: string
+      description: |-
+        * `public` - Public
+        * `internal` - Internal
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
