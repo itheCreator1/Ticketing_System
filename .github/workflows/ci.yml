@@ -1,0 +1,123 @@
+name: ci
+on:
+  push: { branches: [main] }
+  pull_request:
+
+concurrency: { group: "ci-${{ github.ref }}", cancel-in-progress: true }
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - id: filter
+        uses: dorny/paths-filter@v4.0.3
+        with:
+          filters: |
+            code:
+              - 'backend/**'
+              - 'frontend/**'
+              - 'deploy/**'
+              - 'scripts/**'
+              - 'Makefile'
+              - 'mise.toml'
+              - '.gitleaks.toml'
+              - '.github/**'
+
+  lint:
+    needs: changes
+    # Job-level skip reports "skipped" (= success). Workflow-level path filters would leave required checks "Pending".
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: jdx/mise-action@v4.3.0
+      - uses: astral-sh/setup-uv@v10.2.0
+      - run: (cd backend && uv sync --frozen) && (cd frontend && pnpm install --frozen-lockfile)
+      - run: make lint typecheck
+
+  backend:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env: { POSTGRES_DB: sd, POSTGRES_USER: sd, POSTGRES_PASSWORD: sd }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U sd" --health-interval 2s --health-timeout 3s --health-retries 30
+    env: { SD_EXTERNAL_DB: "1", POSTGRES_HOST: "127.0.0.1", POSTGRES_PORT: "5432" }
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.2.0
+      - run: cd backend && uv sync --frozen
+      - run: cd backend && uv run python manage.py makemigrations --check --dry-run
+      - run: make coverage-backend
+      - run: make scope-mutation-check
+      - run: cd backend && uv run pytest -c /dev/null -p no:django ../scripts/test_report_flaky.py -q
+      - name: quarantined tests (non-gating)
+        continue-on-error: true
+        run: cd backend && (uv run pytest -m quarantine -q || test $? -eq 5)   # 5 = none collected
+
+  frontend:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: jdx/mise-action@v4.3.0
+      - run: cd frontend && pnpm install --frozen-lockfile
+      - run: make test-frontend
+
+  openapi:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: jdx/mise-action@v4.3.0
+      - uses: astral-sh/setup-uv@v10.2.0
+      - run: (cd backend && uv sync --frozen) && (cd frontend && pnpm install --frozen-lockfile)
+      - run: make openapi-check
+
+  security:
+    runs-on: ubuntu-latest   # always runs: secrets can land in docs too
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with: { fetch-depth: 0 }
+      - uses: jdx/mise-action@v4.3.0
+      - uses: astral-sh/setup-uv@v10.2.0
+      - run: (cd backend && uv sync --frozen) && (cd frontend && pnpm install --frozen-lockfile)
+      - run: make security
+      - name: gitleaks full history
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 git /repo --config /repo/.gitleaks.toml --no-banner --redact
+
+  e2e:
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    env: { CI: "1" }
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: jdx/mise-action@v4.3.0
+      - run: cd frontend && pnpm install --frozen-lockfile
+      - run: make test-e2e
+      - name: flaky report
+        if: always()
+        run: python3 scripts/report_flaky.py frontend/e2e-results/results.json
+      - name: quarantined E2E (non-gating)
+        continue-on-error: true
+        run: make test-e2e T="--project=quarantine --pass-with-no-tests"
+      - name: Trivy image scan (HIGH/CRITICAL fail)
+        run: |
+          tag="$(basename "$GITHUB_WORKSPACE" | tr -c 'a-zA-Z0-9\n' '-' | tr '[:upper:]' '[:lower:]')"
+          for image in backend scheduler frontend; do
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.74.0 \
+              image --exit-code 1 --severity HIGH,CRITICAL --ignore-unfixed "servicedesk-${image}:${tag}"
+          done
+      - uses: actions/upload-artifact@v7.0.1
+        if: always()
+        with: { name: e2e-results, path: frontend/e2e-results }
