@@ -1,0 +1,10 @@
+services:
+  backend:
+    environment:
+      DJANGO_ENV: e2e
+  scheduler:
+    environment:
+      DJANGO_ENV: e2e
+  caddy:
+    ports:
+      - "127.0.0.1:${E2E_HTTP_PORT:?set by scripts/run-e2e.sh}:80"

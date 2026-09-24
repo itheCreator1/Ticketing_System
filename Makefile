@@ -46,3 +46,7 @@ down:
 	$(DEV) down
 smoke: ## smoke test against the running dev stack
 	deploy/smoke.sh http://127.0.0.1:8080
+
+.PHONY: test-e2e
+test-e2e: ## E2E on a per-worktree stack; T="e2e/smoke.spec.ts" or T="--project=quarantine"
+	scripts/run-e2e.sh $(if $(T),$(T),--project=gating)
