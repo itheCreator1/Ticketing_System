@@ -4,13 +4,7 @@ from rest_framework.test import APIClient
 from tests.scope import ACTORS, SCOPE_CASES
 from tests.world import build_world
 
-
-def pytest_addoption(parser):
-    parser.addoption(
-        "--scope-mutation",
-        action="store_true",
-        help="Replace the scope functions with unscoped versions; scope tests must then FAIL.",
-    )
+pytest_plugins = ["pytester", "tests.scope_gate"]
 
 
 def pytest_collection_modifyitems(config, items):

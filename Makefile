@@ -19,10 +19,8 @@ test-backend: db ## backend tests; T=<path/-k expr> for a single RED/GREEN run
 	cd backend && uv run pytest $(if $(T),$(T),-n auto)
 
 .PHONY: scope-mutation-check
-scope-mutation-check: db ## scope tests must FAIL when scoping is removed
-	@cd backend && if uv run pytest -m scope --scope-mutation -q -n auto; then \
-	  echo "SCOPE MUTATION CHECK FAILED: scope tests still pass with scoping removed"; exit 1; \
-	else echo "Scope mutation check OK: scope tests fail without scoping"; fi
+scope-mutation-check: db ## every scope test must FAIL when scoping is removed (gate: backend/tests/scope_gate.py)
+	cd backend && uv run pytest -m scope --scope-mutation -q -n auto --tb=no
 
 .PHONY: openapi openapi-check
 openapi: ## regenerate backend/openapi.yaml (and frontend types once the frontend exists)
