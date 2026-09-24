@@ -51,6 +51,7 @@ down:
 	$(DEV) down
 smoke: ## smoke test against the running dev stack
 	deploy/smoke.sh http://127.0.0.1:8080
+	$(DEV) exec -T backend sh -c 'f="$$DJANGO_MEDIA_ROOT/.smoke-probe" && touch "$$f" && rm "$$f"' && echo "media volume writable"
 
 .PHONY: test-e2e
 test-e2e: frontend/node_modules/.modules.yaml ## E2E on a per-worktree stack; T="e2e/smoke.spec.ts" or T="--project=quarantine"

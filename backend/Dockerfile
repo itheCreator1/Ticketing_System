@@ -6,11 +6,11 @@ COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 COPY . .
 ENV PATH="/app/.venv/bin:$PATH"
-RUN useradd --create-home --uid 10001 app
+RUN useradd --create-home --uid 10001 app && mkdir -p /app/media && chown app:app /app/media
 USER app
 EXPOSE 8000
 HEALTHCHECK --interval=5s --timeout=3s --retries=20 \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health/')"
+  CMD python -c "import urllib.request as u; u.urlopen(u.Request('http://127.0.0.1:8000/api/v1/health/', headers={'Host': 'backend'}))"
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "3", "--access-logfile", "-"]
 
 FROM base AS scheduler

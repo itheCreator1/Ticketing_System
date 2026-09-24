@@ -1,7 +1,9 @@
 x-backend-env: &backend-env
   DJANGO_ENV: ${DJANGO_ENV:-production}
   DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-}
-  DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+  # Must include PUBLIC_HOST (below); Django always adds the internal hostname "backend" itself.
+  DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1}
+  DJANGO_MEDIA_ROOT: /app/media
   POSTGRES_HOST: db
   POSTGRES_PORT: "5432"
   POSTGRES_DB: ${POSTGRES_DB:-sd}
@@ -27,12 +29,16 @@ services:
     build: { context: ../backend, target: base }
     image: servicedesk-backend:${IMAGE_TAG:-local}
     environment: *backend-env
+    volumes:
+      - media:/app/media
     depends_on: { db: { condition: service_healthy } }
 
   scheduler:
     build: { context: ../backend, target: scheduler }
     image: servicedesk-scheduler:${IMAGE_TAG:-local}
     environment: *backend-env
+    volumes:
+      - media:/app/media
     depends_on: { db: { condition: service_healthy } }
 
   frontend:
@@ -40,7 +46,7 @@ services:
     image: servicedesk-frontend:${IMAGE_TAG:-local}
     environment:
       INTERNAL_API_URL: http://backend:8000
-      PUBLIC_HOST: ${PUBLIC_HOST:-localhost}
+      PUBLIC_HOST: ${PUBLIC_HOST:-localhost}   # the site's public host name; must be in DJANGO_ALLOWED_HOSTS
     depends_on: { backend: { condition: service_healthy } }
 
   caddy:
@@ -54,4 +60,5 @@ services:
 
 volumes:
   pgdata: {}
+  media: {}
   caddy_data: {}

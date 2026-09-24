@@ -16,7 +16,11 @@ if not SECRET_KEY:
         raise ImproperlyConfigured("DJANGO_SECRET_KEY is required in production")
     SECRET_KEY = "insecure-development-key-not-for-production"  # noqa: S105  # nosec B105 (dev/e2e only; production raises)
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,backend").split(",")
+# The internal hostname is always allowed: the container healthcheck calls Django with Host: backend.
+# Requests through Caddy and server-side reads from Next.js (X-Forwarded-Host = PUBLIC_HOST) are
+# validated against the public host, so PUBLIC_HOST must be listed in DJANGO_ALLOWED_HOSTS.
+_hosts = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+ALLOWED_HOSTS = [*dict.fromkeys(h for h in [*_hosts, "backend"] if h)]
 CSRF_TRUSTED_ORIGINS = [o for o in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o]
 
 # Only Caddy (one hop) can reach Django; it sets these headers. HTTPS redirect happens at Caddy only.
@@ -70,6 +74,9 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Private uploads (attachments from Phase 3): a Compose volume, never served directly by Caddy.
+MEDIA_ROOT = Path(os.environ.get("DJANGO_MEDIA_ROOT", BASE_DIR / "media"))
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ["core.auth.SessionAuthentication401"],
