@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
@@ -29,7 +31,8 @@ class User(AbstractUser):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["display_name"]
-    objects = UserManager()  # type: ignore[misc]
+    # Custom manager (email login, no username); stubs type AbstractUser.objects as the stock UserManager.
+    objects: ClassVar[UserManager] = UserManager()  # type: ignore[assignment]
 
     class Meta:
         constraints = [

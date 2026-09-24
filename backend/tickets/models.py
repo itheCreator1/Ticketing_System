@@ -30,6 +30,9 @@ class Ticket(models.Model):
         constraints = [models.UniqueConstraint(fields=["organization", "number"], name="unique_ticket_number")]
         indexes = [models.Index(fields=["requester"]), models.Index(fields=["organization", "status"])]
 
+    def __str__(self) -> str:
+        return self.key
+
     @property
     def key(self) -> str:
         return f"{self.organization.key}-{self.number}"
@@ -45,3 +48,6 @@ class Event(models.Model):
     class Meta:
         ordering = ["id"]
         indexes = [models.Index(fields=["ticket", "id"])]
+
+    def __str__(self) -> str:
+        return f"{self.ticket.key} #{self.pk} ({self.visibility})"

@@ -1,0 +1,15 @@
+# gitleaks: default rules; skip dependency, build, and test-output folders.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "generated and third-party files"
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)\.venv/''',
+  '''(^|/)\.next/''',
+  '''(^|/)e2e-results/''',
+  '''(^|/)coverage/''',
+  '''(^|/)\.superpowers/''',
+  '''(^|/)\.git/''',
+]

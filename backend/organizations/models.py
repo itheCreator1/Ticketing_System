@@ -37,3 +37,6 @@ class TicketCounter(models.Model):
         Organization, primary_key=True, on_delete=models.CASCADE, related_name="ticket_counter"
     )
     last_number = models.PositiveIntegerField(default=0)
+
+    def __str__(self) -> str:
+        return f"{self.organization.key}: {self.last_number}"

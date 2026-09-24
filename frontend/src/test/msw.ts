@@ -7,6 +7,10 @@ type Health = components["schemas"]["Health"];
 
 export const API = "http://backend.test";
 
-export const handlers = [http.get(`${API}/api/v1/health/`, () => HttpResponse.json<Health>({ status: "ok" }))];
+export const handlers = [
+  http.get(`${API}/api/v1/health/`, () =>
+    HttpResponse.json<Health>({ status: "ok" }),
+  ),
+];
 
 export const server = setupServer(...handlers);

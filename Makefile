@@ -50,3 +50,25 @@ smoke: ## smoke test against the running dev stack
 .PHONY: test-e2e
 test-e2e: ## E2E on a per-worktree stack; T="e2e/smoke.spec.ts" or T="--project=quarantine"
 	scripts/run-e2e.sh $(if $(T),$(T),--project=gating)
+
+.PHONY: lint typecheck security coverage-backend test
+lint: ## ruff + eslint + prettier
+	cd backend && uv run ruff check . && uv run ruff format --check .
+	cd frontend && $(PNPM) lint && $(PNPM) format:check
+
+typecheck:
+	cd backend && uv run mypy .
+	cd frontend && $(PNPM) typecheck
+
+security: ## dependency audit, static analysis, secret scan (Trivy runs in CI after image build)
+	cd backend && uv export --no-hashes --format requirements-txt > /tmp/sd-reqs.txt && uv run pip-audit -r /tmp/sd-reqs.txt
+	cd backend && uv run bandit -c pyproject.toml -r . -q
+	cd frontend && $(PNPM) audit --audit-level high
+	docker run --rm -v "$(CURDIR):/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 dir /repo --config /repo/.gitleaks.toml --no-banner --redact
+
+coverage-backend: db ## 85% overall, 95% for each of access/ accounts/ tickets/
+	cd backend && uv run pytest -n auto --cov --cov-report= \
+	  && uv run coverage report --fail-under=85 \
+	  && for app in access accounts tickets; do uv run coverage report --include="$$app/*" --fail-under=95 || exit 1; done
+
+test: test-backend test-frontend test-e2e ## all layers

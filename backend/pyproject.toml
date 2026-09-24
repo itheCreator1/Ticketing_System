@@ -42,3 +42,32 @@ markers = [
   "scope: scope-matrix test; must fail under `make scope-mutation-check`",
   "quarantine(issue): known-flaky test; runs in a non-gating job; issue URL required",
 ]
+
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "DJ", "S"]
+ignore = ["S101"]  # assert is how pytest works
+
+[tool.ruff.lint.per-file-ignores]
+"**/migrations/*" = ["E501"]
+"**/tests/*" = ["S105", "S106"]
+"tests/*" = ["S105", "S106"]
+
+[tool.mypy]
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+strict_optional = true
+ignore_missing_imports = true
+exclude = ["migrations/"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
+
+[tool.coverage.run]
+source = ["."]
+omit = ["*/migrations/*", "*/tests/*", "tests/*", "conftest.py", "manage.py", "config/wsgi.py", "config/asgi.py"]
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv"]

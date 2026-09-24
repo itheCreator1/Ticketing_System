@@ -1,10 +1,15 @@
+from typing import TYPE_CHECKING
+
 from django.contrib.auth.base_user import BaseUserManager
 
+if TYPE_CHECKING:
+    from .models import User
 
-class UserManager(BaseUserManager):
+
+class UserManager(BaseUserManager["User"]):
     use_in_migrations = True
 
-    def create_user(self, email: str, password: str | None = None, **fields):
+    def create_user(self, email: str, password: str | None = None, **fields) -> "User":
         if not email:
             raise ValueError("Email is required")
         user = self.model(email=email.strip().lower(), **fields)
@@ -14,8 +19,3 @@ class UserManager(BaseUserManager):
             user.set_unusable_password()
         user.save(using=self._db)
         return user
-
-    def create_superuser(self, email: str, password: str | None = None, **fields):
-        fields.setdefault("role", "superadmin")
-        fields.setdefault("display_name", email)
-        return self.create_user(email, password, **fields)

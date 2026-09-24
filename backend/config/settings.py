@@ -14,7 +14,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "")
 if not SECRET_KEY:
     if ENV == "production":
         raise ImproperlyConfigured("DJANGO_SECRET_KEY is required in production")
-    SECRET_KEY = "insecure-development-key-not-for-production"
+    SECRET_KEY = "insecure-development-key-not-for-production"  # noqa: S105  # nosec B105 (dev/e2e only; production raises)
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,backend").split(",")
 CSRF_TRUSTED_ORIGINS = [o for o in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o]

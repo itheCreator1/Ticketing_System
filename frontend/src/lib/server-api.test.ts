@@ -6,7 +6,10 @@ import { API, server } from "@/test/msw";
 
 describe("buildServerHeaders", () => {
   it("forwards the cookie and marks the request as coming through HTTPS on the public host", () => {
-    const h = buildServerHeaders(new Headers({ cookie: "sessionid=abc", "user-agent": "x" }), "desk.example.com");
+    const h = buildServerHeaders(
+      new Headers({ cookie: "sessionid=abc", "user-agent": "x" }),
+      "desk.example.com",
+    );
     expect(h.get("cookie")).toBe("sessionid=abc");
     expect(h.get("x-forwarded-proto")).toBe("https");
     expect(h.get("x-forwarded-host")).toBe("desk.example.com");
@@ -19,10 +22,19 @@ describe("buildServerHeaders", () => {
 
 describe("serverGet", () => {
   it("returns parsed JSON from the internal API", async () => {
-    await expect(serverGet("/api/v1/health/", new Headers(), { baseUrl: API })).resolves.toEqual({ status: "ok" });
+    await expect(
+      serverGet("/api/v1/health/", new Headers(), { baseUrl: API }),
+    ).resolves.toEqual({ status: "ok" });
   });
   it("throws with the status on failure", async () => {
-    server.use(http.get(`${API}/api/v1/health/`, () => new HttpResponse(null, { status: 503 })));
-    await expect(serverGet("/api/v1/health/", new Headers(), { baseUrl: API })).rejects.toThrow("503");
+    server.use(
+      http.get(
+        `${API}/api/v1/health/`,
+        () => new HttpResponse(null, { status: 503 }),
+      ),
+    );
+    await expect(
+      serverGet("/api/v1/health/", new Headers(), { baseUrl: API }),
+    ).rejects.toThrow("503");
   });
 });

@@ -11,7 +11,9 @@ export default async function Home() {
   return (
     <main>
       <h1>{t("home.title")}</h1>
-      <p data-testid="backend-status">{t("home.backendStatus", { status: health.status })}</p>
+      <p data-testid="backend-status">
+        {t("home.backendStatus", { status: health.status })}
+      </p>
     </main>
   );
 }

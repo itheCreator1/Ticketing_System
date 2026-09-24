@@ -35,5 +35,12 @@ def test_user_without_a_valid_role_is_rejected():
 
 def test_is_staff_member(acme):
     staff = User.objects.create_user("sam@sd.test", display_name="Sam", role=Role.SUPERADMIN)
-    customer = User.objects.create_user("carol@acme.test", display_name="Carol", role=Role.CUSTOMER_MANAGER, organization=acme)
+    customer = User.objects.create_user(
+        "carol@acme.test", display_name="Carol", role=Role.CUSTOMER_MANAGER, organization=acme
+    )
     assert staff.is_staff_member and not customer.is_staff_member
+
+
+def test_create_user_requires_an_email():
+    with pytest.raises(ValueError, match="Email is required"):
+        User.objects.create_user("", display_name="Nobody", role=Role.SUPERADMIN)

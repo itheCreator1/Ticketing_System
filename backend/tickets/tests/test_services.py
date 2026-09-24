@@ -13,7 +13,9 @@ from tickets.services import add_event, create_ticket
 @pytest.fixture
 def acme_alice(db):
     acme = Organization.objects.create(name="Acme", key="ACME")
-    alice = User.objects.create_user("alice@acme.test", display_name="Alice", role=Role.CUSTOMER_USER, organization=acme)
+    alice = User.objects.create_user(
+        "alice@acme.test", display_name="Alice", role=Role.CUSTOMER_USER, organization=acme
+    )
     return acme, alice
 
 
@@ -54,7 +56,9 @@ def test_add_event_records_visibility(acme_alice):
 @pytest.mark.django_db(transaction=True)
 def test_parallel_creation_gets_unique_sequential_numbers():
     acme = Organization.objects.create(name="Acme", key="ACME")
-    alice = User.objects.create_user("alice@acme.test", display_name="Alice", role=Role.CUSTOMER_USER, organization=acme)
+    alice = User.objects.create_user(
+        "alice@acme.test", display_name="Alice", role=Role.CUSTOMER_USER, organization=acme
+    )
     start = threading.Barrier(8)
 
     def worker() -> None:

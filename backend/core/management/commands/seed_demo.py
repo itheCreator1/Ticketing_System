@@ -3,10 +3,10 @@ from django.core.management.base import BaseCommand, CommandError
 
 from accounts.models import User
 from organizations.models import Organization
-from tickets.models import Ticket
 from tests.world import build_world
+from tickets.models import Ticket
 
-DEMO_PASSWORD = "demo-password-123"
+DEMO_PASSWORD = "demo-password-123"  # noqa: S105  # nosec B105 (documented demo-only credential)
 
 
 class Command(BaseCommand):

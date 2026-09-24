@@ -12,6 +12,9 @@ class OrganizationGrant(models.Model):
     class Meta:
         constraints = [models.UniqueConstraint(fields=["admin", "organization"], name="unique_organization_grant")]
 
+    def __str__(self) -> str:
+        return f"{self.admin.email} → {self.organization.key}"
+
     def save(self, *args, **kwargs) -> None:
         if self.admin.role != Role.ADMIN:
             raise ValueError("Only admin users receive grants")
@@ -25,6 +28,9 @@ class PersonGrant(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["admin", "customer"], name="unique_person_grant")]
+
+    def __str__(self) -> str:
+        return f"{self.admin.email} → {self.customer.email}"
 
     def save(self, *args, **kwargs) -> None:
         if self.admin.role != Role.ADMIN:

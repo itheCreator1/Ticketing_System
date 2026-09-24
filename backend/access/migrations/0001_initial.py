@@ -6,37 +6,66 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('organizations', '0002_organization_key_immutable_trigger'),
+        ("organizations", "0002_organization_key_immutable_trigger"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='OrganizationGrant',
+            name="OrganizationGrant",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('admin', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='organization_grants', to=settings.AUTH_USER_MODEL)),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='grants', to='organizations.organization')),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "admin",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="organization_grants",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "organization",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="grants",
+                        to="organizations.organization",
+                    ),
+                ),
             ],
             options={
-                'constraints': [models.UniqueConstraint(fields=('admin', 'organization'), name='unique_organization_grant')],
+                "constraints": [
+                    models.UniqueConstraint(fields=("admin", "organization"), name="unique_organization_grant")
+                ],
             },
         ),
         migrations.CreateModel(
-            name='PersonGrant',
+            name="PersonGrant",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('admin', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='person_grants', to=settings.AUTH_USER_MODEL)),
-                ('customer', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='granted_to', to=settings.AUTH_USER_MODEL)),
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                (
+                    "admin",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="person_grants",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "customer",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="granted_to",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'constraints': [models.UniqueConstraint(fields=('admin', 'customer'), name='unique_person_grant')],
+                "constraints": [models.UniqueConstraint(fields=("admin", "customer"), name="unique_person_grant")],
             },
         ),
     ]

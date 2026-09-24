@@ -15,7 +15,9 @@ def people():
         "acme": acme,
         "maria": User.objects.create_user("maria@sd.test", display_name="Maria", role=Role.ADMIN),
         "sam": User.objects.create_user("sam@sd.test", display_name="Sam", role=Role.SUPERADMIN),
-        "alice": User.objects.create_user("alice@acme.test", display_name="Alice", role=Role.CUSTOMER_USER, organization=acme),
+        "alice": User.objects.create_user(
+            "alice@acme.test", display_name="Alice", role=Role.CUSTOMER_USER, organization=acme
+        ),
     }
 
 
