@@ -14,8 +14,11 @@ T ?=
 help:
 	@grep -E '^[a-z-]+:.*##' $(MAKEFILE_LIST) | sed 's/:.*##/ —/'
 
+# One PostgreSQL serves every worktree. Concurrent `up` calls race on the container name, so they take a
+# shared lock (flock ships with util-linux); --no-recreate keeps another branch's compose file from recreating it.
+DB_LOCK := $(or $(XDG_RUNTIME_DIR),/tmp)/sd-dev-db.lock
 db: ## start the shared dev PostgreSQL (skipped when SD_EXTERNAL_DB=1, e.g. CI service)
-	@if [ -z "$$SD_EXTERNAL_DB" ]; then $(DEV) up -d --wait db; fi
+	@if [ -z "$$SD_EXTERNAL_DB" ]; then flock "$(DB_LOCK)" $(DEV) up -d --wait --no-recreate db; fi
 
 test-backend: db ## backend tests; T=<path/-k expr> for a single RED/GREEN run
 	cd backend && uv run pytest $(if $(T),$(T),-n auto)
