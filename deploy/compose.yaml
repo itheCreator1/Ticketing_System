@@ -1,5 +1,5 @@
 x-backend-env: &backend-env
-  DJANGO_ENV: ${DJANGO_ENV:-development}
+  DJANGO_ENV: ${DJANGO_ENV:-production}
   DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-}
   DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
   POSTGRES_HOST: db

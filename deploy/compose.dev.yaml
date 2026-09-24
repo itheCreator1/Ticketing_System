@@ -2,6 +2,12 @@ services:
   db:
     ports:
       - "127.0.0.1:55432:5432"
+  backend:
+    environment:
+      DJANGO_ENV: development
+  scheduler:
+    environment:
+      DJANGO_ENV: development
   caddy:
     ports:
       - "127.0.0.1:8080:80"

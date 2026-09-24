@@ -7,7 +7,7 @@ from django.core.exceptions import ImproperlyConfigured
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ENV = os.environ.get("DJANGO_ENV", "development")  # development | e2e | production
+ENV = os.environ.get("DJANGO_ENV", "production")  # development | e2e | production; unset fails closed
 DEBUG = ENV == "development"
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "")

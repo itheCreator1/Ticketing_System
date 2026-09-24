@@ -4,6 +4,8 @@ SHELL := /bin/bash
 # Worktree-scoped names: the checkout directory name becomes the slug.
 SLUG := $(shell basename "$(CURDIR)" | tr -c 'a-zA-Z0-9\n' '_' | tr '[:upper:]' '[:lower:]')
 export SD_TEST_DB ?= test_sd_$(SLUG)
+# Settings fail closed to production; local tooling (pytest, mypy, spectacular) runs as development.
+export DJANGO_ENV ?= development
 
 DEV := docker compose -p sd-dev -f deploy/compose.yaml -f deploy/compose.dev.yaml
 T ?=
